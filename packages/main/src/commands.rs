@@ -1,4 +1,7 @@
-use std::fs;
+use std::{
+    fs,
+    process::{Command, Stdio},
+};
 
 #[tauri::command]
 pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> {
@@ -43,11 +46,36 @@ pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Re
 }
 
 #[tauri::command]
-pub async fn open_website(app: tauri::AppHandle, name: String, url: String) -> Result<(), String> {
+pub async fn open_website(app: tauri::AppHandle, name: String) -> Result<(), String> {
+    let mut path = app.path_resolver().app_dir().unwrap();
+    path.push("websites");
+    path.push(&name);
+
+    let output = Command::new("pnpm")
+        .arg("install")
+        .current_dir(&path)
+        .stdout(Stdio::piped())
+        .output()
+        .expect("failed to execute process");
+
+    println!("{}", String::from_utf8(output.stdout).unwrap());
+
+    let output = Command::new("pnpm")
+        .arg("run")
+        .arg("dev")
+        .current_dir(&path)
+        .stdout(Stdio::piped())
+        .output()
+        .expect("failed to execute process");
+
+    println!("{}", String::from_utf8(output.stdout).unwrap());
+
     tauri::WindowBuilder::new(
         &app,
         &name,
-        tauri::WindowUrl::External(url.parse().unwrap()),
-    ).build().unwrap();
+        tauri::WindowUrl::External("http://127.0.0.1:5173/".parse().unwrap()),
+    )
+    .build()
+    .unwrap();
     Ok(())
 }
