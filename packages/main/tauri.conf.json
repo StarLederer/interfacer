@@ -3,7 +3,7 @@
     "beforeBuildCommand": "",
     "beforeDevCommand": "",
     "devPath": "http://127.0.0.1:5173",
-    "distDir": "../../renderer/dist"
+    "distDir": "../renderer/dist"
   },
   "package": {
     "productName": "Webwriter App",
@@ -28,7 +28,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "org.webwriter.app",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
