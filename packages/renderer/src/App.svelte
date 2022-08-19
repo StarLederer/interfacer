@@ -7,11 +7,10 @@
 </script>
 
 {#if $route.startsWith("/websites")}
-  <Websites/>
+  <Websites />
 {:else if $route.startsWith("/add-website")}
-  <AddWebsite/>
+  <AddWebsite />
 {/if}
 
 <style>
-
 </style>

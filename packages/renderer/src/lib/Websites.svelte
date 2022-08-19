@@ -27,14 +27,15 @@
   {#if status}
     {#if websites}
       {#each websites as website}
-        <Website label={website} />
+        <Website label={website} on:click={() => {
+          // route.set("/editor");
+          invoke("open_website", {name: website, url: "https://www.rust-lang.org/"});
+        }}/>
       {/each}
       <Website
         label="Add one"
         on:click={async () => {
-          await invoke("add_website", { name: "testwebwriterwebsite" });
-          reloadSites();
-          // route.set("/add-website");
+          route.set("/add-website");
         }}
       />
     {:else}

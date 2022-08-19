@@ -41,3 +41,13 @@ pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Re
         }
     }
 }
+
+#[tauri::command]
+pub async fn open_website(app: tauri::AppHandle, name: String, url: String) -> Result<(), String> {
+    tauri::WindowBuilder::new(
+        &app,
+        &name,
+        tauri::WindowUrl::External(url.parse().unwrap()),
+    ).build().unwrap();
+    Ok(())
+}
