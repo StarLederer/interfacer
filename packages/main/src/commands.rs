@@ -46,7 +46,7 @@ pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Re
 }
 
 #[tauri::command]
-pub async fn open_website(app: tauri::AppHandle, name: String) -> Result<(), String> {
+pub async fn open_website(app: tauri::AppHandle, name: String) -> Result<String, String> {
     let mut cwd = app.path_resolver().app_dir().unwrap();
     cwd.push("websites");
     cwd.push(&name);
@@ -65,17 +65,18 @@ pub async fn open_website(app: tauri::AppHandle, name: String) -> Result<(), Str
                     .expect("Failed to execute wrapp.launcher.js");
 
                 let address = "http://localhost:".to_string() + port;
-                println!("{}", address);
 
-                tauri::WindowBuilder::new(
-                    &app,
-                    "Editor".to_string(),
-                    tauri::WindowUrl::External(
-                        address.parse().expect("Failed to parse server address"),
-                    ),
-                )
-                .build()
-                .expect("Failed to build the editor window");
+                return Ok(address);
+
+                // tauri::WindowBuilder::new(
+                //     &app,
+                //     "Editor".to_string(),
+                //     tauri::WindowUrl::External(
+                //         address.parse().expect("Failed to parse server address"),
+                //     ),
+                // )
+                // .build()
+                // .expect("Failed to build the editor window");
             } else {
                 return Err("Failed to find PORT in wrapp.env".to_string());
             }
@@ -84,6 +85,4 @@ pub async fn open_website(app: tauri::AppHandle, name: String) -> Result<(), Str
             return Err(err.to_string());
         }
     }
-
-    Ok(())
 }

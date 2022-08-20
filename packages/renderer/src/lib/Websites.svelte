@@ -2,6 +2,7 @@
   import { invoke } from "@tauri-apps/api/tauri";
   import { onMount } from "svelte";
   import route from "./router";
+  import { name } from "./server";
   import Website from "./Website.svelte";
   import Progress from "./Progress.svelte";
 
@@ -27,10 +28,13 @@
   {#if status}
     {#if websites}
       {#each websites as website}
-        <Website label={website} on:click={() => {
-          // route.set("/editor");
-          invoke("open_website", {name: website, url: "https://www.rust-lang.org/"});
-        }}/>
+        <Website
+          label={website}
+          on:click={() => {
+            name.set(website);
+            route.set("/server");
+          }}
+        />
       {/each}
       <Website
         label="Add one"
