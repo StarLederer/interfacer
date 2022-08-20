@@ -57,26 +57,20 @@ pub async fn open_website(app: tauri::AppHandle, name: String) -> Result<String,
     match env_opt {
         Ok(env) => {
             if let Some(port) = env.get("PORT") {
-                Command::new("node")
+                match Command::new("node")
                     .arg("wrapp.launcher.js")
                     .current_dir(&cwd)
                     .stdout(Stdio::piped())
                     .output()
-                    .expect("Failed to execute wrapp.launcher.js");
-
-                let address = "http://localhost:".to_string() + port;
-
-                return Ok(address);
-
-                // tauri::WindowBuilder::new(
-                //     &app,
-                //     "Editor".to_string(),
-                //     tauri::WindowUrl::External(
-                //         address.parse().expect("Failed to parse server address"),
-                //     ),
-                // )
-                // .build()
-                // .expect("Failed to build the editor window");
+                {
+                    Ok(_) => {
+                        let address = "http://localhost:".to_string() + port;
+                        return Ok(address);
+                    }
+                    Err(err) => {
+                        return Err(err.to_string());
+                    }
+                }
             } else {
                 return Err("Failed to find PORT in wrapp.env".to_string());
             }
