@@ -1,6 +1,7 @@
 use std::{
     fs,
-    process::{Command, Stdio},
+    process::{Child, Command},
+    sync::Mutex,
 };
 
 #[tauri::command]
@@ -45,8 +46,15 @@ pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Re
     }
 }
 
+#[derive(Default)]
+pub struct Node(Mutex<Option<Child>>);
+
 #[tauri::command]
-pub async fn open_website(app: tauri::AppHandle, name: String) -> Result<String, String> {
+pub async fn open_website(
+    app: tauri::AppHandle,
+    global_node: tauri::State<'_, Node>,
+    name: String,
+) -> Result<String, String> {
     let mut cwd = app.path_resolver().app_dir().unwrap();
     cwd.push("websites");
     cwd.push(&name);
@@ -60,10 +68,11 @@ pub async fn open_website(app: tauri::AppHandle, name: String) -> Result<String,
                 match Command::new("node")
                     .arg("wrapp.launcher.js")
                     .current_dir(&cwd)
-                    .stdout(Stdio::piped())
-                    .output()
+                    // .stdout(Stdio::piped())
+                    .spawn()
                 {
-                    Ok(_) => {
+                    Ok(node) => {
+                        *global_node.0.lock().unwrap() = Some(node);
                         let address = "http://localhost:".to_string() + port;
                         return Ok(address);
                     }
@@ -79,4 +88,15 @@ pub async fn open_website(app: tauri::AppHandle, name: String) -> Result<String,
             return Err(err.to_string());
         }
     }
+}
+
+#[tauri::command]
+pub async fn close_website(global_node: tauri::State<'_, Node>) -> Result<(), String> {
+    let mut node_changer = global_node.0.lock().unwrap();
+    let node_opt = &mut *node_changer;
+    if let Some(node) = node_opt {
+      node.kill().unwrap();
+    }
+    *node_changer = None;
+    Ok(())
 }

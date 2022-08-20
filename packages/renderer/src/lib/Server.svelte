@@ -20,7 +20,10 @@
 </script>
 
 <button
-  on:click={() => {
+  on:click={async () => {
+    error = undefined;
+    address = undefined;
+    await invoke("close_website");
     route.set("/websites");
   }}
 >
