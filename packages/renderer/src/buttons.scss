@@ -1,0 +1,57 @@
+.button,
+button,
+input[type="button"],
+input[type="submit"] {
+  --background: hsl(var(--hue), 60%, 60%);
+  --shadow: 0 0 0.4rem hsla(0, 0%, 0%, 60%);
+
+  background: var(--background);
+  color: hsl(var(--hue), 20%, 10%);
+  position: relative;
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 6rem hsla(var(--hue), 60%, 60%, 40%), var(--shadow);
+  font-weight: 600;
+  padding: 1rem;
+
+  display: flex;
+  align-items: stretch;
+  /* justify-content: stretch; */
+  transition: var(--transition);
+
+  &::before {
+    --offset: 0rem;
+    content: "";
+
+    position: absolute;
+    top: calc(var(--offset) * -1);
+    left: calc(var(--offset) * -1);
+    width: calc(100% + var(--offset) * 2);
+    height: calc(100% + var(--offset) * 2);
+    border-radius: calc(var(--border-radius) + var(--offset));
+
+    background: var(--background);
+    opacity: 0;
+    transition: var(--transition);
+  }
+
+  &:hover {
+    --background: hsl(var(--hue), 60%, 80%);
+    color: hsl(var(--hue), 100%, 10%);
+  }
+
+  &:focus {
+    --shadow: 0 0 0 transparent;
+    outline: none;
+
+    &::before {
+      --offset: 0.4rem;
+      opacity: 0.5;
+    }
+  }
+
+  &:active {
+    &::before {
+      --offset: 0.2rem;
+    }
+  }
+}

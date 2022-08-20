@@ -1,5 +1,6 @@
 <script>
   import { invoke } from "@tauri-apps/api/tauri";
+  import Button from "../primitives/Button.svelte";
   import route from "./router";
   import Progress from "./Progress.svelte";
 
@@ -8,13 +9,16 @@
   let url = "";
 </script>
 
-<button
+<Button
+  hue={0}
   on:click={() => {
     route.set("/websites");
   }}
 >
   back
-</button>
+</Button>
+
+<h2>Add website</h2>
 
 {#if loading}
   <Progress />
@@ -26,25 +30,44 @@
       route.set("/websites");
     }}
   >
-    <p>You probably want to ask your developer to do this step for you</p>
+    <p>You probably want to ask your developer to do this step for you.</p>
 
     <label>
       <span>Name</span>
-      <input type="text" bind:value={name} />
+      <input type="text" bind:value={name} required />
     </label>
     <label>
       <span>Git URL</span>
-      <input type="url" bind:value={url} />
+      <input type="url" bind:value={url} required />
     </label>
 
-    <input type="submit" value="Add website" />
+    <Button hue={100}>Add website</Button>
   </form>
 {/if}
 
 <style>
+  h2 {
+    margin-block: 2rem;
+  }
+
+  p {
+    color: hsla(0, 0%, 100%, 0.4);
+  }
+
   form {
-    max-width: 20rem;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  label {
+    display: flex;
+    gap: 0.4rem;
+    flex-direction: column;
+  }
+
+  input {
+    /* width: 100%; */
   }
 </style>

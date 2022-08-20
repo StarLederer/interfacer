@@ -18,6 +18,8 @@
     "vite": "^3.0.8"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.0.2"
+    "@tauri-apps/api": "^1.0.2",
+    "sass": "^1.54.5",
+    "svelte-material-icons": "^2.0.4"
   }
 }

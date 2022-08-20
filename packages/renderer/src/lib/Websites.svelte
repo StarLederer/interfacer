@@ -5,6 +5,7 @@
   import { name } from "./server";
   import Website from "./Website.svelte";
   import Progress from "./Progress.svelte";
+  import Button from "../primitives/Button.svelte";
 
   let status;
   let websites;
@@ -24,9 +25,10 @@
 </script>
 
 <h2>Your websites</h2>
-<div class="websites">
-  {#if status}
-    {#if websites}
+
+{#if status}
+  {#if websites}
+    <div class="websites">
       {#each websites as website}
         <Website
           label={website}
@@ -36,23 +38,30 @@
           }}
         />
       {/each}
-      <Website
-        label="Add one"
-        on:click={async () => {
-          route.set("/add-website");
-        }}
-      />
-    {:else}
-      <p>{status}</p>
-    {/if}
+    </div>
+    <Button
+      hue={100}
+      on:click={async () => {
+        route.set("/add-website");
+      }}>Add one</Button
+    >
   {:else}
-    <Progress />
+    <p>{status}</p>
   {/if}
-</div>
+{:else}
+  <Progress />
+{/if}
 
 <style>
+  h2 {
+    margin-block: 2rem;
+  }
+
   .websites {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    gap: 0.4rem;
+
+    margin-bottom: 1rem;
   }
 </style>
