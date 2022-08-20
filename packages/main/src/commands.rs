@@ -47,35 +47,43 @@ pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Re
 
 #[tauri::command]
 pub async fn open_website(app: tauri::AppHandle, name: String) -> Result<(), String> {
-    let mut path = app.path_resolver().app_dir().unwrap();
-    path.push("websites");
-    path.push(&name);
+    let mut cwd = app.path_resolver().app_dir().unwrap();
+    cwd.push("websites");
+    cwd.push(&name);
 
-    let output = Command::new("pnpm")
-        .arg("install")
-        .current_dir(&path)
-        .stdout(Stdio::piped())
-        .output()
-        .expect("failed to execute process");
+    let mut env_path = cwd.clone();
+    env_path.push("wrapp.env");
+    let env_opt = envfile::EnvFile::new(&env_path);
+    match env_opt {
+        Ok(env) => {
+            if let Some(port) = env.get("PORT") {
+                Command::new("node")
+                    .arg("wrapp.launcher.js")
+                    .current_dir(&cwd)
+                    .stdout(Stdio::piped())
+                    .output()
+                    .expect("Failed to execute wrapp.launcher.js");
 
-    println!("{}", String::from_utf8(output.stdout).unwrap());
+                let address = "http://localhost:".to_string() + port;
+                println!("{}", address);
 
-    let output = Command::new("pnpm")
-        .arg("run")
-        .arg("dev")
-        .current_dir(&path)
-        .stdout(Stdio::piped())
-        .output()
-        .expect("failed to execute process");
+                tauri::WindowBuilder::new(
+                    &app,
+                    "Editor".to_string(),
+                    tauri::WindowUrl::External(
+                        address.parse().expect("Failed to parse server address"),
+                    ),
+                )
+                .build()
+                .expect("Failed to build the editor window");
+            } else {
+                return Err("Failed to find PORT in wrapp.env".to_string());
+            }
+        }
+        Err(err) => {
+            return Err(err.to_string());
+        }
+    }
 
-    println!("{}", String::from_utf8(output.stdout).unwrap());
-
-    tauri::WindowBuilder::new(
-        &app,
-        &name,
-        tauri::WindowUrl::External("http://127.0.0.1:5173/".parse().unwrap()),
-    )
-    .build()
-    .unwrap();
     Ok(())
 }
