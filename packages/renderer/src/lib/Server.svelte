@@ -31,7 +31,10 @@
   <p>An error has occured!</p>
   <p>{error}</p>
 {:else if address}
-  <p>We've launcher the development server for you!</p>
+  <p>
+    We've launched the development server for you!
+    You can now edit the website
+  </p>
   <a href={address} target="_blank">Open in browser</a>
 {:else}
   <p>Launching the development server</p>
