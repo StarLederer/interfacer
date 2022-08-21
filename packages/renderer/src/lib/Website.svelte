@@ -1,11 +1,11 @@
 <script>
   import Play from "svelte-material-icons/Play.svelte";
   import Menu from "svelte-material-icons/DotsVertical.svelte";
-  import Edit from "svelte-material-icons/Pencil.svelte";
   import Favorite from "svelte-material-icons/Star.svelte";
   import { stringToHue } from "./visuals";
   import Button from "../primitives/Button.svelte";
   import ButtonList from "../primitives/ButtonList.svelte";
+
   export let label = "";
 </script>
 
