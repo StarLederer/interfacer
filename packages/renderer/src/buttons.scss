@@ -2,14 +2,20 @@
 button,
 input[type="button"],
 input[type="submit"] {
-  --background: hsl(var(--hue), 60%, 60%);
+  --background-hsl: var(--hue), 60%, 60%;
+  --background-a: 100%;
+  --background: hsla(var(--background-hsl), var(--background-a));
+  --color: hsl(var(--hue), 20%, 10%);
+  --glow-color-a: 40%;
+  --glow-color: hsla(var(--background-hsl), var(--glow-color-a));
+  --glow: 0 0 6rem var(--glow-color);
   --shadow: 0 0 0.4rem hsla(0, 0%, 0%, 60%);
 
   background: var(--background);
-  color: hsl(var(--hue), 20%, 10%);
+  color: var(--color);
   position: relative;
   border-radius: var(--border-radius);
-  box-shadow: 0 0 6rem hsla(var(--hue), 60%, 60%, 40%), var(--shadow);
+  box-shadow: var(--glow), var(--shadow);
   font-weight: 600;
   padding: 1rem;
 
@@ -29,14 +35,39 @@ input[type="submit"] {
     height: calc(100% + var(--offset) * 2);
     border-radius: calc(var(--border-radius) + var(--offset));
 
-    background: var(--background);
-    opacity: 0;
+    --background-a: 0;
+    background: hsla(var(--background-hsl), var(--background-a));
     transition: var(--transition);
   }
 
-  &:hover {
-    --background: hsl(var(--hue), 60%, 80%);
-    color: hsl(var(--hue), 100%, 10%);
+  &.is-ghost {
+    --background: transparent;
+    --color: hsl(var(--hue), 60%, 60%);
+    --glow: 0 0 0 transparent;
+    --shadow: 0 0 0 transparent;
+
+    &:hover,
+    &:active {
+      --color: hsl(var(--hue), 60%, 80%);
+    }
+  }
+
+  &.is-half {
+    --background-a: 0.2;
+    --color: hsl(var(--hue), 60%, 60%);
+    --glow: 0 0 0 transparent;
+    --shadow: 0 0 0 transparent;
+
+    &:hover,
+    &:active {
+      --color: hsl(var(--hue), 60%, 80%);
+    }
+  }
+
+  &:hover,
+  &:active {
+    --background-hsl: var(--hue), 60%, 80%;
+    --color: hsl(var(--hue), 100%, 10%);
   }
 
   &:focus {
@@ -45,7 +76,7 @@ input[type="submit"] {
 
     &::before {
       --offset: 0.4rem;
-      opacity: 0.5;
+      --background-a: 20%;
     }
   }
 
