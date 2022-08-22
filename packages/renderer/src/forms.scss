@@ -1,0 +1,21 @@
+fieldset {
+  --border-color-a: 10%;
+  border-width: var(--border-width);
+  border-color: hsla(0, 0%, 100%, var(--border-color-a));
+  padding: calc(0.8rem - var(--border-width));
+  border-radius: var(--border-radius);
+}
+
+legend {
+  inset-inline-start: var(--border-radius);
+  opacity: 0.4;
+}
+
+label > .label,
+.listbox-label {
+  position: absolute;
+  left: 1rem;
+  line-height: 2.5rem;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}

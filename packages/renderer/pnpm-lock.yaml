@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@rgossiaux/svelte-headlessui': ^1.0.2
   '@sveltejs/vite-plugin-svelte': ^1.0.1
   '@tauri-apps/api': ^1.0.2
   '@tsconfig/svelte': ^3.0.0
@@ -14,6 +15,7 @@ specifiers:
   vite: ^3.0.8
 
 dependencies:
+  '@rgossiaux/svelte-headlessui': 1.0.2_svelte@3.49.0
   '@tauri-apps/api': 1.0.2
   sass: 1.54.5
   svelte-material-icons: 2.0.4_svelte@3.49.0
@@ -75,6 +77,14 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
     dev: true
+
+  /@rgossiaux/svelte-headlessui/1.0.2_svelte@3.49.0:
+    resolution: {integrity: sha512-sauopYTSivhzXe1kAvgawkhyYJcQlK8Li3p0d2OtcCIVprOzdbard5lbqWB4xHDv83zAobt2mR08oizO2poHLQ==}
+    peerDependencies:
+      svelte: ^3.44.0
+    dependencies:
+      svelte: 3.49.0
+    dev: false
 
   /@rollup/pluginutils/4.2.1:
     resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}

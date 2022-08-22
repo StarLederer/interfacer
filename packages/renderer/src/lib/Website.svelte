@@ -1,5 +1,5 @@
 <script>
-  import Play from "svelte-material-icons/Play.svelte";
+  import Open from "svelte-material-icons/ArrowRight.svelte";
   import Menu from "svelte-material-icons/DotsVertical.svelte";
   import Favorite from "svelte-material-icons/Star.svelte";
   import { stringToHue } from "./visuals";
@@ -43,8 +43,8 @@
 
   <ButtonList spread>
     <Button hue={stringToHue(label)} on:click>
-      Launch
-      <Play />
+      Open
+      <Open />
     </Button>
     <Button hue={stringToHue(label)} ghost>
       <Menu />

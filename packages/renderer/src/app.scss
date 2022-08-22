@@ -1,4 +1,4 @@
-@forward "./buttons.scss";
+@forward "./forms.scss";
 
 * {
   margin: 0;
@@ -6,6 +6,8 @@
   line-height: 1;
   box-sizing: border-box;
   font-size: 1rem;
+  cursor: inherit;
+  position: relative;
 }
 
 :root {
@@ -23,9 +25,17 @@
   -webkit-text-size-adjust: 100%;
 
   user-select: none;
+  -webkit-user-select: none;
+
+  --saturation: 100%;
 
   --transition: 100ms;
   --border-radius: 1rem;
+  --border-width: 1px;
+}
+
+body {
+  cursor: default;
 }
 
 .btn,
@@ -35,14 +45,8 @@ button {
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: 1.4rem;
   font-weight: 800;
-}
-
-input {
-  border: none;
-  padding: var(--border-radius);
-  border-radius: var(--border-radius);
 }
 
 @media (prefers-color-scheme: light) {

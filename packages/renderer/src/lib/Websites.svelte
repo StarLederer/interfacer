@@ -1,11 +1,14 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/tauri";
   import { onMount } from "svelte";
+  import Add from "svelte-material-icons/Git.svelte";
+  import AddLocal from "svelte-material-icons/FolderPlus.svelte";
   import route from "./router";
   import { name } from "./server";
   import Website from "./Website.svelte";
   import Progress from "./Progress.svelte";
   import Button from "../primitives/Button.svelte";
+  import ButtonList from "../primitives/ButtonList.svelte";
 
   let status;
   let websites;
@@ -24,7 +27,33 @@
   });
 </script>
 
-<h2>Your websites</h2>
+<div class="header">
+  <h2>Your projects</h2>
+  {#if status}
+    <ButtonList>
+      <Button
+        hue={100}
+        ghost
+        on:click={async () => {
+          route.set("/add-website");
+        }}
+      >
+        Add local
+        <AddLocal />
+      </Button>
+      <Button
+        half
+        hue={100}
+        on:click={async () => {
+          route.set("/add-website");
+        }}
+      >
+        Add from Git
+        <Add />
+      </Button>
+    </ButtonList>
+  {/if}
+</div>
 
 {#if status}
   {#if websites}
@@ -39,12 +68,6 @@
         />
       {/each}
     </div>
-    <Button
-      hue={100}
-      on:click={async () => {
-        route.set("/add-website");
-      }}>Add one</Button
-    >
   {:else}
     <p>{status}</p>
   {/if}
@@ -53,15 +76,16 @@
 {/if}
 
 <style>
-  h2 {
-    margin-block: 2rem;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-block-end: 1rem;
   }
 
   .websites {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
     gap: 0.4rem;
-
-    margin-bottom: 1rem;
   }
 </style>
