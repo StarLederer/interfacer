@@ -1,9 +1,9 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import route from "./lib/router";
-  import Websites from "./lib/Websites.svelte";
-  import AddWebsite from "./lib/AddWebsite.svelte";
-  import Server from "./lib/Server.svelte";
+  import route from "~/router";
+  import Projects from "~/routes/projects/Projects.svelte";
+  import AddProject from "~/routes/AddProject.svelte";
+  import Server from "~/routes/server/Server.svelte";
 
   route.set("/websites");
 </script>
@@ -11,11 +11,11 @@
 <main>
   {#if $route.startsWith("/websites")}
     <section transition:fade>
-      <Websites />
+      <Projects />
     </section>
   {:else if $route.startsWith("/add-website")}
     <section transition:fade>
-      <AddWebsite />
+      <AddProject />
     </section>
   {:else if $route.startsWith("/server")}
     <section transition:fade>

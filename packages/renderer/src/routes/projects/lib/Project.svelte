@@ -2,9 +2,10 @@
   import Open from "svelte-material-icons/ArrowRight.svelte";
   import Menu from "svelte-material-icons/DotsVertical.svelte";
   import Favorite from "svelte-material-icons/Star.svelte";
-  import { stringToHue } from "./visuals";
-  import Button from "../primitives/Button.svelte";
-  import ButtonList from "../primitives/ButtonList.svelte";
+
+  import { stringToHue } from "~/lib/visuals";
+  import Button from "~/lib//primitives/Button.svelte";
+  import ButtonList from "~/lib//primitives/ButtonList.svelte";
 
   export let label = "";
 </script>
@@ -16,17 +17,14 @@
       <Button hue={stringToHue(label)} ghost>
         <Favorite />
       </Button>
-      <!-- <Button hue={stringToHue(label)} ghost>
-        <Menu />
-      </Button> -->
     </ButtonList>
   </div>
-  <!-- <p>A short description maybe?</p> -->
-  <table>
+  <p>A short description maybe?</p>
+  <!-- <table>
     <thead>
       <tr>
         <th>Team</th>
-        <th>Last modified</th>
+        <th>Git status</th>
       </tr>
     </thead>
     <tbody>
@@ -36,16 +34,18 @@
             <div class="team-member" style={`--hue: ${Math.random() * 360}`} />
           {/each}
         </td>
-        <td>Recently</td>
+        <td>Up to date</td>
       </tr>
     </tbody>
-  </table>
+  </table> -->
 
   <ButtonList spread>
-    <Button hue={stringToHue(label)} on:click>
-      Open
-      <Open />
-    </Button>
+    <ButtonList>
+      <Button hue={stringToHue(label)} on:click>
+        Open
+        <Open />
+      </Button>
+    </ButtonList>
     <Button hue={stringToHue(label)} ghost>
       <Menu />
     </Button>

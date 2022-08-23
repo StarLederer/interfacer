@@ -4,12 +4,13 @@
   import Back from "svelte-material-icons/ChevronLeft.svelte";
   import Remove from "svelte-material-icons/Close.svelte";
   import { invoke } from "@tauri-apps/api/tauri";
-  import Dropdown from "../primitives/Dropdown.svelte";
-  import Button from "../primitives/Button.svelte";
-  import Input from "../primitives/Input.svelte";
-  import route from "./router";
-  import Progress from "./Progress.svelte";
-  import ButtonList from "../primitives/ButtonList.svelte";
+  import Dropdown from "~/lib/primitives/Dropdown.svelte";
+  import Button from "~/lib/primitives/Button.svelte";
+  import Input from "~/lib/primitives/Input.svelte";
+  import route from "../router";
+  import Progress from "~/lib/primitives/Progress.svelte";
+  import ButtonList from "~/lib/primitives/ButtonList.svelte";
+  import Headerbar from "~/lib/Headerbar.svelte";
 
   let loading = false;
   let name;
@@ -20,26 +21,21 @@
 </script>
 
 <section class="add-website">
-  <ButtonList spread>
-    <Button
-      half
-      on:click={() => {
-        route.set("/websites");
-      }}
-    >
-      <Back />
-    </Button>
-
-    <Button hue={100}>
+  <Headerbar
+    title="Add website"
+    back={() => {
+      route.set("/websites");
+    }}
+  >
+    <Button hue={100} slot="actions">
       Save
       <Save />
     </Button>
-  </ButtonList>
+  </Headerbar>
 
-  <h2>Add website</h2>
   <p>
-    If you are a content writer, you probably want to call your developer
-    for this.
+    If you are a content writer, you probably want to call your developer for
+    this.
   </p>
 
   {#if loading}
@@ -100,18 +96,11 @@
   .add-website {
     display: flex;
     flex-direction: column;
-  }
-
-  h2 {
-    margin-block: 2rem;
-    margin-block-end: 0.4rem;
-
+    gap: 1rem;
   }
 
   p {
     color: hsla(0, 0%, 100%, 0.4);
-    margin-block-end: 2rem;
-
   }
 
   form,

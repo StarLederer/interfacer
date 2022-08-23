@@ -3,12 +3,12 @@
   import { onMount } from "svelte";
   import Add from "svelte-material-icons/Git.svelte";
   import AddLocal from "svelte-material-icons/FolderPlus.svelte";
-  import route from "./router";
-  import { name } from "./server";
-  import Website from "./Website.svelte";
-  import Progress from "./Progress.svelte";
-  import Button from "../primitives/Button.svelte";
-  import ButtonList from "../primitives/ButtonList.svelte";
+  import route from "~/router";
+  import { name } from "~/routes/server/server";
+  import Project from "./lib/Project.svelte";
+  import Progress from "~/lib/primitives/Progress.svelte";
+  import Button from "~/lib/primitives/Button.svelte";
+  import ButtonList from "~/lib/primitives/ButtonList.svelte";
 
   let status;
   let websites;
@@ -59,7 +59,7 @@
   {#if websites}
     <div class="websites">
       {#each websites as website}
-        <Website
+        <Project
           label={website}
           on:click={() => {
             name.set(website);

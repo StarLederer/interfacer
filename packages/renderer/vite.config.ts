@@ -1,8 +1,14 @@
+import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 
 // https://tauri.app/v1/guides/getting-started/setup/vite/
 const tauriRequired = defineConfig({
+  resolve: {
+    alias: {
+      '~': resolve('./src'),
+    },
+  },
   // prevent vite from obscuring rust errors
   clearScreen: false,
   // Tauri expects a fixed port, fail if that port is not available
