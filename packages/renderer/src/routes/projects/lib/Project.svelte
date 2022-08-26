@@ -5,52 +5,55 @@
 
   import { stringToHue } from "~/lib/visuals";
   import Button from "~/lib//primitives/Button.svelte";
+  import Panel from "~/lib//primitives/Panel.svelte";
   import ButtonList from "~/lib//primitives/ButtonList.svelte";
 
   export let label = "";
 </script>
 
-<article style={`--hue: ${stringToHue(label)}`}>
-  <div class="header">
-    <div class="title">{label}</div>
-    <ButtonList>
-      <Button hue={stringToHue(label)} ghost>
-        <Favorite />
-      </Button>
-    </ButtonList>
-  </div>
-  <p>A short description maybe?</p>
-  <!-- <table>
-    <thead>
-      <tr>
-        <th>Team</th>
-        <th>Git status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="team-members">
-          {#each Array(Math.floor(Math.random() * 3 + 1)) as member}
-            <div class="team-member" style={`--hue: ${Math.random() * 360}`} />
-          {/each}
-        </td>
-        <td>Up to date</td>
-      </tr>
-    </tbody>
-  </table> -->
+<Panel hue={stringToHue(label)}>
+  <article>
+    <div class="header">
+      <div class="title">{label}</div>
+      <ButtonList>
+        <Button hue={stringToHue(label)} ghost>
+          <Favorite />
+        </Button>
+      </ButtonList>
+    </div>
+    <p>A short description maybe?</p>
+    <!-- <table>
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Git status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="team-members">
+            {#each Array(Math.floor(Math.random() * 3 + 1)) as member}
+              <div class="team-member" style={`--hue: ${Math.random() * 360}`} />
+            {/each}
+          </td>
+          <td>Up to date</td>
+        </tr>
+      </tbody>
+    </table> -->
 
-  <ButtonList spread>
-    <ButtonList>
-      <Button hue={stringToHue(label)} on:click>
-        Open
-        <Open />
+    <ButtonList spread>
+      <ButtonList>
+        <Button hue={stringToHue(label)} on:click>
+          Open
+          <Open />
+        </Button>
+      </ButtonList>
+      <Button hue={stringToHue(label)} ghost>
+        <Menu />
       </Button>
     </ButtonList>
-    <Button hue={stringToHue(label)} ghost>
-      <Menu />
-    </Button>
-  </ButtonList>
-</article>
+  </article>
+</Panel>
 
 <style lang="scss">
   article {
@@ -58,54 +61,31 @@
     flex-direction: column;
     gap: 1rem;
 
-    background: hsla(var(--hue), 20%, 20%, 20%);
-    --border-width: 1px;
-    border-style: solid;
-    border-width: var(--border-width);
-    border-color: hsla(var(--hue), 20%, 40%, 20%);
-    border-radius: 1rem;
-    padding: calc(1rem - var(--border-width));
-
-    * {
-      --color-l: 60%;
-      --color-hsl: var(--hue), 40%, var(--color-l);
-      --color-a: 80%;
-      --color: hsla(var(--color-hsl), var(--color-a));
-      color: var(--color);
-    }
-
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .title {
-      --color-l: 80%;
-      --color-a: 100%;
-      font-weight: 600;
-    }
+    // table {
+    //   font-weight: 400;
+    // }
 
-    table {
-      font-weight: 400;
-    }
+    // th {
+    //   width: 50%;
+    //   --color-a: 40%;
+    //   text-align: start;
+    //   font-weight: 400;
+    // }
 
-    th {
-      width: 50%;
-      --color-a: 40%;
-      text-align: start;
-      font-weight: 400;
-    }
-
-    .team-members {
-      display: flex;
-      // gap: 0.2rem;
-    }
-    .team-member {
-      width: 1.4rem;
-      aspect-ratio: 1/1;
-      background: hsl(var(--hue), 40%, 50%);
-      border-radius: 50%;
-    }
+    // .team-members {
+    //   display: flex;
+    // }
+    // .team-member {
+    //   width: 1.4rem;
+    //   aspect-ratio: 1/1;
+    //   background: hsl(var(--hue), 40%, 50%);
+    //   border-radius: 50%;
+    // }
   }
 </style>

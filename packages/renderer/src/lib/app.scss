@@ -16,7 +16,8 @@
 
   color-scheme: light dark;
   color: white;
-  background: hsl(0, 0%, 10%);
+  --app-background: hsl(0, 0%, 10%);
+  background: var(--app-background);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -26,8 +27,6 @@
 
   user-select: none;
   -webkit-user-select: none;
-
-  --saturation: 100%;
 
   --transition: 100ms;
   --border-radius: 1rem;

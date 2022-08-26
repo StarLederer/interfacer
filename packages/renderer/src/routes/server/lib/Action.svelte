@@ -1,41 +1,45 @@
-<script>
-  import Check from "svelte-material-icons/Check.svelte";
-  import { open } from "@tauri-apps/api/shell";
-  import Button from "~/lib/primitives/Button.svelte";
-  import ButtonList from "~/lib/primitives/ButtonList.svelte";
+<script lang="ts" context="module">
+  type IActionStatus = "idle" | "activating" | "active" | "terminated";
 
-  export let active = false;
-  export let action;
-  export let hue;
-  export let address;
+  type IAction = {
+    duration: "instant" | "self-terminated" | "user-terminated";
+    names: { [K in IActionStatus]: string };
+    depends?: {
+      action: number;
+      status: IActionStatus;
+    }[];
+  };
+
+  export type { IActionStatus, IAction };
 </script>
 
-<div class="action" style={`--hue: ${hue}`}>
-  <div class="icon">
-    <Check />
+<script lang="ts">
+  import Button from "~/lib/primitives/Button.svelte";
+
+  export let action: IAction;
+  export let hue: number;
+  export let status: IActionStatus;
+</script>
+
+<Button {hue} half={status !== "active"} on:click>
+  <div class="action-content">
+    <span class="name">{action.names[status]}</span>
+    <!-- {#if status === "active"}
+      <div class="info">
+        <table class="status">
+          <tr>
+            <th>Status: </th>
+            <td>Running</td>
+          </tr>
+        </table>
+        <div class="output">
+        </div>
+      </div>
+    {/if} -->
   </div>
-  <div class="content">
-    <span class="name">{action.name}</span>
-    <span class="status">{action.status}</span>
-    {#if action.buttons}
-      {#each action.buttons as button}
-        <Button
-          {hue}
-          half={!active}
-          on:click={async () => {
-            await open(address);
-          }}>{button.name}</Button
-        >
-      {/each}
-    {/if}
-  </div>
-</div>
+</Button>
 
 <style lang="scss">
-  @mixin use-color {
-    --color: hsl(var(--hue), var(--color-s), var(--color-l), var(--color-a));
-  }
-
   @mixin use-background {
     --background: hsl(
       var(--hue),
@@ -45,63 +49,47 @@
     );
   }
 
-  .action {
-    --color-s: 60%;
-    --color-l: 60%;
-    --color-a: 1;
-    --background-s: 40%;
-    --background-l: 60%;
-    --background-a: 0.1;
-
-    @include use-background;
-    background: var(--background);
-    border-radius: var(--border-radius);
-    border-style: solid;
-    border-width: var(--border-width);
-    border-radius: var(--border-radius);
-    border-color: hsla(var(--hue), 60%, 80%, 10%);
-    padding-block: calc(2rem - var(--border-width));
-    padding-inline: calc(1rem - var(--border-width));
+  .action-content {
+    width: 100%;
+    height: 100%;
 
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     gap: 1rem;
 
-    .dot {
-      @include use-color;
-
-      width: 1rem;
-      height: 1rem;
-
-      background: var(--color);
-      border-radius: 50%;
+    .name {
+      font-size: 2rem;
+      font-weight: 800;
     }
 
-    .content {
-      --background-a: 5%;
+    // .info {
+    //   --border-radius: 1rem;
 
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.4rem;
+    //   color: white;
+    //   background: var(--app-background);
+    //   padding: var(--border-radius);
+    //   border-radius: var(--border-radius);
 
-      .name {
-        --color-l: 80%;
-        --color-s: 40%;
-        --color-a: 1;
-        @include use-color;
+    //   display: flex;
+    //   flex-direction: column;
+    //   gap: 1rem;
 
-        color: var(--color);
-        font-weight: 600;
-      }
+    //   .status {
+    //     text-align: left;
 
-      .status {
-        --color-l: 60%;
-        --color-s: 40%;
-        --color-a: 0.8;
-        @include use-color;
+    //     tr {
+    //       display: flex;
+    //       gap: 1rem;
+    //     }
+    //   }
 
-        color: var(--color);
-      }
-    }
+    //   .output {
+    //     max-height: 6rem;
+    //     overflow: scroll;
+    //     overflow: overlay;
+    //     text-align: start;
+    //   }
+    // }
   }
 </style>

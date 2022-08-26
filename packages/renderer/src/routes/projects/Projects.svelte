@@ -9,6 +9,7 @@
   import Progress from "~/lib/primitives/Progress.svelte";
   import Button from "~/lib/primitives/Button.svelte";
   import ButtonList from "~/lib/primitives/ButtonList.svelte";
+  import Headerbar from "~/lib/Headerbar.svelte";
 
   let status;
   let websites;
@@ -27,10 +28,9 @@
   });
 </script>
 
-<div class="header">
-  <h2>Your projects</h2>
-  {#if status}
-    <ButtonList>
+<Headerbar title="Your projects">
+  <ButtonList slot="actions">
+    {#if status}
       <Button
         hue={100}
         ghost
@@ -51,9 +51,9 @@
         Add from Git
         <Add />
       </Button>
-    </ButtonList>
-  {/if}
-</div>
+    {/if}
+  </ButtonList>
+</Headerbar>
 
 {#if status}
   {#if websites}
@@ -76,16 +76,11 @@
 {/if}
 
 <style>
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-block-end: 1rem;
-  }
-
   .websites {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr));
     gap: 0.4rem;
+    padding: 1rem;
+    padding-block-start: 0;
   }
 </style>

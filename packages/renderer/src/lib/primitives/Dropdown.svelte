@@ -46,22 +46,9 @@
 
 <style lang="scss" global>
   .listbox {
-    &.interactable {
-      --hue: 0;
-      --saturation: 0%;
-      --lightness: 100%;
-
-      &.is-open {
-        &:focus-within {
-          &::before {
-            border: none;
-            --border-width: 0px;
-            --background-a: 5%;
-            background: var(--background);
-          }
-        }
-      }
-    }
+    --hue: 0;
+    --saturation: 0%;
+    --lightness: 100%;
 
     .listbox-button {
       --color-l: 100%;
@@ -84,6 +71,19 @@
     .listbox-option {
       margin-block-start: 0.2rem;
       cursor: pointer;
+    }
+
+    &.is-open {
+      margin-block: 0.4rem;
+
+      &:focus-within {
+        &::before {
+          border: none;
+          --border-width: 0px;
+          --background-a: 5%;
+          background: var(--background);
+        }
+      }
     }
   }
 </style>

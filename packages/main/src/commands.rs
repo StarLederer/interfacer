@@ -1,3 +1,4 @@
+use serde::Serialize;
 use std::{
     fs,
     process::{Child, Command},
@@ -47,42 +48,87 @@ pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Re
 }
 
 #[derive(Default)]
-pub struct Node(Mutex<Option<Child>>);
+pub struct CommandLine(Mutex<Option<Child>>);
+
+#[derive(Serialize)]
+pub struct CliCommand {
+    program: String,
+    arguments: Vec<String>,
+}
+
+#[derive(Serialize)]
+pub struct WrappAction {
+    name: String,
+    command: CliCommand,
+}
 
 #[tauri::command]
-pub async fn open_website(
+pub fn get_actions(app: tauri::AppHandle, name: String) -> Result<Vec<WrappAction>, String> {
+    let mut project_path = app.path_resolver().app_dir().unwrap();
+    project_path.push("websites");
+    project_path.push(&name);
+
+    // TODO: Read project config and save to state instead
+    let actions: Vec<WrappAction> = vec![WrappAction {
+        name: "Start server".to_string(),
+        command: CliCommand {
+            program: "docker".to_string(),
+            arguments: vec![
+                "run".to_string(),
+                "--rm".to_string(),
+                "-it".to_string(),
+                "-v".to_string(),
+                "${pwd}:/usr/src/app".to_string(),
+                "-p".to_string(),
+                "5138:5138".to_string(),
+                "test-vite".to_string(),
+                "pnpm".to_string(),
+                "run".to_string(),
+                "dev".to_string(),
+                "--host".to_string(),
+                "--port".to_string(),
+                "5138".to_string(),
+            ],
+        }, // command: "docker run --rm -it -v ${pwd}:/usr/src/app -p 5138:5138 test-vite pnpm run dev --host --port 5138".to_string(),
+    }];
+
+    Ok(actions)
+}
+
+#[tauri::command]
+pub async fn start_action(
     app: tauri::AppHandle,
-    global_node: tauri::State<'_, Node>,
+    command_line: tauri::State<'_, CommandLine>,
     name: String,
 ) -> Result<String, String> {
-    let mut cwd = app.path_resolver().app_dir().unwrap();
-    cwd.push("websites");
-    cwd.push(&name);
+    let mut project_path = app.path_resolver().app_dir().unwrap();
+    project_path.push("websites");
+    project_path.push(&name);
 
-    let mut env_path = cwd.clone();
-    env_path.push("wrapp.env");
-    let env_opt = envfile::EnvFile::new(&env_path);
-    match env_opt {
-        Ok(env) => {
-            if let Some(port) = env.get("PORT") {
-                match Command::new("node")
-                    .arg("wrapp.launcher.js")
-                    .current_dir(&cwd)
-                    // .stdout(Stdio::piped())
-                    .spawn()
-                {
-                    Ok(node) => {
-                        *global_node.0.lock().unwrap() = Some(node);
-                        let address = "http://localhost:".to_string() + port;
-                        return Ok(address);
-                    }
-                    Err(err) => {
-                        return Err(err.to_string());
-                    }
-                }
-            } else {
-                return Err("Failed to find PORT in wrapp.env".to_string());
-            }
+    // TODO: Getactins from state instead
+    let workspace = &project_path;
+    let actions = get_actions(app, name).unwrap();
+    let action = &actions[0];
+    let command = &action.command;
+
+    // Execute command
+    // let mut command_parts = command.split(" ");
+
+    let mut cli = Command::new(&command.program);
+    cli.current_dir(&workspace);
+    for arg in &command.arguments {
+        cli.arg(arg.replace("${pwd}", &project_path.as_path().display().to_string()));
+    }
+
+    println!(
+        "{}",
+        String::from_utf8(cli.output().unwrap().stdout).unwrap()
+    );
+
+    match cli.spawn() {
+        Ok(child) => {
+            *command_line.0.lock().unwrap() = Some(child);
+            return Ok("Stop this action".to_string());
         }
         Err(err) => {
             return Err(err.to_string());
@@ -91,11 +137,11 @@ pub async fn open_website(
 }
 
 #[tauri::command]
-pub async fn close_website(global_node: tauri::State<'_, Node>) -> Result<(), String> {
+pub async fn stop_action(global_node: tauri::State<'_, CommandLine>) -> Result<(), String> {
     let mut node_changer = global_node.0.lock().unwrap();
     let node_opt = &mut *node_changer;
     if let Some(node) = node_opt {
-      node.kill().unwrap();
+        node.kill().unwrap();
     }
     *node_changer = None;
     Ok(())

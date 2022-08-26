@@ -23,7 +23,7 @@
   .button,
   button {
     --background-s: 0%;
-    --background-l: 80%;
+    --background-l: 100%;
     --background-hsl: var(--hue), var(--background-s), var(--background-l);
     --background-a: 100%;
     --background: hsla(var(--background-hsl), var(--background-a));

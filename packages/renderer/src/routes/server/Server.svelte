@@ -1,6 +1,8 @@
-<script>
+<script lang="ts">
   import { invoke } from "@tauri-apps/api/tauri";
+  import { open } from "@tauri-apps/api/shell";
   import Refresh from "svelte-material-icons/Refresh.svelte";
+  import Save from "svelte-material-icons/ContentSave.svelte";
 
   import route from "~/router";
   import { stringToHue } from "~/lib/visuals";
@@ -11,59 +13,46 @@
 
   import { name } from "./server";
   import Action from "./lib/Action.svelte";
+  import type { IActionStatus, IAction } from "./lib/Action.svelte";
 
   let error;
-  let address;
-
-  // $: (async () => {
-  //   try {
-  //     address = await invoke("open_website", {
-  //       name: $name,
-  //     });
-  //   } catch (err) {
-  //     error = err;
-  //   }
-  // })();
-  address = "webwriter.org";
 
   $: hue = stringToHue($name);
 
-  let activeAction = 2;
-  let actions = [
+  const actions: IAction[] = [
     {
-      name: "Code",
-      builtIn: true,
-      commands: ["git fetch"],
-      status: "Up to date",
+      names: {
+        idle: "Start server",
+        activating: "Starting the server...",
+        active: "Stop server",
+        terminated: "Server stopped",
+      },
+      duration: "user-terminated",
     },
     {
-      name: "Environment",
-      status: "No need. Skipped",
-      buttons: [
+      names: {
+        idle: "Open editor",
+        active: "Opening editor in your browser",
+        terminated: "Editor opened",
+      },
+      duration: "instant",
+      depends: [
         {
-          name: "Refresh",
-          commands: [
-            "docker build . -t test-vite",
-            "docker run --rm -it -v $(pwd):/usr/src/app test-vite pnpm install",
-          ],
+          action: 0,
+          status: "active",
         },
       ],
     },
     {
-      name: "Dev server",
-      commands: [
-        "docker run --rm -it -v $(pwd):/usr/src/app -p 5173:5173 test-vite pnpm run dev --host --port 5138",
-      ],
-      status: "Running",
-      buttons: ["Open editor", "Stop server"],
-    },
-    {
-      name: "Apply changes",
-      commands: ["git add .", 'git commit -m "Make changes with Wrapp"'],
-      status: "No changes made",
-      buttons: ["Upload changes", "Discard"],
+      names: {
+        idle: "Deploy",
+        active: "Deploying...",
+        terminated: "Deploy successful",
+      },
+      duration: "self-terminated",
     },
   ];
+  const actionStati: IActionStatus[] = Array(actions.length).fill("idle");
 </script>
 
 <section>
@@ -71,53 +60,87 @@
     title={$name}
     back={async () => {
       error = undefined;
-      address = undefined;
-      await invoke("close_website");
+      // await invoke("close_website");
       route.set("/websites");
     }}
   >
+    <ButtonList slot="title-actions">
+      <Button half>
+        <Save />
+      </Button>
+    </ButtonList>
+
     <div slot="actions" class="header-bar-actions">
       <span> Up to date </span>
-      <Button
-        half
-        on:click={async () => {
-          await open(address);
-        }}
-      >
+      <Button half>
         Refresh
         <Refresh />
       </Button>
     </div>
   </Headerbar>
 
-  {#if error}
-    <p>An error has occured!</p>
-    <p>{error}</p>
-  {:else if address}
-    <p>A short description maybe?</p>
-
-    <h3>Actions</h3>
-    <div class="actions">
-      {#each actions as action, i}
-        <Action
-          {action}
-          hue={hue + i * 10}
-          {address}
-          active={i === activeAction}
-        />
-      {/each}
-    </div>
-  {:else}
-    <p>Launching the development server</p>
-    <Progress />
-  {/if}
+  <main>
+    {#if error}
+      <p>An error has occured!</p>
+      <p>{error}</p>
+    {:else}
+      <div class="actions">
+        {#each actions as action, i}
+          <Action
+            {action}
+            {hue}
+            status={actionStati[i]}
+            on:click={async () => {
+              if (action.duration === "user-terminated") {
+                if (actionStati[i] === "idle") {
+                  actionStati[i] = "activating";
+                  await invoke("start_action", {name: $name})
+                  actionStati[i] = "active";
+                } else if (actionStati[i] === "active") {
+                  actionStati[i] = "terminated";
+                  setTimeout(() => {
+                    actionStati[i] = "idle";
+                  }, 1000);
+                }
+              } else if (action.duration === "self-terminated") {
+                if (actionStati[i] === "idle") {
+                  actionStati[i] = "active";
+                  setTimeout(() => {
+                    actionStati[i] = "terminated";
+                  }, 1000);
+                  setTimeout(() => {
+                    actionStati[i] = "idle";
+                  }, 2000);
+                }
+              } else if (action.duration === "instant") {
+                if (actionStati[i] === "idle") {
+                  actionStati[i] = "active";
+                  setTimeout(() => {
+                    actionStati[i] = "terminated";
+                  }, 1000);
+                  setTimeout(() => {
+                    actionStati[i] = "idle";
+                  }, 2000);
+                }
+              }
+            }}
+          />
+        {/each}
+      </div>
+    {/if}
+  </main>
 </section>
 
 <style lang="scss">
   section {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    height: 100%;
+    display: grid;
+    grid-template-rows: min-content auto;
+  }
+
+  main {
+    padding: var(--border-radius);
+    padding-block-start: 0;
   }
 
   .header-bar-actions {
@@ -135,8 +158,10 @@
   }
 
   .actions {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+    gap: 0.4rem;
+    --border-radius: 3rem;
   }
 </style>

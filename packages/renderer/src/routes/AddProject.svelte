@@ -15,24 +15,24 @@
   let loading = false;
   let name;
   let url;
-  let environments = ["Your OS", "Docker"];
+  let environments = ["Your OS", "Managed Docker container"];
   let selectedEnvironment = environments[0];
   let actions = [];
 </script>
 
-<section class="add-website">
-  <Headerbar
-    title="Add website"
-    back={() => {
-      route.set("/websites");
-    }}
-  >
-    <Button hue={100} slot="actions">
-      Save
-      <Save />
-    </Button>
-  </Headerbar>
+<Headerbar
+  title="Add website"
+  back={() => {
+    route.set("/websites");
+  }}
+>
+  <Button hue={100} slot="actions">
+    Save
+    <Save />
+  </Button>
+</Headerbar>
 
+<section class="add-website">
   <p>
     If you are a content writer, you probably want to call your developer for
     this.
@@ -97,6 +97,8 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+
+    padding: var(--border-radius);
   }
 
   p {
