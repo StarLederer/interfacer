@@ -1,6 +1,7 @@
-use serde::Serialize;
+use crate::config::*;
 use std::{
     fs,
+    path::{Path, PathBuf},
     process::{Child, Command},
     sync::Mutex,
 };
@@ -10,7 +11,7 @@ pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> 
     let mut res: Vec<String> = Vec::new();
 
     let mut path = app.path_resolver().app_dir().unwrap();
-    path.push("websites");
+    path.push("projects");
 
     match fs::read_dir(path) {
         Ok(dir) => {
@@ -32,7 +33,7 @@ pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> 
 #[tauri::command]
 pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Result<(), String> {
     let mut path = app.path_resolver().app_dir().unwrap();
-    path.push("websites");
+    path.push("projects");
 
     fs::create_dir_all(&path).unwrap();
     path.push(&name);
@@ -50,80 +51,102 @@ pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Re
 #[derive(Default)]
 pub struct CommandLine(Mutex<Option<Child>>);
 
-#[derive(Serialize)]
-pub struct CliCommand {
-    program: String,
-    arguments: Vec<String>,
-}
+#[derive(Default)]
+pub struct Config(Mutex<Option<WrappConfig>>);
 
-#[derive(Serialize)]
-pub struct WrappAction {
+#[derive(Default)]
+pub struct Workspace(Mutex<Option<PathBuf>>);
+
+#[tauri::command]
+pub fn load_project(
+    app: tauri::AppHandle,
+    config: tauri::State<'_, Config>,
+    workspace: tauri::State<'_, Workspace>,
     name: String,
-    command: CliCommand,
+) -> Result<(), String> {
+    let mut project_path = app.path_resolver().app_dir().unwrap();
+    project_path.push("projects");
+    project_path.push(&name);
+
+    // Config
+    let mut config_path = project_path.clone();
+    config_path.push("wrapp.yaml");
+
+    match fs::read_to_string(&config_path) {
+        Ok(config_src) => match serde_yaml::from_str::<WrappConfig>(&config_src) {
+            Ok(config_yaml) => {
+                if let Some(workspace_path) = &config_yaml.workspace_dir {
+                    *workspace.0.lock().unwrap() = Some(PathBuf::from(&workspace_path));
+                } else {
+                    let mut workspace_path = project_path.clone();
+                    workspace_path.push("workspace");
+                    *workspace.0.lock().unwrap() = Some(workspace_path);
+                }
+                *config.0.lock().unwrap() = Some(config_yaml);
+                return Ok(());
+            }
+            Err(err) => {
+                return Err(err.to_string());
+            }
+        },
+        Err(err) => {
+            return Err(err.to_string());
+        }
+    }
 }
 
 #[tauri::command]
-pub fn get_actions(app: tauri::AppHandle, name: String) -> Result<Vec<WrappAction>, String> {
-    let mut project_path = app.path_resolver().app_dir().unwrap();
-    project_path.push("websites");
-    project_path.push(&name);
+pub fn get_actions(config: tauri::State<'_, Config>) -> Result<Vec<WrappAction>, String> {
+    let config_changer = config.0.lock().unwrap();
+    let config_opt = &*config_changer;
 
-    // TODO: Read project config and save to state instead
-    let actions: Vec<WrappAction> = vec![WrappAction {
-        name: "Start server".to_string(),
-        command: CliCommand {
-            program: "docker".to_string(),
-            arguments: vec![
-                "run".to_string(),
-                "--rm".to_string(),
-                "-it".to_string(),
-                "-v".to_string(),
-                "${pwd}:/usr/src/app".to_string(),
-                "-p".to_string(),
-                "5138:5138".to_string(),
-                "test-vite".to_string(),
-                "pnpm".to_string(),
-                "run".to_string(),
-                "dev".to_string(),
-                "--host".to_string(),
-                "--port".to_string(),
-                "5138".to_string(),
-            ],
-        }, // command: "docker run --rm -it -v ${pwd}:/usr/src/app -p 5138:5138 test-vite pnpm run dev --host --port 5138".to_string(),
-    }];
-
-    Ok(actions)
+    if let Some(config) = config_opt {
+        return Ok(config.actions.clone());
+    } else {
+        return Err("Attempted to get actions before config is loaded".to_string());
+    }
 }
 
 #[tauri::command]
 pub async fn start_action(
-    app: tauri::AppHandle,
     command_line: tauri::State<'_, CommandLine>,
-    name: String,
+    config: tauri::State<'_, Config>,
+    workspace: tauri::State<'_, Workspace>,
+    i: usize,
 ) -> Result<String, String> {
-    let mut project_path = app.path_resolver().app_dir().unwrap();
-    project_path.push("websites");
-    project_path.push(&name);
-
-    // TODO: Getactins from state instead
-    let workspace = &project_path;
-    let actions = get_actions(app, name).unwrap();
-    let action = &actions[0];
-    let command = &action.command;
-
-    // Execute command
-    // let mut command_parts = command.split(" ");
-
-    let mut cli = Command::new(&command.program);
-    cli.current_dir(&workspace);
-    for arg in &command.arguments {
-        cli.arg(arg.replace("${pwd}", &project_path.as_path().display().to_string()));
+    // Get config
+    let mut config_changer = config.0.lock().unwrap();
+    let config_opt = &mut *config_changer;
+    let config;
+    if let Some(c) = config_opt {
+        config = c
+    } else {
+        return Err("Attempted to start action before config is loaded".to_string());
     }
 
-    println!(
-        "{}",
-        String::from_utf8(cli.output().unwrap().stdout).unwrap()
-    );
+    // Get workspace
+    let mut workspace_changer = workspace.0.lock().unwrap();
+    let workspace_opt = &mut *workspace_changer;
+    let workspace;
+    if let Some(w) = workspace_opt {
+        workspace = w
+    } else {
+        return Err("Attempted to start action before workspace is loaded".to_string());
+    }
+
+    // Get command
+    let actions = &config.actions;
+    let action = &actions[i];
+    let command = &action.commands[0].command;
+
+    // Execute command
+    let mut command_parts = command.split(" ");
+
+    let mut cli = Command::new(&command_parts.next().unwrap());
+    cli.current_dir(&workspace);
+    for arg in command_parts {
+        cli.arg(arg.replace("${pwd}", &workspace.display().to_string()));
+    }
 
     match cli.spawn() {
         Ok(child) => {
@@ -137,7 +160,7 @@ pub async fn start_action(
 }
 
 #[tauri::command]
-pub async fn stop_action(global_node: tauri::State<'_, CommandLine>) -> Result<(), String> {
+pub fn stop_action(global_node: tauri::State<'_, CommandLine>) -> Result<(), String> {
     let mut node_changer = global_node.0.lock().unwrap();
     let node_opt = &mut *node_changer;
     if let Some(node) = node_opt {

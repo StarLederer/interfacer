@@ -1,6 +1,6 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/tauri";
-  import { open } from "@tauri-apps/api/shell";
+  import { onMount } from "svelte";
   import Refresh from "svelte-material-icons/Refresh.svelte";
   import Save from "svelte-material-icons/ContentSave.svelte";
 
@@ -13,46 +13,22 @@
 
   import { name } from "./server";
   import Action from "./lib/Action.svelte";
-  import type { IActionStatus, IAction } from "./lib/Action.svelte";
-
-  let error;
+  import type { IAction } from "./lib/Action.svelte";
 
   $: hue = stringToHue($name);
 
-  const actions: IAction[] = [
-    {
-      names: {
-        idle: "Start server",
-        activating: "Starting the server...",
-        active: "Stop server",
-        terminated: "Server stopped",
-      },
-      duration: "user-terminated",
-    },
-    {
-      names: {
-        idle: "Open editor",
-        active: "Opening editor in your browser",
-        terminated: "Editor opened",
-      },
-      duration: "instant",
-      depends: [
-        {
-          action: 0,
-          status: "active",
-        },
-      ],
-    },
-    {
-      names: {
-        idle: "Deploy",
-        active: "Deploying...",
-        terminated: "Deploy successful",
-      },
-      duration: "self-terminated",
-    },
-  ];
-  const actionStati: IActionStatus[] = Array(actions.length).fill("idle");
+  let error;
+  let actions: IAction[] = [];
+
+  onMount(async () => {
+    try {
+      await invoke("load_project", { name: $name });
+      actions = await invoke("get_actions");
+      console.log(actions);
+    } catch (err) {
+      error = err;
+    }
+  });
 </script>
 
 <section>
@@ -89,41 +65,7 @@
           <Action
             {action}
             {hue}
-            status={actionStati[i]}
-            on:click={async () => {
-              if (action.duration === "user-terminated") {
-                if (actionStati[i] === "idle") {
-                  actionStati[i] = "activating";
-                  await invoke("start_action", {name: $name})
-                  actionStati[i] = "active";
-                } else if (actionStati[i] === "active") {
-                  actionStati[i] = "terminated";
-                  setTimeout(() => {
-                    actionStati[i] = "idle";
-                  }, 1000);
-                }
-              } else if (action.duration === "self-terminated") {
-                if (actionStati[i] === "idle") {
-                  actionStati[i] = "active";
-                  setTimeout(() => {
-                    actionStati[i] = "terminated";
-                  }, 1000);
-                  setTimeout(() => {
-                    actionStati[i] = "idle";
-                  }, 2000);
-                }
-              } else if (action.duration === "instant") {
-                if (actionStati[i] === "idle") {
-                  actionStati[i] = "active";
-                  setTimeout(() => {
-                    actionStati[i] = "terminated";
-                  }, 1000);
-                  setTimeout(() => {
-                    actionStati[i] = "idle";
-                  }, 2000);
-                }
-              }
-            }}
+            {i}
           />
         {/each}
       </div>
