@@ -1,0 +1,46 @@
+.interactable {
+  position: relative;
+  border-radius: var(--border-radius);
+  outline: none;
+
+  * {
+    outline: none;
+  }
+
+  &::before {
+    content: "";
+
+    --offset: 0rem;
+
+    --background: hsla(var(--background-hsl), var(--background-a));
+    --border-width: 0px;
+
+    display: block;
+    position: absolute;
+    top: calc(var(--offset) * -1);
+    left: calc(var(--offset) * -1);
+    width: calc(100% + var(--offset) * 2 - var(--border-width) * 2);
+    height: calc(100% + var(--offset) * 2 - var(--border-width) * 2);
+    border-radius: calc(var(--border-radius) + var(--offset));
+    border-width: var(--border-width);
+    border-style: solid;
+
+    border-color: var(--background);
+    transition: var(--transition);
+  }
+
+  &:focus,
+  &:focus-within {
+    &::before {
+      --offset: 0.4rem;
+      --border-width: 2px;
+    }
+  }
+
+  &:active {
+    &::before {
+      --offset: 0.2rem;
+      --border-width: 1px;
+    }
+  }
+}
