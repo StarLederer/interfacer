@@ -4,6 +4,7 @@
   import { style } from "$lib/css-engine/style";
   import Button from "$lib/primitives/Button.svelte";
   import Input from "$lib/primitives/Input.svelte";
+  import Dropdown from "$lib/primitives/Dropdown.svelte";
 </script>
 
 <main
@@ -20,25 +21,25 @@
       <div class="row">
         <div class="demo">
           <div>
-            <Button />
+            <Button solid />
           </div>
           <div>Empty</div>
         </div>
         <div class="demo">
           <div>
-            <Button><Icon /></Button>
+            <Button solid><Icon /></Button>
           </div>
           <div>Icon</div>
         </div>
         <div class="demo">
           <div>
-            <Button>Button</Button>
+            <Button solid>Button</Button>
           </div>
           <div>Text</div>
         </div>
         <div class="demo">
           <div>
-            <Button>Button <Icon /></Button>
+            <Button solid>Button <Icon /></Button>
           </div>
           <div>Text & icon</div>
         </div>
@@ -47,7 +48,7 @@
       <div class="row">
         <div class="demo">
           <div>
-            <Button ghost>Button</Button>
+            <Button>Button</Button>
           </div>
           <div>Ghost</div>
         </div>
@@ -59,7 +60,7 @@
         </div>
         <div class="demo">
           <div>
-            <Button colored ghost style={{ hue: 100 }}>Button</Button>
+            <Button colored style={{ hue: 100 }}>Button</Button>
           </div>
           <div>Colored ghost</div>
         </div>
@@ -71,7 +72,7 @@
         </div>
         <div class="demo">
           <div>
-            <Button colored style={{ hue: 100 }}>Button</Button>
+            <Button colored solid style={{ hue: 100 }}>Button</Button>
           </div>
           <div>Colored</div>
         </div>
@@ -80,13 +81,13 @@
       <div class="row">
         <div class="demo">
           <div>
-            <Button style={{ borderRadius: 2 }}>Button<Icon /></Button>
+            <Button solid style={{ borderRadius: 2 }}>Button<Icon /></Button>
           </div>
           <div>Resized</div>
         </div>
         <div class="demo">
           <div>
-            <Button colored style={{ hue: 100, borderRadius: 2 }}
+            <Button colored solid style={{ hue: 100, borderRadius: 2 }}
               ><Icon /></Button
             >
           </div>
@@ -94,9 +95,9 @@
         </div>
         <div class="demo">
           <div>
-            <Button colored style={{ hue: 100, borderRadius: 2 }}
-              ><div style="position: absolute;"><Icon /></div></Button
-            >
+            <Button colored solid style={{ hue: 100, borderRadius: 2 }}>
+              <div style="position: absolute;"><Icon /></div>
+            </Button>
           </div>
           <div>Ghost contnet</div>
         </div>
@@ -117,6 +118,16 @@
           <Input value="Prefilled" label="Input" />
         </div>
         <div>Prefilled input</div>
+      </div>
+      <div class="demo">
+        <div>
+          <Dropdown
+            label="Input"
+            selected="First"
+            options={["First", "Second", "Third"]}
+          />
+        </div>
+        <div>Dropdown</div>
       </div>
     </div>
   </article>

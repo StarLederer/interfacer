@@ -12,22 +12,28 @@
 <style lang="scss">
   @use "../sass-resources/label";
   @use "../sass-resources/interactable";
-  @use "../sass-resources/half";
 
   .input {
-    --base-background-l: 100%;
-    @include half.half;
+    @include interactable.baseColors;
     @include interactable.highlightable;
     @include interactable.transition;
-    @include interactable.interactable(--border-radius, --background-hsl, 40%, --transition);
+    @include interactable.outline(
+      --border-radius,
+      --background-hsl,
+      40%,
+      --transition
+    );
+    @include interactable.buttonColors(
+      $hue: --hue,
+      $base-background-l: --base-background-l,
+      $base-color-l: --base-color-l,
+      $highlight-l: --highlight-l
+    );
+    @include interactable.half;
 
-    --background-l: calc(var(--base-background-l) + var(--base-highlight-l));
-    --highlight-l: 0%
-
+    border-radius: var(--border-radius);
     height: 4rem;
     width: 100%;
-    background: hsl(0, 0%, var(--background-l), var(--background-a));
-    border-radius: var(--border-radius);
     cursor: text;
     display: flex;
 
@@ -37,17 +43,16 @@
 
     input {
       min-width: 0;
+      flex: 1;
+      border-radius: inherit;
       padding: var(--border-radius);
+      color: inherit;
       padding-block-start: calc(var(--border-radius) + 1rem);
       font-size: 1rem;
       font-weight: 600;
       outline: none;
       border: none;
       background: none;
-    }
-
-    @media (prefers-color-scheme: light) {
-      --base-background-l: 0%;
     }
   }
 </style>

@@ -1,4 +1,4 @@
-@mixin interactable($border-radius, $outline-hsl, $outline-a, $transition) {
+@mixin outline($border-radius, $outline-hsl, $outline-a, $transition) {
   position: relative;
   outline: none;
 
@@ -24,12 +24,14 @@
     border-radius: calc(var(--border-radius) + var(--offset));
     border-width: var(--outline-width);
     border-style: solid;
-
     border-color: var(--background);
+
+    pointer-events: none;
     transition: var($transition);
   }
 
   &:focus,
+  &.force-focus,
   &:focus-within {
     &::before {
       --outline-a: 100%;
@@ -61,4 +63,62 @@
   --transition-duration: 100ms;
   --transition: var(--transition-duration);
   transition: var(--transition);
+}
+
+@mixin buttonShape(
+  $border-radius,
+) {
+  padding: var(#{$border-radius});
+
+  border: none;
+  border-radius: var(#{$border-radius});
+  line-height: 1;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+@mixin half {
+  --background-a: 10%;
+
+  &:hover,
+  &:active {
+    --background-a: 20%;
+  }
+}
+
+@mixin baseColors {
+  --hue: 0;
+  --base-background-l: 90%;
+  --base-color-l: 90%;
+
+  @media (prefers-color-scheme: light) {
+    --base-highlight-l: -10%;
+    --base-color-l: 10%;
+    --base-background-l: 0%;
+  }
+}
+
+@mixin buttonColors(
+  $base-background-l,
+  $hue,
+  $base-color-l,
+  $highlight-l,
+) {
+  --background-s: 0%;
+  --background-l: calc(var(#{$base-background-l}) + var(#{$highlight-l}));
+  --background-hsl: var(#{$hue}), var(--background-s), var(--background-l);
+  --background-a: 0%;
+  --background: hsla(var(--background-hsl), var(--background-a));
+  background: var(--background);
+
+  --color-s: 0%;
+  --color-l: calc(var(#{$base-color-l}) + var(--highlight-l));
+  --color: hsl(var(#{$hue}), var(--color-s), var(--color-l));
+  color: var(--color);
+
+  &:hover,
+  &.force-hover,
+  &:active {
+    --background-a: 20%;
+  }
 }

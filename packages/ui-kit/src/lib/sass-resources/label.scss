@@ -1,7 +1,9 @@
 @mixin label {
   position: absolute;
-  left: 1rem;
-  line-height: 2.5rem;
+  left: var(--border-radius);
+  line-height: calc(var(--border-radius) * 2.5);
   font-size: 0.8rem;
   opacity: 0.6;
+  user-select: none;
+  pointer-events: none;
 }

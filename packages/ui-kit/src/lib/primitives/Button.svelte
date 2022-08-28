@@ -2,8 +2,8 @@
   import { style as describeStyle } from "$lib/css-engine/style.js";
 
   export let type = "button";
-  export let ghost = false;
   export let half = false;
+  export let solid = false;
   export let colored = false;
   export let style: {
     borderRadius?: number;
@@ -14,8 +14,8 @@
 <button
   class="interactable"
   class:is-colored={colored}
-  class:is-ghost={ghost}
   class:is-half={half}
+  class:is-solid={solid}
   {type}
   style={describeStyle(style)}
   on:click
@@ -24,41 +24,39 @@
 </button>
 
 <style lang="scss">
-  @use "../sass-resources/half";
-  @use "../sass-resources/interactable.scss";
+  @use "../sass-resources/interactable";
 
-  button {
-    --hue: 0;
-    --base-background-l: 90%;
-    --base-color-l: 0%;
-    @include interactable.highlightable;
-    @include interactable.transition;
-    @include interactable.interactable(--border-radius, --background-hsl, 40%, --transition);
-
-    --background-s: 0%;
-    --background-l: calc(var(--base-background-l) + var(--base-highlight-l));
-    --background-hsl: var(--hue), var(--background-s),
-      calc(var(--base-background-l) + var(--highlight-l));
-    --background-a: 100%;
-    --background: hsla(var(--background-hsl), var(--background-a));
-    --color-s: 0%;
-    --color-l: calc(var(--base-color-l) + var(--highlight-l));
-    --color: hsl(var(--hue), var(--color-s), var(--color-l));
+  @mixin glow() {
     --glow-color-a: 40%;
     --glow-color: hsla(var(--background-hsl), var(--glow-color-a));
     --glow: 0 0 6rem var(--glow-color);
     --shadow: 0 0 0.4rem rgba(0, 0, 0, 0.6);
 
-    position: relative;
-    padding: var(--border-radius);
-
-    background: var(--background);
-    color: var(--color);
-    border: none;
-    border-radius: var(--border-radius);
     box-shadow: var(--glow), var(--shadow);
-    line-height: 1;
-    font-weight: 600;
+
+    @media (prefers-color-scheme: light) {
+      --glow-color-a: 60%;
+      --shadow: 0 0 0 transparent;
+    }
+  }
+
+  button {
+    @include interactable.baseColors;
+    @include interactable.highlightable;
+    @include interactable.transition;
+    @include interactable.outline(
+      --border-radius,
+      --background-hsl,
+      40%,
+      --transition
+    );
+    @include interactable.buttonShape($border-radius: --border-radius);
+    @include interactable.buttonColors(
+      $hue: --hue,
+      $base-background-l: --base-background-l,
+      $base-color-l: --base-color-l,
+      $highlight-l: --highlight-l
+    );
 
     display: flex;
     align-items: stretch;
@@ -72,67 +70,49 @@
       gap: var(--border-radius);
     }
 
-    &.is-ghost,
     &.is-half {
-      --base-color-l: var(--base-background-l);
-      --glow: 0 0 0 transparent;
-      --shadow: 0 0 0 transparent;
-      --color-s: var(--background-s);
+      @include interactable.half;
     }
 
-    &.is-ghost {
-      --background-a: 0%;
-
-      &:hover,
-      &:active {
-        --background-a: 10%;
-      }
-    }
-
-    &.is-half {
-      @include half.half;
+    &.is-solid {
+      --base-color-l: 0%;
+      --background-a: 100%;
+      @include glow();
     }
 
     &.is-colored {
-      --base-color-l: 10%;
       --base-highlight-l: 20%;
       --background-s: 60%;
       --base-background-l: 60%;
       --color-s: 60%;
-
-      &.is-ghost {
-        --base-color-l: 60%;
-        &:hover,
-        &:active {
-          --background-a: 20%;
-        }
-      }
+      --base-color-l: 60%;
 
       &.is-half {
-        --base-color-l: 60%;
         --background-a: 20%;
+      }
+
+      &.is-solid {
+        --base-color-l: 10%;
       }
     }
 
     @media (prefers-color-scheme: light) {
-      --base-background-l: 0%;
-      --base-color-l: 100%;
-      --glow-color-a: 60%;
-      --shadow: 0 0 0 transparent;
-
-      &.is-ghost,
-      &.is-half {
-        --base-highlight-l: -10%;
-        --base-color-l: 10%;
+      &.is-solid {
+        --base-highlight-l: 10%;
+        --base-color-l: 90%;
       }
 
       &.is-colored {
-        --base-highlight-l: 10%;
+        --base-highlight-l: -20%;
+        --base-color-l: 40%;
 
-        &.is-ghost,
-        &.is-half {
-          --base-highlight-l: -20%;
-          --base-color-l: 40%;
+        &.is-solid {
+          --base-color-l: 10%;
+          --base-highlight-l: 10%;
+        }
+
+        &.is-solid {
+          --base-background-l: 60%;
         }
       }
     }

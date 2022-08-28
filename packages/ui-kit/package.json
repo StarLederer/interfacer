@@ -9,6 +9,7 @@
 		"lint": "eslint ."
 	},
 	"devDependencies": {
+		"@rgossiaux/svelte-headlessui": "^1.0.2",
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
 		"@sveltejs/package": "next",
