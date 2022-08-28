@@ -3,6 +3,7 @@
 
   import { style } from "$lib/css-engine/style";
   import Button from "$lib/primitives/Button.svelte";
+  import Input from "$lib/primitives/Input.svelte";
 </script>
 
 <main
@@ -11,7 +12,7 @@
   })}
 >
   <header>
-    <h1>Ui Library</h1>
+    <h1>UI Library</h1>
   </header>
   <article>
     <h2>Buttons</h2>
@@ -85,27 +86,37 @@
         </div>
         <div class="demo">
           <div>
-            <Button colored style={{ hue: 100, borderRadius: 2 }} ><Icon /></Button>
+            <Button colored style={{ hue: 100, borderRadius: 2 }}
+              ><Icon /></Button
+            >
           </div>
           <div>Resized</div>
         </div>
         <div class="demo">
           <div>
-            <Button colored style={{ hue: 100, borderRadius: 2 }} ><div style="position: absolute;"><Icon /></div></Button>
+            <Button colored style={{ hue: 100, borderRadius: 2 }}
+              ><div style="position: absolute;"><Icon /></div></Button
+            >
           </div>
           <div>Ghost contnet</div>
         </div>
       </div>
     </div>
   </article>
-  <article>
-    <h2>Dropdown</h2>
+  <article class="form-inputs">
+    <h2>Form inputs</h2>
     <div class="table">
-      <div class="row">
-        <div class="demo">
-          <div></div>
-          <div></div>
+      <div class="demo">
+        <div>
+          <Input value="" label="Input" />
         </div>
+        <div>Text input</div>
+      </div>
+      <div class="demo">
+        <div>
+          <Input value="Prefilled" label="Input" />
+        </div>
+        <div>Prefilled input</div>
       </div>
     </div>
   </article>
@@ -114,8 +125,8 @@
     <div class="table">
       <div class="row">
         <div class="demo">
-          <div></div>
-          <div></div>
+          <div />
+          <div />
         </div>
       </div>
     </div>

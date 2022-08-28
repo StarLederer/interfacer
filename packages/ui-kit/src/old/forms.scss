@@ -10,12 +10,3 @@ legend {
   inset-inline-start: var(--border-radius);
   opacity: 0.4;
 }
-
-label > .label,
-.listbox-label {
-  position: absolute;
-  left: 1rem;
-  line-height: 2.5rem;
-  font-size: 0.8rem;
-  opacity: 0.6;
-}

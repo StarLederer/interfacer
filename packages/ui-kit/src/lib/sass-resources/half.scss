@@ -1,0 +1,8 @@
+@mixin half {
+  --background-a: 10%;
+
+  &:hover,
+  &:active {
+    --background-a: 20%;
+  }
+}
