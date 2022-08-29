@@ -4,12 +4,12 @@
   import Back from "svelte-material-icons/ChevronLeft.svelte";
   import Remove from "svelte-material-icons/Close.svelte";
   import { invoke } from "@tauri-apps/api/tauri";
-  import Dropdown from "~/lib/primitives/Dropdown.svelte";
-  import Button from "~/lib/primitives/Button.svelte";
-  import Input from "~/lib/primitives/Input.svelte";
+  import Dropdown from "ui-kit/primitives/Dropdown.svelte";
+  import Button from "ui-kit/primitives/Button.svelte";
+  import Input from "ui-kit/primitives/Input.svelte";
   import route from "../router";
-  import Progress from "~/lib/primitives/Progress.svelte";
-  import ButtonList from "~/lib/primitives/ButtonList.svelte";
+  import Progress from "ui-kit/primitives/Progress.svelte";
+  import Flex from "ui-kit/helpers/Flex.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
 
   let loading = false;
@@ -26,7 +26,7 @@
     route.set("/websites");
   }}
 >
-  <Button hue={100} slot="actions">
+  <Button solid colored style={{ hue: 100 }} slot="actions">
     Save
     <Save />
   </Button>
@@ -66,7 +66,6 @@
               <Input label="Name" bind:value={actions[i].name} />
               <Input label="Command" bind:value={actions[i].command} />
               <Button
-                ghost
                 on:click={() => {
                   actions.splice(i, 1);
                   actions = [...actions];
@@ -77,8 +76,9 @@
             </fieldset>
           {/each}
           <Button
-            hue={100}
             half
+            colored
+            style={{ hue: 100 }}
             on:click={() => {
               actions = [...actions, { name: "", command: "" }];
               console.log(actions);

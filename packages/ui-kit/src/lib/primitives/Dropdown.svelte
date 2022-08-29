@@ -53,8 +53,9 @@
   @use "../sass-resources/interactable";
 
   .listbox {
-    @include interactable.transition;
+    --hue: 0;
     @include interactable.baseColors;
+    @include interactable.transition;
     @include interactable.outline(
       --border-radius,
       --background-hsl,

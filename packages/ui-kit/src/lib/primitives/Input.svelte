@@ -14,6 +14,7 @@
   @use "../sass-resources/interactable";
 
   .input {
+    --hue: 0;
     @include interactable.baseColors;
     @include interactable.highlightable;
     @include interactable.transition;

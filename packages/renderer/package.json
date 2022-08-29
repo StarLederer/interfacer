@@ -8,19 +8,18 @@
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
+    "@rgossiaux/svelte-headlessui": "^1.0.2",
     "@sveltejs/vite-plugin-svelte": "^1.0.1",
+    "@tauri-apps/api": "^1.0.2",
     "@tsconfig/svelte": "^3.0.0",
+    "ui-kit": "link:packages/ui-kit/package",
+    "sass": "^1.54.5",
     "svelte": "^3.49.0",
     "svelte-check": "^2.8.0",
+    "svelte-material-icons": "^2.0.4",
     "svelte-preprocess": "^4.10.7",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4",
     "vite": "^3.0.8"
-  },
-  "dependencies": {
-    "@rgossiaux/svelte-headlessui": "^1.0.2",
-    "@tauri-apps/api": "^1.0.2",
-    "sass": "^1.54.5",
-    "svelte-material-icons": "^2.0.4"
   }
 }

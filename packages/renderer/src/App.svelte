@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { style } from "ui-kit/css-engine/style";
   import route from "~/router";
   import Projects from "~/routes/projects/Projects.svelte";
   import AddProject from "~/routes/AddProject.svelte";
@@ -8,16 +9,19 @@
   route.set("/websites");
 </script>
 
-<main>
+<main style={style({
+  hue: 0,
+  borderRadius: 1,
+})}>
   {#if $route.startsWith("/websites")}
     <section in:routeIn out:routeOut>
       <Projects />
     </section>
-  {:else if $route.startsWith("/add-website")}
+ {:else if $route.startsWith("/add-website")}
     <section in:routeIn out:routeOut>
       <AddProject />
     </section>
-  {:else if $route.startsWith("/server")}
+   {:else if $route.startsWith("/server")}
     <section in:routeIn out:routeOut>
       <Server />
     </section>

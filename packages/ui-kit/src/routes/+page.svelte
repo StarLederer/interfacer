@@ -3,12 +3,17 @@
 
   import { style } from "$lib/css-engine/style";
   import Button from "$lib/primitives/Button.svelte";
-  import Input from "$lib/primitives/Input.svelte";
   import Dropdown from "$lib/primitives/Dropdown.svelte";
+  import Input from "$lib/primitives/Input.svelte";
+  import Panel from "$lib/primitives/Panel.svelte";
+  import Progress from "$lib/primitives/Progress.svelte";
+
+  import Flex from "$lib/helpers/Flex.svelte";
 </script>
 
 <main
   style={style({
+    hue: 0,
     borderRadius: 1,
   })}
 >
@@ -132,12 +137,63 @@
     </div>
   </article>
   <article>
+    <h2>Panels</h2>
+    <div class="table">
+      <div class="row">
+        <div class="demo">
+          <div>
+            <Panel style={{ hue: 140 }}>This one has simple text inside.</Panel>
+          </div>
+          <div>Panel</div>
+        </div>
+        <div class="demo">
+          <div>
+            <Panel let:titleStyle style={{ hue: 180 }}>
+              <Flex direction="column">
+                <span style={titleStyle}>This one has a title</span>
+                <span>On top of some text.</span>
+                <span>Within some alignment.</span>
+              </Flex>
+            </Panel>
+          </div>
+          <div>Panel</div>
+        </div>
+        <div class="demo">
+          <div>
+            <Panel style={{ hue: 220 }} let:titleStyle>
+              <Flex direction="column" gap={1}>
+                <Flex justify="space-between" align="center">
+                  <span style={titleStyle}>This one</span>
+                  <Button half colored><Icon /></Button>
+                </Flex>
+                <Flex direction="column">
+                  <span>Has signifincatly more content.</span>
+                  <span>Even buttons!</span>
+                </Flex>
+                <Button solid colored>Button</Button>
+              </Flex>
+            </Panel>
+          </div>
+          <div>Panel</div>
+        </div>
+      </div>
+    </div>
+  </article>
+  <article>
     <h2>Progress</h2>
     <div class="table">
       <div class="row">
         <div class="demo">
-          <div />
-          <div />
+          <div><Progress /></div>
+          <div>Spinner</div>
+        </div>
+        <div class="demo">
+          <div><Progress style={{borderRadius: 2}}/></div>
+          <div>Resized</div>
+        </div>
+        <div class="demo">
+          <div><Progress style={{borderRadius: 3}}/></div>
+          <div>Resized</div>
         </div>
       </div>
     </div>

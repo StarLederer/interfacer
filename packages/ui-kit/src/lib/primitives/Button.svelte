@@ -12,7 +12,6 @@
 </script>
 
 <button
-  class="interactable"
   class:is-colored={colored}
   class:is-half={half}
   class:is-solid={solid}
@@ -63,8 +62,8 @@
     cursor: pointer;
 
     .container {
-      height: 100%;
       display: flex;
+      flex: 1;
       justify-content: center;
       align-items: center;
       gap: var(--border-radius);

@@ -4,22 +4,22 @@
   import Favorite from "svelte-material-icons/Star.svelte";
 
   import { stringToHue } from "~/lib/visuals";
-  import Button from "~/lib//primitives/Button.svelte";
-  import Panel from "~/lib//primitives/Panel.svelte";
-  import ButtonList from "~/lib//primitives/ButtonList.svelte";
+  import Button from "ui-kit/primitives/Button.svelte";
+  import Panel from "ui-kit/primitives/Panel.svelte";
+  import Flex from "ui-kit/helpers/Flex.svelte";
 
   export let label = "";
 </script>
 
-<Panel hue={stringToHue(label)}>
+<Panel style={{ hue: stringToHue(label) }}>
   <article>
     <div class="header">
       <div class="title">{label}</div>
-      <ButtonList>
-        <Button hue={stringToHue(label)} ghost>
+      <Flex>
+        <Button colored style={{ hue: stringToHue(label) }}>
           <Favorite />
         </Button>
-      </ButtonList>
+      </Flex>
     </div>
     <p>A short description maybe?</p>
     <!-- <table>
@@ -41,17 +41,17 @@
       </tbody>
     </table> -->
 
-    <ButtonList spread>
-      <ButtonList>
-        <Button hue={stringToHue(label)} on:click>
+    <Flex justify="space-between">
+      <Flex>
+        <Button solid colored style={{ hue: stringToHue(label) }} on:click>
           Open
           <Open />
         </Button>
-      </ButtonList>
-      <Button hue={stringToHue(label)} ghost>
+      </Flex>
+      <Button colored style={{ hue: stringToHue(label) }}>
         <Menu />
       </Button>
-    </ButtonList>
+    </Flex>
   </article>
 </Panel>
 

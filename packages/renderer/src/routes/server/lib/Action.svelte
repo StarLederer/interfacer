@@ -13,8 +13,8 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/tauri";
   import { open } from "@tauri-apps/api/shell";
-  import Button from "~/lib/primitives/Button.svelte";
-  import Progress from "~/lib/primitives/Progress.svelte";
+  import Button from "ui-kit/primitives/Button.svelte";
+  import Progress from "ui-kit/primitives/Progress.svelte";
 
   let active = false;
   let loading = false;
@@ -25,8 +25,10 @@
 </script>
 
 <Button
-  {hue}
   half={!active}
+  solid={active}
+  colored
+  style={{ hue }}
   on:click={async () => {
     if (loading) return;
 
@@ -41,9 +43,7 @@
         loading = false;
         alert(err);
       }
-    }
-    else {
-      console.log(1);
+    } else {
       try {
         loading = true;
         await invoke("stop_action");

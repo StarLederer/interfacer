@@ -6,9 +6,9 @@
 
   import route from "~/router";
   import { stringToHue } from "~/lib/visuals";
-  import Button from "~/lib/primitives/Button.svelte";
-  import ButtonList from "~/lib/primitives/ButtonList.svelte";
-  import Progress from "~/lib/primitives/Progress.svelte";
+  import Button from "ui-kit/primitives/Button.svelte";
+  import Flex from "ui-kit/helpers/Flex.svelte";
+  import Progress from "ui-kit/primitives/Progress.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
 
   import { name } from "./server";
@@ -40,11 +40,11 @@
       route.set("/websites");
     }}
   >
-    <ButtonList slot="title-actions">
+    <Flex slot="title-actions">
       <Button half>
         <Save />
       </Button>
-    </ButtonList>
+    </Flex>
 
     <div slot="actions" class="header-bar-actions">
       <span> Up to date </span>

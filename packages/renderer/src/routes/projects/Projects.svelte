@@ -6,9 +6,9 @@
   import route from "~/router";
   import { name } from "~/routes/server/server";
   import Project from "./lib/Project.svelte";
-  import Progress from "~/lib/primitives/Progress.svelte";
-  import Button from "~/lib/primitives/Button.svelte";
-  import ButtonList from "~/lib/primitives/ButtonList.svelte";
+  import Progress from "ui-kit/primitives/Progress.svelte";
+  import Button from "ui-kit/primitives/Button.svelte";
+  import Flex from "ui-kit/helpers/Flex.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
 
   let status;
@@ -29,11 +29,11 @@
 </script>
 
 <Headerbar title="Your projects">
-  <ButtonList slot="actions">
+  <Flex slot="actions">
     {#if status}
       <Button
-        hue={100}
-        ghost
+        colored
+        style={{ hue: 100 }}
         on:click={async () => {
           route.set("/add-website");
         }}
@@ -43,7 +43,8 @@
       </Button>
       <Button
         half
-        hue={100}
+        colored
+        style={{ hue: 100 }}
         on:click={async () => {
           route.set("/add-website");
         }}
@@ -52,7 +53,7 @@
         <Add />
       </Button>
     {/if}
-  </ButtonList>
+  </Flex>
 </Headerbar>
 
 {#if status}
