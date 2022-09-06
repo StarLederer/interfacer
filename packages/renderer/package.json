@@ -12,7 +12,7 @@
     "@sveltejs/vite-plugin-svelte": "^1.0.1",
     "@tauri-apps/api": "^1.0.2",
     "@tsconfig/svelte": "^3.0.0",
-    "ui-kit": "link:packages/ui-kit/package",
+    "ui-kit": "link:../ui-kit/package",
     "sass": "^1.54.5",
     "svelte": "^3.49.0",
     "svelte-check": "^2.8.0",
