@@ -23,8 +23,15 @@ fn main() {
                 user_terminated: true,
             },
             common::Action {
-                idle_name: "Check folder".to_string(),
-                active_name: "Folder checked".to_string(),
+                idle_name: "Quick action".to_string(),
+                active_name: "".to_string(),
+                process: None,
+                command: "ls -a".to_string(),
+                user_terminated: false,
+            },
+            common::Action {
+                idle_name: "Long action".to_string(),
+                active_name: "".to_string(),
                 process: None,
                 command: "sleep 3".to_string(),
                 user_terminated: false,
