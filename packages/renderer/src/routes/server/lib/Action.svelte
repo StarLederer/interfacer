@@ -1,25 +1,33 @@
-<script lang="ts" context="module">
-  type IAction = {
-    name: string;
-    commands: {
-      lang: "bash" | "built-in";
-      command: string;
-    }[];
-  };
-
-  export type { IAction };
-</script>
-
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/tauri";
   import { open } from "@tauri-apps/api/shell";
   import Button from "ui-kit/primitives/Button.svelte";
   import Progress from "ui-kit/primitives/Progress.svelte";
 
+  let error;
   let active = false;
   let loading = false;
 
-  export let action: IAction;
+  const interact = async () => {
+    if (loading) return;
+
+    try {
+      loading = true;
+      error = null;
+      const res = (await invoke("interact", { actionI: i })) as {
+        name: string;
+        active: boolean;
+      };
+      name = res.name;
+      active = res.active;
+      loading = false;
+    } catch (err) {
+      error = err;
+      loading = false;
+    }
+  };
+
+  export let name: string;
   export let hue: number;
   export let i: number;
 </script>
@@ -29,39 +37,24 @@
   solid={active}
   colored
   style={{ hue }}
-  on:click={async () => {
-    if (loading) return;
-
-    if (!active) {
-      try {
-        loading = true;
-        active = true;
-        await invoke("start_action", { i });
-        loading = false;
-      } catch (err) {
-        active = false;
-        loading = false;
-        alert(err);
-      }
-    } else {
-      try {
-        loading = true;
-        await invoke("stop_action");
-        loading = false;
-        active = false;
-      } catch (err) {
-        alert(err);
-      }
-    }
-  }}
+  on:click={interact}
 >
-  {#if loading}
-    <Progress />
-  {:else}
+  <div class="action-content-container">
     <div class="action-content">
-      <span class="name">{action.name}</span>
+      {#if loading}
+        <Progress style={{ borderRadius: 2 }} />
+      {:else if error}
+        <span class="name">{name}</span>
+        <div class="error">
+          <div>Error:</div>
+          {error}
+        </div>
+        Try again?
+      {:else}
+        <span class="name">{name}</span>
+      {/if}
     </div>
-  {/if}
+  </div>
 </Button>
 
 <style lang="scss">
@@ -81,11 +74,35 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     gap: 1rem;
 
     .name {
       font-size: 2rem;
       font-weight: 800;
+    }
+
+    .error {
+      --border-radius: 1rem;
+      --color-s: 40%;
+      --color-l: 80%;
+
+      color: hsl(var(--hue), var(--color-s), var(--color-l));
+      background: var(--app-background);
+      border-radius: var(--border-radius);
+      padding: var(--border-radius);
+      text-align: start;
+      font-weight: 400;
+
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+
+      div {
+        color: hsl(0, var(--color-s), 60%);
+        font-weight: 600;
+      }
     }
   }
 </style>

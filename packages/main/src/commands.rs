@@ -1,10 +1,5 @@
 use crate::config::*;
-use std::{
-    fs,
-    path::{Path, PathBuf},
-    process::{Child, Command},
-    sync::Mutex,
-};
+use std::{fs, path::PathBuf, sync::Mutex};
 
 #[tauri::command]
 pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> {
@@ -49,13 +44,13 @@ pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Re
 }
 
 #[derive(Default)]
-pub struct CommandLine(Mutex<Option<Child>>);
-
-#[derive(Default)]
 pub struct Config(Mutex<Option<WrappConfig>>);
 
 #[derive(Default)]
 pub struct Workspace(Mutex<Option<PathBuf>>);
+
+#[derive(Default)]
+pub struct Actions(pub Mutex<Vec<common::Action>>);
 
 #[tauri::command]
 pub fn load_project(
@@ -96,32 +91,26 @@ pub fn load_project(
 }
 
 #[tauri::command]
-pub fn get_actions(config: tauri::State<'_, Config>) -> Result<Vec<WrappAction>, String> {
-    let config_changer = config.0.lock().unwrap();
-    let config_opt = &*config_changer;
-
-    if let Some(config) = config_opt {
-        return Ok(config.actions.clone());
-    } else {
-        return Err("Attempted to get actions before config is loaded".to_string());
+pub fn get_actions(actions: tauri::State<'_, Actions>) -> Result<Vec<String>, String> {
+    let config_changer = actions.0.lock().unwrap();
+    let mut action_names = Vec::new();
+    for action in (*config_changer).iter() {
+        action_names.push(action.idle_name.clone());
     }
+    Ok(action_names)
 }
 
 #[tauri::command]
-pub async fn start_action(
-    command_line: tauri::State<'_, CommandLine>,
-    config: tauri::State<'_, Config>,
+pub async fn interact(
+    action_i: usize,
+    actions: tauri::State<'_, Actions>,
     workspace: tauri::State<'_, Workspace>,
-    i: usize,
-) -> Result<String, String> {
-    // Get config
-    let mut config_changer = config.0.lock().unwrap();
-    let config_opt = &mut *config_changer;
-    let config;
-    if let Some(c) = config_opt {
-        config = c
-    } else {
-        return Err("Attempted to start action before config is loaded".to_string());
+) -> Result<common::Consequence, String> {
+    // Get actions
+    let mut actions = actions.0.lock().unwrap();
+
+    if action_i >= (*actions).len() {
+        return Err("Action index out of bounds".to_string());
     }
 
     // Get workspace
@@ -134,38 +123,6 @@ pub async fn start_action(
         return Err("Attempted to start action before workspace is loaded".to_string());
     }
 
-    // Get command
-    let actions = &config.actions;
-    let action = &actions[i];
-    let command = &action.commands[0].command;
-
-    // Execute command
-    let mut command_parts = command.split(" ");
-
-    let mut cli = Command::new(&command_parts.next().unwrap());
-    cli.current_dir(&workspace);
-    for arg in command_parts {
-        cli.arg(arg.replace("${pwd}", &workspace.display().to_string()));
-    }
-
-    match cli.spawn() {
-        Ok(child) => {
-            *command_line.0.lock().unwrap() = Some(child);
-            return Ok("Stop this action".to_string());
-        }
-        Err(err) => {
-            return Err(err.to_string());
-        }
-    }
-}
-
-#[tauri::command]
-pub fn stop_action(global_node: tauri::State<'_, CommandLine>) -> Result<(), String> {
-    let mut node_changer = global_node.0.lock().unwrap();
-    let node_opt = &mut *node_changer;
-    if let Some(node) = node_opt {
-        node.kill().unwrap();
-    }
-    *node_changer = None;
-    Ok(())
+    let action = &mut actions[action_i];
+    common::interact(action, &workspace)
 }

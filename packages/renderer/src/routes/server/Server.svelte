@@ -13,18 +13,16 @@
 
   import { name } from "./server";
   import Action from "./lib/Action.svelte";
-  import type { IAction } from "./lib/Action.svelte";
 
   $: hue = stringToHue($name);
 
   let error;
-  let actions: IAction[] = [];
+  let actions: string[] = [];
 
   onMount(async () => {
     try {
       await invoke("load_project", { name: $name });
       actions = await invoke("get_actions");
-      console.log(actions);
     } catch (err) {
       error = err;
     }
@@ -63,7 +61,7 @@
       <div class="actions">
         {#each actions as action, i}
           <Action
-            {action}
+            name={action}
             {hue}
             {i}
           />
