@@ -14,6 +14,7 @@
     try {
       loading = true;
       error = null;
+      active = true;
       const res = (await invoke("interact", { actionI: i })) as {
         name: string;
         active: boolean;
