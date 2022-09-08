@@ -15,13 +15,19 @@
       loading = true;
       error = null;
       active = true;
+
+      // const timer = setTimeout(() => {}, 1000);
+      const before = Date.now();
       const res = (await invoke("interact", { actionI: i })) as {
         name: string;
         active: boolean;
       };
-      name = res.name;
-      active = res.active;
-      loading = false;
+
+      setTimeout(() => {
+        name = res.name;
+        active = res.active;
+        loading = false;
+      }, 1000 - (Date.now() - before));
     } catch (err) {
       error = err;
       loading = false;
@@ -43,7 +49,7 @@
   <div class="action-content-container">
     <div class="action-content">
       {#if loading}
-        <Progress style={{ borderRadius: 2 }} />
+        <Progress style={{ borderRadius: 1 }} />
       {:else if error}
         <span class="name">{name}</span>
         <div class="error">
