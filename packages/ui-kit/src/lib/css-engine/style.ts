@@ -1,7 +1,7 @@
 export type Style = {
   borderRadius?: number;
   hue?: number;
-  transitionDuration? : number;
+  transitionDuration?: number;
 };
 
 export const style = (style: Style) => {
