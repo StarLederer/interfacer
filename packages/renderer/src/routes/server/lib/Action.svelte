@@ -1,6 +1,6 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/tauri";
-  import { open } from "@tauri-apps/api/shell";
+  import Active from "svelte-material-icons/Cog.svelte";
   import Button from "ui-kit/primitives/Button.svelte";
   import Progress from "ui-kit/primitives/Progress.svelte";
 
@@ -43,24 +43,33 @@
   half={!active}
   solid={active}
   colored
-  style={{ hue }}
+  disabled={loading}
+  style={{
+    hue,
+  }}
   on:click={interact}
 >
-  <div class="action-content-container">
-    <div class="action-content">
-      {#if loading}
-        <Progress style={{ borderRadius: 1 }} />
-      {:else if error}
-        <span class="name">{name}</span>
-        <div class="error">
-          <div>Error:</div>
-          {error}
-        </div>
-        Try again?
-      {:else}
-        <span class="name">{name}</span>
-      {/if}
+  <div
+    class="action-content"
+    class:is-active={active && !loading}
+    class:is-loading={loading}
+  >
+    <div class="progress-container">
+      <Progress />
     </div>
+
+    <div class="name-line">
+      <div class="icon"><Active size={"100%"} /></div>
+      <span class="name">{name}</span>
+    </div>
+    {#if error}
+      <span class="name">{name}</span>
+      <div class="error">
+        <div>Error:</div>
+        {error}
+      </div>
+      Try again?
+    {/if}
   </div>
 </Button>
 
@@ -74,6 +83,15 @@
     );
   }
 
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
   .action-content {
     width: 100%;
     height: 100%;
@@ -84,9 +102,35 @@
     align-items: center;
     gap: 1rem;
 
-    .name {
-      font-size: 2rem;
-      font-weight: 800;
+    .progress-container {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: var(--transition);
+
+      opacity: 0;
+      --border-radius: 1rem;
+    }
+
+    .name-line {
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+
+      .name {
+        font-weight: 800;
+        font-size: 2rem;
+      }
+
+      .icon {
+        width: 0rem;
+        display: flex;
+        animation: 10s rotate infinite;
+        margin-inline-start: 0rem;
+        transition: var(--transition);
+      }
     }
 
     .error {
@@ -109,6 +153,23 @@
       div {
         color: hsl(0, var(--color-s), 60%);
         font-weight: 600;
+      }
+    }
+
+    &.is-loading {
+      .name-line {
+        opacity: 0;
+      }
+
+      .progress-container {
+        opacity: 1;
+      }
+    }
+
+    &.is-active {
+      .icon {
+        width: 2rem;
+        margin-inline-end: 1rem;
       }
     }
   }
