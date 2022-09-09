@@ -53,9 +53,12 @@
   --base-highlight-l: 10%;
   --highlight-l: 0%;
 
-  &:hover,
-  &:active {
-    --highlight-l: var(--base-highlight-l);
+  &:not(:disabled) {
+
+    &:hover,
+    &:active {
+      --highlight-l: var(--base-highlight-l);
+    }
   }
 }
 
@@ -65,8 +68,7 @@
   transition: var(--transition);
 }
 
-@mixin buttonShape(
-  $border-radius,
+@mixin buttonShape($border-radius,
 ) {
   padding: var(#{$border-radius});
 
@@ -80,9 +82,12 @@
 @mixin half {
   --background-a: 10%;
 
-  &:hover,
-  &:active {
-    --background-a: 20%;
+  &:not(:disabled) {
+
+    &:hover,
+    &:active {
+      --background-a: 20%;
+    }
   }
 }
 
@@ -97,15 +102,16 @@
   }
 }
 
-@mixin buttonColors(
-  $base-background-l,
+@mixin buttonColors($base-background-l,
   $hue,
   $base-color-l,
   $highlight-l,
 ) {
   --background-s: 0%;
   --background-l: calc(var(#{$base-background-l}) + var(#{$highlight-l}));
-  --background-hsl: var(#{$hue}), var(--background-s), var(--background-l);
+  --background-hsl: var(#{$hue}),
+  var(--background-s),
+  var(--background-l);
   --background-a: 0%;
   --background: hsla(var(--background-hsl), var(--background-a));
   background: var(--background);
@@ -115,9 +121,12 @@
   --color: hsl(var(#{$hue}), var(--color-s), var(--color-l));
   color: var(--color);
 
-  &:hover,
-  &.force-hover,
-  &:active {
-    --background-a: 20%;
+  &:not(:disabled) {
+
+    &:hover,
+    &.force-hover,
+    &:active {
+      --background-a: 20%;
+    }
   }
 }

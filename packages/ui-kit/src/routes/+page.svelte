@@ -107,8 +107,30 @@
           <div>Ghost contnet</div>
         </div>
       </div>
+
+      <div class="row">
+        <div class="demo">
+          <div>
+            <Button disabled>Inactive</Button>
+          </div>
+          <div>Disabled</div>
+        </div>
+        <div class="demo">
+          <div>
+            <Button half disabled>Inactive</Button>
+          </div>
+          <div>Disabled</div>
+        </div>
+        <div class="demo">
+          <div>
+            <Button solid disabled>Inactive</Button>
+          </div>
+          <div>Disabled</div>
+        </div>
+      </div>
     </div>
   </article>
+
   <article class="form-inputs">
     <h2>Form inputs</h2>
     <div class="table">
@@ -188,11 +210,11 @@
           <div>Spinner</div>
         </div>
         <div class="demo">
-          <div><Progress style={{borderRadius: 2}}/></div>
+          <div><Progress style={{ borderRadius: 2 }} /></div>
           <div>Resized</div>
         </div>
         <div class="demo">
-          <div><Progress style={{borderRadius: 3}}/></div>
+          <div><Progress style={{ borderRadius: 3 }} /></div>
           <div>Resized</div>
         </div>
       </div>

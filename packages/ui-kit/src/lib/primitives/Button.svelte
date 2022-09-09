@@ -5,6 +5,7 @@
   export let half = false;
   export let solid = false;
   export let colored = false;
+  export let disabled = false;
   export let style: {
     borderRadius?: number;
     hue?: number;
@@ -16,6 +17,7 @@
   class:is-half={half}
   class:is-solid={solid}
   {type}
+  {disabled}
   style={describeStyle(style)}
   on:click
 >
@@ -59,7 +61,10 @@
 
     display: flex;
     align-items: stretch;
-    cursor: pointer;
+
+    &:not(:disabled) {
+      cursor: pointer;
+    }
 
     .container {
       display: flex;
@@ -75,7 +80,7 @@
 
     &.is-solid {
       --base-color-l: 0%;
-      --background-a: 100%;
+      --background-a: 100% !important;
       @include glow();
     }
 
