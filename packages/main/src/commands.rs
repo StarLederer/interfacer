@@ -116,7 +116,7 @@ pub async fn interact(
     };
 
     if action_i >= (state.actions).len() {
-        return Err("Action index out of bounds".to_string());
+        return Err("Action index out of bounds. This is a bug! Please report it".to_string());
     }
 
     let action = &mut state.actions[action_i];
