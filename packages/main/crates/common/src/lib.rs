@@ -4,6 +4,8 @@ use std::{
     process::{Child, Command},
 };
 
+pub mod config;
+
 #[cfg(test)]
 mod tests;
 

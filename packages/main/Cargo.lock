@@ -62,7 +62,6 @@ dependencies = [
  "rs-docker",
  "serde",
  "serde_json",
- "serde_yaml",
  "tauri",
  "tauri-build",
 ]
@@ -372,6 +371,7 @@ dependencies = [
  "bollard",
  "futures-util",
  "serde",
+ "serde_yaml",
  "tokio",
 ]
 

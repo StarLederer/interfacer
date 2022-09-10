@@ -4,7 +4,6 @@
 )]
 
 mod commands;
-mod config;
 
 use std::sync::Mutex;
 
@@ -13,7 +12,6 @@ use commands::*;
 fn main() {
     tauri::Builder::default()
         .manage(Config::default())
-        .manage(Workspace::default())
         .manage(Actions(Mutex::new(vec![
             common::Action {
                 idle_name: "Start server".to_string(),

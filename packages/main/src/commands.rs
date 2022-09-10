@@ -1,5 +1,4 @@
-use crate::config::*;
-use std::{fs, path::PathBuf, sync::Mutex};
+use std::{fs, sync::Mutex, vec};
 
 #[tauri::command]
 pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> {
@@ -44,10 +43,7 @@ pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Re
 }
 
 #[derive(Default)]
-pub struct Config(Mutex<Option<WrappConfig>>);
-
-#[derive(Default)]
-pub struct Workspace(Mutex<Option<PathBuf>>);
+pub struct Config(Mutex<Option<common::config::Config>>);
 
 #[derive(Default)]
 pub struct Actions(pub Mutex<Vec<common::Action>>);
@@ -56,7 +52,6 @@ pub struct Actions(pub Mutex<Vec<common::Action>>);
 pub fn load_project(
     app: tauri::AppHandle,
     config: tauri::State<'_, Config>,
-    workspace: tauri::State<'_, Workspace>,
     name: String,
 ) -> Result<(), String> {
     let mut project_path = app.path_resolver().app_dir().unwrap();
@@ -67,27 +62,35 @@ pub fn load_project(
     let mut config_path = project_path.clone();
     config_path.push("wrapp.yaml");
 
-    match fs::read_to_string(&config_path) {
-        Ok(config_src) => match serde_yaml::from_str::<WrappConfig>(&config_src) {
-            Ok(config_yaml) => {
-                if let Some(workspace_path) = &config_yaml.workspace_dir {
-                    *workspace.0.lock().unwrap() = Some(PathBuf::from(&workspace_path));
-                } else {
-                    let mut workspace_path = project_path.clone();
-                    workspace_path.push("workspace");
-                    *workspace.0.lock().unwrap() = Some(workspace_path);
-                }
-                *config.0.lock().unwrap() = Some(config_yaml);
-                return Ok(());
-            }
-            Err(err) => {
-                return Err(err.to_string());
-            }
-        },
+    let config_src = match fs::read_to_string(&config_path) {
+        Ok(src) => src,
         Err(err) => {
             return Err(err.to_string());
         }
-    }
+    };
+
+    let mut workspace_path = project_path.clone();
+    workspace_path.push("workspace");
+
+    let parsed_config = match common::config::parse_config(
+        &config_src,
+        &common::config::Config {
+            version: String::from("1"),
+            workspace_dir: workspace_path,
+            after_code_download: vec![],
+            before_code_upload: vec![],
+            actions: vec![],
+        },
+    ) {
+        Ok(config) => config,
+        Err(err) => {
+            return Err(err.to_string());
+        }
+    };
+
+    *config.0.lock().unwrap() = Some(parsed_config);
+
+    Ok(())
 }
 
 #[tauri::command]
@@ -104,7 +107,7 @@ pub fn get_actions(actions: tauri::State<'_, Actions>) -> Result<Vec<String>, St
 pub async fn interact(
     action_i: usize,
     actions: tauri::State<'_, Actions>,
-    workspace: tauri::State<'_, Workspace>,
+    config: tauri::State<'_, Config>,
 ) -> Result<common::Consequence, String> {
     // Get actions
     let mut actions = actions.0.lock().unwrap();
@@ -113,16 +116,15 @@ pub async fn interact(
         return Err("Action index out of bounds".to_string());
     }
 
-    // Get workspace
-    let mut workspace_changer = workspace.0.lock().unwrap();
-    let workspace_opt = &mut *workspace_changer;
-    let workspace;
-    if let Some(w) = workspace_opt {
-        workspace = w
-    } else {
-        return Err("Attempted to start action before workspace is loaded".to_string());
-    }
+    // Get config
+    let config = config.0.lock().unwrap();
+    let config = match &*config {
+        Some(config) => config,
+        None => {
+            return Err("Attempted to start action before config is loaded".to_string());
+        }
+    };
 
     let action = &mut actions[action_i];
-    common::interact(action, &workspace)
+    common::interact(action, &config.workspace_dir)
 }
