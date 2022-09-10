@@ -1,57 +1,49 @@
 use serde::{Deserialize, Serialize};
-use std::{
-    ffi::OsStr,
-    path::{Path, PathBuf},
-};
 
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-pub struct Command {
-    lang: String,
-    command: String,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ActionConfig {
+    pub command: String,
+    pub user_terminated: bool,
+    pub idle_name: String,
+    pub active_name: String,
 }
 
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-pub struct Action {
-    pub name: String,
-    pub commands: Vec<Command>,
-}
-
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-pub struct UserConfig {
-    pub version: Option<String>,
-    pub workspace_dir: Option<String>,
-    pub after_code_download: Option<Vec<String>>,
-    pub before_code_upload: Option<Vec<String>>,
-    pub actions: Option<Vec<Action>>,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct UserConfig {
+    version: Option<String>,
+    workspace_dir: Option<String>,
+    after_code_download: Option<Vec<String>>,
+    before_code_upload: Option<Vec<String>>,
+    actions: Option<Vec<ActionConfig>>,
 }
 
 pub struct Config {
     pub version: String,
-    pub workspace_dir: PathBuf,
+    pub workspace_dir: String,
     pub after_code_download: Vec<String>,
     pub before_code_upload: Vec<String>,
-    pub actions: Vec<Action>,
+    pub actions: Vec<ActionConfig>,
 }
 
 pub fn parse_config(
     config_src: &String,
-    defaults: &Config,
+    defaults: Config,
 ) -> Result<Config, serde_yaml::Error> {
     let config = serde_yaml::from_str::<UserConfig>(&config_src)?;
 
     Ok(Config {
-        version: config.version.unwrap_or(defaults.version.clone()),
-        workspace_dir: if config.workspace_dir.is_some() {
-            PathBuf::from(config.workspace_dir.unwrap())
-        } else {
-            defaults.workspace_dir.clone()
-        },
+        version: config
+            .version
+            .unwrap_or(defaults.version),
+        workspace_dir: config
+            .workspace_dir
+            .unwrap_or(defaults.workspace_dir),
         after_code_download: config
             .after_code_download
-            .unwrap_or(defaults.after_code_download.clone()),
+            .unwrap_or(defaults.after_code_download),
         before_code_upload: config
             .before_code_upload
-            .unwrap_or(defaults.before_code_upload.clone()),
-        actions: config.actions.unwrap_or(defaults.actions.clone()),
+            .unwrap_or(defaults.before_code_upload),
+        actions: config.actions.unwrap_or(defaults.actions),
     })
 }

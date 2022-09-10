@@ -43,15 +43,12 @@ pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Re
 }
 
 #[derive(Default)]
-pub struct Config(Mutex<Option<common::config::Config>>);
-
-#[derive(Default)]
-pub struct Actions(pub Mutex<Vec<common::Action>>);
+pub struct AppState(Mutex<Option<common::state::AppState>>);
 
 #[tauri::command]
 pub fn load_project(
     app: tauri::AppHandle,
-    config: tauri::State<'_, Config>,
+    state: tauri::State<'_, AppState>,
     name: String,
 ) -> Result<(), String> {
     let mut project_path = app.path_resolver().app_dir().unwrap();
@@ -69,14 +66,11 @@ pub fn load_project(
         }
     };
 
-    let mut workspace_path = project_path.clone();
-    workspace_path.push("workspace");
-
-    let parsed_config = match common::config::parse_config(
+    let config = match common::config::parse_config(
         &config_src,
-        &common::config::Config {
+        common::config::Config {
             version: String::from("1"),
-            workspace_dir: workspace_path,
+            workspace_dir: String::from("./workspace"),
             after_code_download: vec![],
             before_code_upload: vec![],
             actions: vec![],
@@ -88,43 +82,43 @@ pub fn load_project(
         }
     };
 
-    *config.0.lock().unwrap() = Some(parsed_config);
+    *state.0.lock().unwrap() = Some(common::state::AppState::init(config, project_path));
 
     Ok(())
 }
 
 #[tauri::command]
-pub fn get_actions(actions: tauri::State<'_, Actions>) -> Result<Vec<String>, String> {
-    let config_changer = actions.0.lock().unwrap();
-    let mut action_names = Vec::new();
-    for action in (*config_changer).iter() {
-        action_names.push(action.idle_name.clone());
+pub fn get_actions(state: tauri::State<'_, AppState>) -> Result<Vec<String>, String> {
+    let state = state.0.lock().unwrap();
+
+    if let Some(state) = &*state {
+        let mut action_names = Vec::new();
+        for action in state.actions.iter() {
+            action_names.push(action.config.idle_name.clone());
+        }
+        Ok(action_names)
+    } else {
+        Err("Attempted to start action before project is loaded".to_string())
     }
-    Ok(action_names)
 }
 
 #[tauri::command]
 pub async fn interact(
     action_i: usize,
-    actions: tauri::State<'_, Actions>,
-    config: tauri::State<'_, Config>,
+    state: tauri::State<'_, AppState>,
 ) -> Result<common::Consequence, String> {
-    // Get actions
-    let mut actions = actions.0.lock().unwrap();
+    let mut state = state.0.lock().unwrap();
+    let state = match &mut *state {
+        Some(state) => state,
+        None => {
+            return Err("Attempted to start action before project is loaded".to_string())
+        },
+    };
 
-    if action_i >= (*actions).len() {
+    if action_i >= (state.actions).len() {
         return Err("Action index out of bounds".to_string());
     }
 
-    // Get config
-    let config = config.0.lock().unwrap();
-    let config = match &*config {
-        Some(config) => config,
-        None => {
-            return Err("Attempted to start action before config is loaded".to_string());
-        }
-    };
-
-    let action = &mut actions[action_i];
-    common::interact(action, &config.workspace_dir)
+    let action = &mut state.actions[action_i];
+    common::interact(action, &state.workspace_dir)
 }

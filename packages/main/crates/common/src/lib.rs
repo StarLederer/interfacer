@@ -5,18 +5,10 @@ use std::{
 };
 
 pub mod config;
+pub mod state;
 
 #[cfg(test)]
 mod tests;
-
-#[derive(Default)]
-pub struct Action {
-    pub command: String,
-    pub user_terminated: bool,
-    pub idle_name: String,
-    pub active_name: String,
-    pub process: Option<Child>,
-}
 
 #[derive(Serialize)]
 pub struct Consequence {
@@ -54,8 +46,8 @@ pub fn use_child_process(
     }
 }
 
-pub fn interact(action: &mut Action, cwd: &Path) -> Result<Consequence, String> {
-    if action.user_terminated {
+pub fn interact(action: &mut state::ActionState, cwd: &Path) -> Result<Consequence, String> {
+    if action.config.user_terminated {
         let name;
 
         // Check whether to start a new child or stop an existing one
@@ -64,7 +56,7 @@ pub fn interact(action: &mut Action, cwd: &Path) -> Result<Consequence, String> 
             match child.kill() {
                 Ok(_) => {
                     action.process = None;
-                    name = action.idle_name.clone();
+                    name = action.config.idle_name.clone();
                 }
                 Err(err) => {
                     return Err(err.to_string());
@@ -72,10 +64,10 @@ pub fn interact(action: &mut Action, cwd: &Path) -> Result<Consequence, String> 
             };
         } else {
             // Start the child process
-            match use_child_process(&action.command, cwd, false).unwrap() {
+            match use_child_process(&action.config.command, cwd, false).unwrap() {
                 Ok(child) => {
                     action.process = Some(child);
-                    name = action.active_name.clone();
+                    name = action.config.active_name.clone();
                 }
                 Err(err) => return Err(err.to_string()),
             }
@@ -92,10 +84,10 @@ pub fn interact(action: &mut Action, cwd: &Path) -> Result<Consequence, String> 
         }
 
         // Execute a child process
-        use_child_process(&action.command, cwd, true);
+        use_child_process(&action.config.command, cwd, true);
 
         Ok(Consequence {
-            name: action.idle_name.clone(),
+            name: action.config.idle_name.clone(),
             active: false,
         })
     }
