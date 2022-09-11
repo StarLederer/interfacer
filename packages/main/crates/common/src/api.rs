@@ -49,7 +49,6 @@ pub fn interact(action: &mut state::ActionState, cwd: &Path) -> Result<Consequen
         // Check whether to start a new child or stop an existing one
         if let Some(child) = &mut action.process {
             // Stop the process
-            // TODO: This doesn't seem to work
             match child.kill() {
                 Ok(_) => {
                     action.process = None;
