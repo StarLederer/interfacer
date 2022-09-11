@@ -106,7 +106,7 @@ pub fn get_actions(state: tauri::State<'_, AppState>) -> Result<Vec<String>, Str
 pub async fn interact(
     action_i: usize,
     state: tauri::State<'_, AppState>,
-) -> Result<common::Consequence, String> {
+) -> Result<common::api::Consequence, String> {
     let mut state = state.0.lock().unwrap();
     let state = match &mut *state {
         Some(state) => state,
@@ -120,5 +120,5 @@ pub async fn interact(
     }
 
     let action = &mut state.actions[action_i];
-    common::interact(action, &state.workspace_dir)
+    common::api::interact(action, &state.workspace_dir)
 }
