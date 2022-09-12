@@ -17,7 +17,10 @@
   $: hue = stringToHue($name);
 
   let error;
-  let actions: string[] = [];
+  let actions: {
+    name: string;
+    active: boolean;
+  }[] = [];
 
   onMount(async () => {
     try {
@@ -60,11 +63,7 @@
     {:else}
       <div class="actions">
         {#each actions as action, i}
-          <Action
-            name={action}
-            {hue}
-            {i}
-          />
+          <Action name={action.name} {hue} {i} />
         {/each}
       </div>
     {/if}

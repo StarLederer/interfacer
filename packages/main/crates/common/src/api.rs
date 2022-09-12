@@ -1,7 +1,7 @@
 use serde::Serialize;
 use std::{
     path::Path,
-    process::{Child, Command}
+    process::{Child, Command},
 };
 
 use crate::state;
@@ -89,7 +89,18 @@ pub fn interact(action: &mut state::ActionState, cwd: &Path) -> Result<Consequen
     }
 }
 
-// TODO: get actions
+pub fn get_actions(state: &state::AppState) -> Vec<Consequence> {
+    let mut consequences = Vec::new();
+
+    for action in state.actions.iter() {
+        consequences.push(Consequence {
+            name: action.config.idle_name.clone(),
+            active: action.process.is_some(),
+        });
+    }
+
+    consequences
+}
 
 // TODO: check source control
 

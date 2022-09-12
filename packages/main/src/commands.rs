@@ -95,15 +95,11 @@ pub fn load_project(
 }
 
 #[tauri::command]
-pub fn get_actions(state: tauri::State<'_, AppState>) -> Result<Vec<String>, String> {
+pub fn get_actions(state: tauri::State<'_, AppState>) -> Result<Vec<common::api::Consequence>, String> {
     let state = state.0.lock().unwrap();
 
     if let Some(state) = &*state {
-        let mut action_names = Vec::new();
-        for action in state.actions.iter() {
-            action_names.push(action.config.idle_name.clone());
-        }
-        Ok(action_names)
+        Ok(common::api::get_actions(state))
     } else {
         Err("Attempted to start action before project is loaded".to_string())
     }
