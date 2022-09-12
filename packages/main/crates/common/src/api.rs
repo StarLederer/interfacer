@@ -1,7 +1,7 @@
 use serde::Serialize;
 use std::{
     path::Path,
-    process::{Child, Command},
+    process::{Child, Command}
 };
 
 use crate::state;

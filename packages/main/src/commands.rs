@@ -82,7 +82,14 @@ pub fn load_project(
         }
     };
 
-    *state.0.lock().unwrap() = Some(common::state::AppState::init(config, project_path));
+    let initialized_state = match common::state::AppState::init(config, project_path) {
+        Ok(state) => state,
+        Err(err) => {
+            return Err(err.to_string());
+        }
+    };
+
+    *state.0.lock().unwrap() = Some(initialized_state);
 
     Ok(())
 }
@@ -110,9 +117,7 @@ pub async fn interact(
     let mut state = state.0.lock().unwrap();
     let state = match &mut *state {
         Some(state) => state,
-        None => {
-            return Err("Attempted to start action before project is loaded".to_string())
-        },
+        None => return Err("Attempted to start action before project is loaded".to_string()),
     };
 
     if action_i >= (state.actions).len() {

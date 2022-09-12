@@ -1,5 +1,5 @@
 use crate::config::{self};
-use std::{path::PathBuf, process::Child};
+use std::{fs, path::PathBuf, process::Child};
 
 pub struct ActionState {
     pub config: config::ActionConfig,
@@ -23,7 +23,7 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub fn init(config: config::Config, mut project_dir: PathBuf) -> AppState {
+    pub fn init(config: config::Config, mut project_dir: PathBuf) -> std::io::Result<AppState> {
         let mut actions = vec![];
         for config in config.actions.iter() {
             actions.push(ActionState::from_config(config));
@@ -31,9 +31,9 @@ impl AppState {
 
         project_dir.push(config.workspace_dir);
 
-        AppState {
-            workspace_dir: project_dir,
+        Ok(AppState {
+            workspace_dir: fs::canonicalize(project_dir)?,
             actions,
-        }
+        })
     }
 }
