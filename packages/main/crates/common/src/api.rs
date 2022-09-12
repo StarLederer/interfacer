@@ -88,3 +88,9 @@ pub fn interact(action: &mut state::ActionState, cwd: &Path) -> Result<Consequen
         })
     }
 }
+
+// TODO: get actions
+
+// TODO: check source control
+
+// TODO: save source control
