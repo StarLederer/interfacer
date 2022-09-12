@@ -26,20 +26,22 @@ pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> 
 
 #[tauri::command]
 pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Result<(), String> {
-    let mut path = app.path_resolver().app_dir().unwrap();
-    path.push("projects");
+    // let mut path = app.path_resolver().app_dir().unwrap();
+    // path.push("projects");
 
-    fs::create_dir_all(&path).unwrap();
-    path.push(&name);
+    // fs::create_dir_all(&path).unwrap();
+    // path.push(&name);
 
-    match git2::Repository::clone(&url, path) {
-        Ok(_) => {
-            return Ok(());
-        }
-        Err(err) => {
-            return Err(err.to_string());
-        }
-    }
+    // match git2::Repository::clone(&url, path) {
+    //     Ok(_) => {
+    //         return Ok(());
+    //     }
+    //     Err(err) => {
+    //         return Err(err.to_string());
+    //     }
+    // }
+
+    Ok(())
 }
 
 #[derive(Default)]

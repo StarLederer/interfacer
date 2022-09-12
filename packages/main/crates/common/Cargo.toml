@@ -9,3 +9,7 @@ serde_yaml = "0.9.10"
 tokio = { version = "1.20.1", features = ["full"] }
 futures-util = "0.3.23"
 bollard = "0.13"
+git2 = "0.15"
+
+[dev-dependencies]
+fs_extra = "1.2.0"
