@@ -1,3 +1,5 @@
+mod messages;
+
 mod api;
-// mod bollard;
+mod bollard;
 mod state;

@@ -102,6 +102,10 @@ pub fn get_actions(state: &state::AppState) -> Vec<Consequence> {
     consequences
 }
 
-// TODO: check source control
+pub fn check_source_cloud(state: &state::AppState) {
+    todo!();
+}
 
-// TODO: save source control
+// TODO: check source
+
+// TODO: upload source
