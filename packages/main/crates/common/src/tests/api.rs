@@ -1,9 +1,10 @@
 use std::path::{Path, PathBuf};
 
+use crate::tests::{messages::*, util};
+
 use crate::api::*;
 use crate::config::ActionConfig;
 use crate::state::{ActionState, AppState};
-use crate::tests::messages::*;
 
 #[test]
 fn self_terminated_interactions_work() {
@@ -74,21 +75,9 @@ fn user_terminated_interactions_work() {
 
 #[test]
 fn git_pulls_changes() {
-    let to = std::fs::canonicalize("./src/tests/tmp/cloned-from-git")
-        .expect(&(String::from(CANONICALIZE_ERR) + " " + TEST_ERR));
+    let to = util::fs::canonicalize("./src/tests/tmp/cloned-from-git");
 
-    match std::fs::remove_dir_all(to) {
-        Ok(_) => {}
-        Err(err) => {
-            match err.kind() {
-                std::io::ErrorKind::NotFound => {}
-                _ => panic!(
-                    "{}",
-                    String::from("Failed to remove tmp/cloned-from-git!") + " " + TEST_ERR
-                ),
-            };
-        }
-    };
+    util::fs::rimraf(&to);
 
     todo!("Pull a git repo");
 }
@@ -96,28 +85,12 @@ fn git_pulls_changes() {
 #[test]
 fn git_detects_changes() {
     // Copy fixtures/git-app to tmp/git-app
-    let from = std::fs::canonicalize("./src/tests/fixtures/git-app")
-        .expect(&(String::from(CANONICALIZE_ERR) + " " + TEST_ERR));
-    let to_parent = std::fs::canonicalize("./src/tests/tmp")
-        .expect(&(String::from(CANONICALIZE_ERR) + " " + TEST_ERR));
+    let from = util::fs::canonicalize("./src/tests/fixtures/git-app");
+    let to = util::fs::canonicalize("./src/tests/tmp/git-app");
 
-    let mut to = to_parent.clone();
-    to.push("git-app");
-    match std::fs::remove_dir_all(to) {
-        Ok(_) => {}
-        Err(err) => {
-            match err.kind() {
-                std::io::ErrorKind::NotFound => {}
-                _ => panic!(
-                    "{}",
-                    String::from("Failed to remove tmp/git-app!") + " " + TEST_ERR
-                ),
-            };
-        }
-    };
+    util::fs::rimraf(&to);
 
-    fs_extra::dir::copy(from, to_parent, &fs_extra::dir::CopyOptions::default())
-        .expect(&(String::from("Failed to copy a fixture!") + " " + TEST_ERR));
+    util::fs::copy_dir(from, to);
 
     let state = AppState::init(
         crate::config::Config {
@@ -133,14 +106,66 @@ fn git_detects_changes() {
 
     todo!("Check source control. Should detect no changes");
 
-    let mut new_file_path = std::fs::canonicalize("./src/tests/tmp/git-app/workspace")
-        .expect(&(String::from(CANONICALIZE_ERR) + " " + TEST_ERR));
+    let mut new_file_path = util::fs::canonicalize("./src/tests/tmp/git-app/workspace");
     new_file_path.push("new-file");
 
-    std::fs::write(new_file_path, [])
-        .expect(&(String::from("Failed to create a new file!") + " " + TEST_ERR));
+    util::fs::write(new_file_path, []);
 
     todo!("Check source control. Should detect new file");
+}
+
+#[test]
+fn git_fetches() {
+    util::fs::rimraf("./src/tests/tmp/git-repo");
+    util::fs::rimraf("./src/tests/tmp/git-repo-2");
+
+    // Clone test fixture
+    // TODO: A local git server would be much better
+    let mut to = util::fs::canonicalize("./src/tests/tmp");
+    to.push("git-repo");
+    let url = "https://github.com/StarLederer/git-test-fixture.git";
+    let repo = match git2::Repository::clone(url, to) {
+        Ok(repo) => repo,
+        Err(err) => panic!(
+            "{}",
+            String::from("Failed to clone git-test-fixture!") + &err.to_string() + " " + TEST_ERR
+        ),
+    };
+
+    // Copy the repo and open it
+    util::fs::copy_dir("./src/tests/tmp/git-repo", "./src/tests/tmp/git-repo-2");
+    let repo_2 = match git2::Repository::open("./src/tests/tmp/git-repo-2") {
+        Ok(repo) => repo,
+        Err(err) => panic!(
+            "{}",
+            String::from("Failed to clone git-test-fixture!") + &err.to_string() + " " + TEST_ERR
+        ),
+    };
+
+    // Make a change to the copied repo and push
+    util::fs::write("./src/tests/tmp/git-repo-2/nothing", []);
+    let mut index = util::expect(repo_2.index(), "Failed to retrieve repo index");
+    util::expect(
+        index.add_path(Path::new("nothing")),
+        "Failed to add file to index",
+    );
+    util::expect(index.write(), "Failed to write repo index to disk");
+    util::expect(
+        repo_2.commit(
+            Some("HEAD"),
+            &git2::Signature::now("Wrapp", "app@webwriter.org").unwrap(),
+            &git2::Signature::now("Wrapp", "app@webwriter.org").unwrap(),
+            "Update nothing",
+            &repo_2.find_tree(repo_2.index().unwrap().write_tree().unwrap()).unwrap(),
+            &[&repo_2.head().unwrap().peel_to_commit().unwrap()],
+        ),
+        "Failed to commit a change to git repo",
+    );
+    // repo_2.find_remote("origin").unwrap().push(refspecs, opts)
+
+    // Fetch the now outdated repo
+
+    // git_fetch(repo, "origin");
 }
 
 #[test]
