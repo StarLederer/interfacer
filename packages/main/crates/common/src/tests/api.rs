@@ -142,11 +142,17 @@ fn git_fetches() {
         ),
     };
 
-    // Make a change to the copied repo and push
-    util::fs::write("./src/tests/tmp/git-repo-2/nothing", []);
+    // Make a change to the copied repo
+    util::fs::write(
+        "./src/tests/tmp/git-repo-2/time",
+        util::expect(
+            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH),
+            "Error retreiving time. System time cannot be set to before the unix epoch",
+        ).as_millis().to_be_bytes(),
+    );
     let mut index = util::expect(repo_2.index(), "Failed to retrieve repo index");
     util::expect(
-        index.add_path(Path::new("nothing")),
+        index.add_path(Path::new("time")),
         "Failed to add file to index",
     );
     util::expect(index.write(), "Failed to write repo index to disk");
@@ -155,13 +161,30 @@ fn git_fetches() {
             Some("HEAD"),
             &git2::Signature::now("Wrapp", "app@webwriter.org").unwrap(),
             &git2::Signature::now("Wrapp", "app@webwriter.org").unwrap(),
-            "Update nothing",
-            &repo_2.find_tree(repo_2.index().unwrap().write_tree().unwrap()).unwrap(),
+            "Update time",
+            &repo_2
+                .find_tree(repo_2.index().unwrap().write_tree().unwrap())
+                .unwrap(),
             &[&repo_2.head().unwrap().peel_to_commit().unwrap()],
         ),
         "Failed to commit a change to git repo",
     );
-    // repo_2.find_remote("origin").unwrap().push(refspecs, opts)
+
+    // Push changes to the copied repo
+    let mut callbacks = git2::RemoteCallbacks::new();
+    callbacks.credentials(move |_url, _username_from_url, _allowed_types| {
+        git2::Cred::userpass_plaintext(todo!("Get username"), todo!("Get assword"))
+    });
+    let mut origin = util::expect(
+        repo_2.find_remote("origin"),
+        "Failed to find remote \"origin\"",
+    );
+    origin
+        .push(
+            &["HEAD:refs/heads/main"],
+            Some(git2::PushOptions::new().remote_callbacks(callbacks)),
+        )
+        .expect("Failed to push to git remote");
 
     // Fetch the now outdated repo
 
