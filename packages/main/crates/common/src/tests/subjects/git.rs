@@ -1,8 +1,11 @@
 use std::path::{Path, PathBuf};
 
-use crate::git::*;
+#[allow(unused_imports)]
 use crate::tests::{messages::*, util};
 
+use crate::git::*;
+
+// TODO: Parametrie the path!!!
 fn advance_repo(repo: &git2::Repository) {
     // Make a change to worktree
     util::fs::write(
@@ -39,48 +42,49 @@ fn advance_repo(repo: &git2::Repository) {
 
 #[test]
 fn git_pulls_changes() {
-    let to = util::fs::canonicalize("./src/tests/tmp/cloned-from-git");
-
-    util::fs::rimraf(&to);
-
     todo!("Pull a git repo");
 }
 
 #[test]
 fn git_detects_changes() {
-    // Copy fixtures/git-app to tmp/git-app
-    let from = util::fs::canonicalize("./src/tests/fixtures/git-app");
-    let to = util::fs::canonicalize("./src/tests/tmp/git-app");
+    util::init_env();
+    let username = util::env::var("TEST_GIT_USERNAME");
+    let password = util::env::var("TEST_GIT_PASSWORD");
+    let status_fail_msg = "Failed to status a git repo!";
 
-    util::fs::rimraf(&to);
+    let from = Path::new("./src/tests/fixtures/git-repo");
+    let repo_path = Path::new("./src/tests/tmp/git-repo");
+    util::fs::rimraf(&repo_path);
 
-    util::fs::copy_dir(from, to);
+    // Copy the repo and open it
+    util::fs::copy_dir(from, &repo_path);
+    let repo = util::expect(
+        git2::Repository::open(&repo_path),
+        "Failed to open the git repo",
+    );
 
-    let state = crate::state::AppState::init(
-        crate::config::Config {
-            version: String::from("1"),
-            workspace_dir: String::from("./workspace"),
-            after_code_download: vec![],
-            before_code_upload: vec![],
-            actions: vec![],
-        },
-        PathBuf::from("./src/tests/tmp/git-app"),
-    )
-    .expect(&(String::from("Failed to init state from config!") + " " + TEST_ERR));
+    // Check the repo. Should not detect cahnges yet
+    assert_eq!(
+        status(&repo, &username, &password).expect(status_fail_msg),
+        false
+    );
 
-    todo!("Check source control. Should detect no changes");
+    // Make a change to worktree
+    let mut file_path = PathBuf::from(repo_path);
+    file_path.push("newfile");
+    util::fs::write(file_path, []);
 
-    let mut new_file_path = util::fs::canonicalize("./src/tests/tmp/git-app/workspace");
-    new_file_path.push("new-file");
-
-    util::fs::write(new_file_path, []);
-
-    todo!("Check source control. Should detect new file");
+    // Check repo_2. Should detect changes now
+    assert_eq!(
+        status(&repo, &username, &password).expect(status_fail_msg),
+        true
+    );
 }
 
 #[test]
 fn git_fetches() {
     util::init_env();
+
     util::fs::rimraf("./src/tests/tmp/git-repo");
     util::fs::rimraf("./src/tests/tmp/git-repo-2");
     let username = util::env::var("TEST_GIT_USERNAME");

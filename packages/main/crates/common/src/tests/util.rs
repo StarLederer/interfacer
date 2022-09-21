@@ -135,8 +135,8 @@ pub mod env {
 }
 
 pub mod git2 {
-    use std::path::Path;
     use crate::tests::messages::*;
+    use std::path::Path;
 
     pub struct RemoteCallbacks;
 
@@ -165,8 +165,18 @@ pub mod git2 {
             Ok(repo) => repo,
             Err(err) => panic!(
                 "{}",
-                String::from("Failed to clone git-test-fixture!") + &err.to_string() + " " + TEST_ERR
+                String::from("Failed to clone git-test-fixture!")
+                    + &err.to_string()
+                    + " "
+                    + TEST_ERR
             ),
         }
+    }
+
+    pub fn find_tree<'a>(repo: &'a git2::Repository, spec: &'a str) -> git2::Object<'a> {
+        repo.revparse_single(spec)
+            .expect(&(String::from("Could not find object with spec ") + spec + "! " + TEST_ERR))
+            .peel(git2::ObjectType::Tree)
+            .expect(&(String::from("Could not peel git object to tree!") + " " + TEST_ERR))
     }
 }

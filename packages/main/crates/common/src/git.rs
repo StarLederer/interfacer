@@ -1,6 +1,4 @@
-use std::{
-    str,
-};
+use std::str;
 
 pub fn git_fetch(
     repo: &git2::Repository,
@@ -11,7 +9,6 @@ pub fn git_fetch(
     let mut cb = git2::RemoteCallbacks::new();
 
     // Figure out whether it's a named remote or a URL
-    println!("Fetching {} for repo", remote);
     let mut remote = repo
         .find_remote(remote)
         .or_else(|_| repo.remote_anonymous(remote))?;
@@ -28,10 +25,22 @@ pub fn git_fetch(
     // remote.update_tips(None, true, git2::AutotagOption::Unspecified, None)?;
 
     // Fetch conveniently
-    remote.fetch(&[] as &[&str], Some(&mut fo), Some("lololollolololoooooooo"))?;
+    remote.fetch(
+        &[] as &[&str],
+        Some(&mut fo),
+        None,
+    )?;
 
     let stats = remote.stats();
     stats.received_objects();
 
     Ok(stats.received_objects() > 0)
+}
+
+pub fn status(
+    repo: &git2::Repository,
+    username: &str,
+    password: &str,
+) -> Result<bool, git2::Error> {
+    todo!("Execute git status")
 }

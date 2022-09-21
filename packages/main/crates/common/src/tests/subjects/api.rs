@@ -1,4 +1,4 @@
-use std::path::{Path};
+use std::path::{Path, PathBuf};
 
 use crate::tests::{messages::*, util};
 
@@ -70,4 +70,36 @@ fn user_terminated_interactions_work() {
     if action.process.is_some() {
         panic!("The process field of the ActionState struct evaluated to Some after user termination when user_terminated");
     }
+}
+
+#[test]
+fn source_control_detects_changes() {
+    // Copy fixtures/git-app to tmp/git-app
+    let from = util::fs::canonicalize("./src/tests/fixtures/git-app");
+    let to = util::fs::canonicalize("./src/tests/tmp/git-app");
+
+    util::fs::rimraf(&to);
+
+    util::fs::copy_dir(from, to);
+
+    let state = crate::state::AppState::init(
+        crate::config::Config {
+            version: String::from("1"),
+            workspace_dir: String::from("./workspace"),
+            after_code_download: vec![],
+            before_code_upload: vec![],
+            actions: vec![],
+        },
+        PathBuf::from("./src/tests/tmp/git-app"),
+    )
+    .expect(&(String::from("Failed to init state from config!") + " " + TEST_ERR));
+
+    todo!("Check source control. Should detect no changes");
+
+    let mut new_file_path = util::fs::canonicalize("./src/tests/tmp/git-app/workspace");
+    new_file_path.push("new-file");
+
+    util::fs::write(new_file_path, []);
+
+    todo!("Check source control. Should detect new file");
 }
