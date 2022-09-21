@@ -13,3 +13,4 @@ git2 = "0.15"
 
 [dev-dependencies]
 fs_extra = "1.2.0"
+dotenv = "0.15.0"

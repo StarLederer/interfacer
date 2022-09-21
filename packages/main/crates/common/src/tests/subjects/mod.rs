@@ -1,7 +1,4 @@
 pub mod api;
-pub mod config;
+pub mod bollard;
 pub mod git;
 pub mod state;
-
-#[cfg(test)]
-mod tests;

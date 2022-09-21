@@ -1,6 +1,20 @@
 #![allow(unused)]
 
+use dotenv::dotenv;
+use std::sync::Once;
+
 use super::messages::*;
+
+static INIT: Once = Once::new();
+
+/**
+ * Initializes the environment
+ */
+pub fn init_env() {
+    INIT.call_once(|| {
+        dotenv().ok();
+    });
+}
 
 /**
  * Like unwrap but panics with a custom error message
@@ -27,13 +41,15 @@ where
     match option {
         Ok(o) => o,
         Err(e) => {
-            panic!("{}", String::from(message) + &e.to_string() + " " + TEST_ERR)
+            panic!(
+                "{}",
+                String::from(message) + &e.to_string() + " " + TEST_ERR
+            )
         }
     }
 }
 
 pub mod fs {
-    use super::unwrap;
     use crate::tests::messages::*;
 
     pub fn canonicalize<P>(path: P) -> std::path::PathBuf
@@ -92,5 +108,47 @@ pub mod fs {
     pub fn create_dir_all<P: AsRef<std::path::Path>>(path: P) {
         std::fs::create_dir_all(path)
             .expect(&(String::from("Failed to create a directory!") + " " + TEST_ERR));
+    }
+}
+
+pub mod env {
+    use crate::tests::messages::*;
+
+    pub fn var<K>(key: K) -> String
+    where
+        K: AsRef<std::ffi::OsStr>,
+    {
+        match std::env::var(key) {
+            Ok(o) => o,
+            Err(e) => {
+                panic!(
+                    "{}",
+                    String::from("Failed to get environment variable!")
+                        + " "
+                        + &e.to_string()
+                        + " "
+                        + TEST_ERR
+                )
+            }
+        }
+    }
+}
+
+pub mod git2 {
+    pub struct RemoteCallbacks;
+
+    impl RemoteCallbacks {
+        pub fn new<'a>() -> git2::RemoteCallbacks<'a> {
+            let mut remote_callbacks = git2::RemoteCallbacks::new();
+
+            remote_callbacks.credentials(move |_url, _username_from_url, _allowed_types| {
+                git2::Cred::userpass_plaintext(
+                    &super::env::var("TEST_GIT_USERNAME"),
+                    &super::env::var("TEST_GIT_PASSWORD"),
+                )
+            });
+
+            remote_callbacks
+        }
     }
 }

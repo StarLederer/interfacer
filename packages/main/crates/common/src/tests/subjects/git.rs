@@ -1,77 +1,6 @@
-use std::path::{Path, PathBuf};
+use std::path::{PathBuf, Path};
 
 use crate::tests::{messages::*, util};
-
-use crate::api::*;
-use crate::config::ActionConfig;
-use crate::state::{ActionState, AppState};
-
-#[test]
-fn self_terminated_interactions_work() {
-    let mut action = ActionState {
-        config: ActionConfig {
-            command: String::from("ls -a"),
-            user_terminated: false,
-            idle_name: String::from("List"),
-            active_name: String::from(""),
-        },
-        process: None,
-    };
-
-    interact(&mut action, Path::new("./")).unwrap();
-
-    if action.process.is_some() {
-        panic!(
-            "The process field of the ActionState struct evaluated to Some when not user_terinated"
-        );
-    }
-}
-
-#[test]
-fn user_terminated_interactions_work() {
-    let mut action = ActionState {
-        config: ActionConfig {
-            command: String::from("top"),
-            user_terminated: true,
-            idle_name: String::from("Open bash"),
-            active_name: String::from("Close bash"),
-        },
-        process: None,
-    };
-
-    // Start action
-    interact(&mut action, Path::new("./")).unwrap();
-
-    std::thread::sleep(std::time::Duration::from_secs(5));
-
-    if action.process.is_none() {
-        panic!("The process field of the ActionState struct evaluated to None before user termination when user_terminated");
-    }
-
-    let pid = action.process.as_ref().unwrap().id();
-
-    // Stop action
-    interact(&mut action, Path::new("./")).unwrap();
-
-    if String::from_utf8(
-        std::process::Command::new("ps")
-            .arg("-p")
-            .arg(&pid.to_string())
-            .output()
-            .unwrap()
-            .stdout,
-    )
-    .unwrap()
-    .contains(&pid.to_string())
-    {
-        // This seems to always fail. I suspect it is a NixOS thing
-        panic!("ps found an active process with the same id as the child proess which means it was not terminated");
-    }
-
-    if action.process.is_some() {
-        panic!("The process field of the ActionState struct evaluated to Some after user termination when user_terminated");
-    }
-}
 
 #[test]
 fn git_pulls_changes() {
@@ -92,7 +21,7 @@ fn git_detects_changes() {
 
     util::fs::copy_dir(from, to);
 
-    let state = AppState::init(
+    let state = crate::state::AppState::init(
         crate::config::Config {
             version: String::from("1"),
             workspace_dir: String::from("./workspace"),
@@ -116,6 +45,7 @@ fn git_detects_changes() {
 
 #[test]
 fn git_fetches() {
+    util::init_env();
     util::fs::rimraf("./src/tests/tmp/git-repo");
     util::fs::rimraf("./src/tests/tmp/git-repo-2");
 
@@ -123,8 +53,12 @@ fn git_fetches() {
     // TODO: A local git server would be much better
     let mut to = util::fs::canonicalize("./src/tests/tmp");
     to.push("git-repo");
-    let url = "https://github.com/StarLederer/git-test-fixture.git";
-    let repo = match git2::Repository::clone(url, to) {
+    let url = util::env::var("TEST_GIT_REPO");
+    let mut fetch_opts = git2::FetchOptions::new();
+    fetch_opts.remote_callbacks(util::git2::RemoteCallbacks::new());
+    let mut repo_builder = git2::build::RepoBuilder::new();
+    repo_builder.fetch_options(fetch_opts);
+    let repo = match repo_builder.clone(&url, &to) {
         Ok(repo) => repo,
         Err(err) => panic!(
             "{}",
@@ -148,7 +82,9 @@ fn git_fetches() {
         util::expect(
             std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH),
             "Error retreiving time. System time cannot be set to before the unix epoch",
-        ).as_millis().to_be_bytes(),
+        )
+        .as_millis()
+        .to_be_bytes(),
     );
     let mut index = util::expect(repo_2.index(), "Failed to retrieve repo index");
     util::expect(
@@ -171,10 +107,6 @@ fn git_fetches() {
     );
 
     // Push changes to the copied repo
-    let mut callbacks = git2::RemoteCallbacks::new();
-    callbacks.credentials(move |_url, _username_from_url, _allowed_types| {
-        git2::Cred::userpass_plaintext(todo!("Get username"), todo!("Get assword"))
-    });
     let mut origin = util::expect(
         repo_2.find_remote("origin"),
         "Failed to find remote \"origin\"",
@@ -182,7 +114,7 @@ fn git_fetches() {
     origin
         .push(
             &["HEAD:refs/heads/main"],
-            Some(git2::PushOptions::new().remote_callbacks(callbacks)),
+            Some(git2::PushOptions::new().remote_callbacks(util::git2::RemoteCallbacks::new())),
         )
         .expect("Failed to push to git remote");
 
