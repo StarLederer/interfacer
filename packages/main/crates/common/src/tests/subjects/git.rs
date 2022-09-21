@@ -3,6 +3,40 @@ use std::path::{Path, PathBuf};
 use crate::git::*;
 use crate::tests::{messages::*, util};
 
+fn advance_repo(repo: &git2::Repository) {
+    // Make a change to worktree
+    util::fs::write(
+        "./src/tests/tmp/git-repo-2/time",
+        util::expect(
+            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH),
+            "Error retreiving time. System time cannot be set to before the unix epoch",
+        )
+        .as_millis()
+        .to_be_bytes(),
+    );
+
+    // Stage the cahange
+    let mut index = util::expect(repo.index(), "Failed to retrieve repo index");
+    util::expect(
+        index.add_path(Path::new("time")),
+        "Failed to add file to index",
+    );
+    util::expect(index.write(), "Failed to write repo index to disk");
+    util::expect(
+        repo.commit(
+            Some("HEAD"),
+            &git2::Signature::now("Wrapp", "app@webwriter.org").unwrap(),
+            &git2::Signature::now("Wrapp", "app@webwriter.org").unwrap(),
+            "Update time",
+            &repo
+                .find_tree(repo.index().unwrap().write_tree().unwrap())
+                .unwrap(),
+            &[&repo.head().unwrap().peel_to_commit().unwrap()],
+        ),
+        "Failed to commit a change to git repo",
+    );
+}
+
 #[test]
 fn git_pulls_changes() {
     let to = util::fs::canonicalize("./src/tests/tmp/cloned-from-git");
@@ -87,34 +121,7 @@ fn git_fetches() {
     };
 
     // Make a change to the copied repo
-    util::fs::write(
-        "./src/tests/tmp/git-repo-2/time",
-        util::expect(
-            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH),
-            "Error retreiving time. System time cannot be set to before the unix epoch",
-        )
-        .as_millis()
-        .to_be_bytes(),
-    );
-    let mut index = util::expect(repo_2.index(), "Failed to retrieve repo index");
-    util::expect(
-        index.add_path(Path::new("time")),
-        "Failed to add file to index",
-    );
-    util::expect(index.write(), "Failed to write repo index to disk");
-    util::expect(
-        repo_2.commit(
-            Some("HEAD"),
-            &git2::Signature::now("Wrapp", "app@webwriter.org").unwrap(),
-            &git2::Signature::now("Wrapp", "app@webwriter.org").unwrap(),
-            "Update time",
-            &repo_2
-                .find_tree(repo_2.index().unwrap().write_tree().unwrap())
-                .unwrap(),
-            &[&repo_2.head().unwrap().peel_to_commit().unwrap()],
-        ),
-        "Failed to commit a change to git repo",
-    );
+    advance_repo(&repo_2);
 
     // Push changes to the copied repo
     let mut origin = util::expect(
