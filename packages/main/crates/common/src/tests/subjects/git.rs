@@ -1,5 +1,6 @@
-use std::path::{PathBuf, Path};
+use std::path::{Path, PathBuf};
 
+use crate::git::*;
 use crate::tests::{messages::*, util};
 
 #[test]
@@ -48,6 +49,9 @@ fn git_fetches() {
     util::init_env();
     util::fs::rimraf("./src/tests/tmp/git-repo");
     util::fs::rimraf("./src/tests/tmp/git-repo-2");
+    let username = util::env::var("TEST_GIT_USERNAME");
+    let password = util::env::var("TEST_GIT_PASSWORD");
+    let fetch_fail_msg = "Failed to fetch from a git repo!";
 
     // Clone test fixture
     // TODO: A local git server would be much better
@@ -65,6 +69,12 @@ fn git_fetches() {
             String::from("Failed to clone git-test-fixture!") + &err.to_string() + " " + TEST_ERR
         ),
     };
+
+    // Fetch the repo, should detect no changes
+    assert_eq!(
+        git_fetch(&repo, "origin", &username, &password,).expect(&fetch_fail_msg),
+        false
+    );
 
     // Copy the repo and open it
     util::fs::copy_dir("./src/tests/tmp/git-repo", "./src/tests/tmp/git-repo-2");
@@ -118,9 +128,11 @@ fn git_fetches() {
         )
         .expect("Failed to push to git remote");
 
-    // Fetch the now outdated repo
-
-    // git_fetch(repo, "origin");
+    // Fetch the now outdated repo, should detech changes
+    assert_eq!(
+        git_fetch(&repo, "origin", &username, &password,).expect(&fetch_fail_msg),
+        true
+    );
 }
 
 #[test]
