@@ -12,7 +12,7 @@ pub struct Consequence {
     pub active: bool,
 }
 
-pub fn use_child_process(
+fn use_child_process(
     command: &String,
     cwd: &Path,
     await_termination: bool,
