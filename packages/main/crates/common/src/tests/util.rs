@@ -135,6 +135,9 @@ pub mod env {
 }
 
 pub mod git2 {
+    use std::path::Path;
+    use crate::tests::messages::*;
+
     pub struct RemoteCallbacks;
 
     impl RemoteCallbacks {
@@ -149,6 +152,21 @@ pub mod git2 {
             });
 
             remote_callbacks
+        }
+    }
+
+    pub fn clone_repo(url: &str, into: &Path) -> git2::Repository {
+        let mut fetch_opts = git2::FetchOptions::new();
+        fetch_opts.remote_callbacks(RemoteCallbacks::new());
+        let mut repo_builder = git2::build::RepoBuilder::new();
+        repo_builder.fetch_options(fetch_opts);
+
+        match repo_builder.clone(url, into) {
+            Ok(repo) => repo,
+            Err(err) => panic!(
+                "{}",
+                String::from("Failed to clone git-test-fixture!") + &err.to_string() + " " + TEST_ERR
+            ),
         }
     }
 }

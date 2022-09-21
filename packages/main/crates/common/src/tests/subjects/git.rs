@@ -92,17 +92,7 @@ fn git_fetches() {
     let mut to = util::fs::canonicalize("./src/tests/tmp");
     to.push("git-repo");
     let url = util::env::var("TEST_GIT_REPO");
-    let mut fetch_opts = git2::FetchOptions::new();
-    fetch_opts.remote_callbacks(util::git2::RemoteCallbacks::new());
-    let mut repo_builder = git2::build::RepoBuilder::new();
-    repo_builder.fetch_options(fetch_opts);
-    let repo = match repo_builder.clone(&url, &to) {
-        Ok(repo) => repo,
-        Err(err) => panic!(
-            "{}",
-            String::from("Failed to clone git-test-fixture!") + &err.to_string() + " " + TEST_ERR
-        ),
-    };
+    let repo = util::git2::clone_repo(&url, &to);
 
     // Fetch the repo, should detect no changes
     assert_eq!(
@@ -112,13 +102,10 @@ fn git_fetches() {
 
     // Copy the repo and open it
     util::fs::copy_dir("./src/tests/tmp/git-repo", "./src/tests/tmp/git-repo-2");
-    let repo_2 = match git2::Repository::open("./src/tests/tmp/git-repo-2") {
-        Ok(repo) => repo,
-        Err(err) => panic!(
-            "{}",
-            String::from("Failed to clone git-test-fixture!") + &err.to_string() + " " + TEST_ERR
-        ),
-    };
+    let repo_2 = util::expect(
+        git2::Repository::open("./src/tests/tmp/git-repo-2"),
+        "Could not open a git repo!",
+    );
 
     // Make a change to the copied repo
     advance_repo(&repo_2);
