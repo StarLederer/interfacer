@@ -49,6 +49,19 @@ where
     }
 }
 
+pub fn expect_opt<T>(option: Option<T>, message: &str) -> T
+{
+    match option {
+        Some(s) => s,
+        None => {
+            panic!(
+                "{}",
+                String::from(message) + " " + TEST_ERR
+            )
+        }
+    }
+}
+
 pub mod fs {
     use crate::tests::messages::*;
 
