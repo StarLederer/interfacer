@@ -5,11 +5,15 @@ use crate::tests::{messages::*, util};
 
 use crate::git::*;
 
-// TODO: Parametrie the path!!!
-fn advance_repo(repo: &git2::Repository) {
+fn write_time_to_repo(repo: &git2::Repository) {
+    // Find workdir
+    let workdir = util::expect_opt(repo.workdir(), "Repo doesn't have a workdir!");
+
     // Make a change to worktree
+    let mut file_path = PathBuf::from(workdir);
+    file_path.push("time");
     util::fs::write(
-        "./src/tests/tmp/git-repo-2/time",
+        file_path,
         util::expect(
             std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH),
             "Error retreiving time. System time cannot be set to before the unix epoch",
@@ -112,7 +116,7 @@ fn git_fetches() {
     );
 
     // Make a change to the copied repo
-    advance_repo(&repo_2);
+    write_time_to_repo(&repo_2);
 
     // Push changes to the copied repo
     let mut origin = util::expect(
