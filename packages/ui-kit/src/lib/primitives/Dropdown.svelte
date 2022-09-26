@@ -46,11 +46,10 @@
 </Listbox>
 
 <style lang="scss" global>
-  @use "../sass-resources/label";
-
   @use "../sass-lib/traits/button-text.scss";
   @use "../sass-lib/traits/focus-indicator.scss";
   @use "../sass-lib/traits/half-transparent.scss";
+  @use "../sass-lib/traits/label.scss";
   @use "../sass-lib/traits/rounded.scss";
 
   @use "../sass-lib/tokens/lightness.scss";
@@ -82,7 +81,7 @@
     flex-direction: column;
 
     .listbox-label {
-      @include label.label;
+      @include label.index(--border-radius);
     }
 
     .clickable {

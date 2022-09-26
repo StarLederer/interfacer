@@ -10,10 +10,9 @@
 </label>
 
 <style lang="scss">
-  @use "../sass-resources/label";
-
   @use "../sass-lib/traits/focus-indicator.scss";
   @use "../sass-lib/traits/half-transparent.scss";
+  @use "../sass-lib/traits/label.scss";
 
   @use "../sass-lib/tokens/lightness.scss";
   @use "../sass-lib/tokens/transition.scss";
@@ -66,7 +65,7 @@
     }
 
     .label {
-      @include label.label;
+      @include label.index(--border-radius);
     }
 
     input {
