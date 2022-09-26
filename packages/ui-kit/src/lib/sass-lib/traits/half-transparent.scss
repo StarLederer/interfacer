@@ -1,0 +1,12 @@
+$a: --#{unique_id()};
+
+@mixin index($property, $h, $s, $l) {
+  #{$a}: 10%;
+  // #{$a}: 100%;
+  #{$property}: hsla(var($h), var($s), var($l), var($a));
+}
+
+@mixin hover() {
+  #{$a}: 20%;
+  // #{$a}: 100%;
+}
