@@ -4,39 +4,66 @@
   export let required = false;
 </script>
 
-<label class="input interactable" {required}>
+<label class="input" {required}>
   <div class="label">{label}</div>
   <input type="text" bind:value />
 </label>
 
 <style lang="scss">
   @use "../sass-resources/label";
-  @use "../sass-resources/interactable";
+
+  @use "../sass-lib/traits/focus-indicator.scss";
+  @use "../sass-lib/traits/half-transparent.scss";
+
+  @use "../sass-lib/tokens/lightness.scss";
+  @use "../sass-lib/tokens/transition.scss";
 
   .input {
-    --hue: 0;
-    @include interactable.baseColors;
-    @include interactable.highlightable;
-    @include interactable.transition;
-    @include interactable.outline(
+    // Base values
+    --base-hue: 0;
+    --base-s: 0%;
+    @include transition.index(--transition);
+    @include lightness.index(--base-l);
+    @include lightness.highlight(--base-highlight-l);
+
+    // Computed values
+    $h: --base-hue;
+    $s: --base-s;
+    --highlight-l: 0%;
+    --l: calc(var(--base-l) + var(--highlight-l));
+    --outline-color: hsl(var($h), var($s), var(--l));
+
+    // Traits
+    @include focus-indicator.index(
       --border-radius,
-      --background-hsl,
-      40%,
+      --outline-color,
       --transition
     );
-    @include interactable.buttonColors(
-      $hue: --hue,
-      $base-background-l: --base-background-l,
-      $base-color-l: --base-color-l,
-      $highlight-l: --highlight-l
-    );
-    @include interactable.half;
+    @include half-transparent.index(background, $h, $s, --l);
 
+    // Properties
+    transition: var(--transition);
     border-radius: var(--border-radius);
     height: 4rem;
     width: 100%;
+    color: hsl(var($h), var($s), var(--l));
     cursor: text;
     display: flex;
+
+    &:hover,
+    &:active,
+    &:focus-within {
+      --highlight-l: var(--base-highlight-l);
+      @include half-transparent.hover();
+    }
+
+    &:focus-within {
+      @include focus-indicator.focus();
+    }
+
+    &:active {
+      @include focus-indicator.active();
+    }
 
     .label {
       @include label.label;

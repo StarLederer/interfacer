@@ -25,45 +25,75 @@
 </button>
 
 <style lang="scss">
-  @use "../sass-resources/interactable";
+  @use "../sass-lib/traits/button-text.scss";
+  @use "../sass-lib/traits/focus-indicator.scss";
+  @use "../sass-lib/traits/glow.scss";
+  @use "../sass-lib/traits/half-transparent.scss";
+  @use "../sass-lib/traits/rounded.scss";
 
-  @mixin glow() {
-    --glow-color-a: 40%;
-    --glow-color: hsla(var(--background-hsl), var(--glow-color-a));
-    --glow: 0 0 6rem var(--glow-color);
-    --shadow: 0 0 0.4rem rgba(0, 0, 0, 0.6);
-
-    box-shadow: var(--glow), var(--shadow);
-
-    @media (prefers-color-scheme: light) {
-      --glow-color-a: 60%;
-      --shadow: 0 0 0 transparent;
-    }
-  }
+  @use "../sass-lib/tokens/lightness.scss";
+  @use "../sass-lib/tokens/transition.scss";
 
   button {
-    @include interactable.baseColors;
-    @include interactable.highlightable;
-    @include interactable.transition;
-    @include interactable.outline(
+    // Base values
+    @include lightness.highlight(--base-highlight-l);
+    @include transition.index(--transition);
+    @include lightness.index(--base-color-l);
+    @include lightness.index(--base-background-l);
+
+    // Computed values
+    $h: --hue;
+    --highlight-l: 0%;
+    --color-l: calc(var(--base-color-l) + var(--highlight-l));
+    --outline-color: hsl(var(--hue), var(--color-s), var(--color-l));
+    --background-a: 0%;
+    --background-s: 0%;
+    --background-l: calc(var(--base-background-l) + var(--highlight-l));
+    --background-a: 0%;
+    --background-hsl: var(#{$h}), var(--background-s), var(--background-l);
+    --background: hsla(var(--background-hsl), var(--background-a));
+    --color-s: 0%;
+    --color-l: calc(var(--base-color-l) + var(--highlight-l));
+    --color: hsl(var(#{$h}), var(--color-s), var(--color-l));
+
+    // Traits
+    @include button-text.index();
+    @include focus-indicator.index(
       --border-radius,
-      --background-hsl,
-      40%,
+      --outline-color,
       --transition
     );
-    @include interactable.buttonShape($border-radius: --border-radius);
-    @include interactable.buttonColors(
-      $hue: --hue,
-      $base-background-l: --base-background-l,
-      $base-color-l: --base-color-l,
-      $highlight-l: --highlight-l
-    );
+    @include rounded.index(--border-radius);
 
+    // Properties
+    background: var(--background);
+    color: var(--color);
+    border: none;
     display: flex;
     align-items: stretch;
+    transition: var(--transition);
+
+    &:disabled {
+      cursor: not-allowed;
+    }
 
     &:not(:disabled) {
       cursor: pointer;
+
+      &:hover,
+      &:active {
+        --background-a: 20%;
+        --highlight-l: var(--base-highlight-l);
+        --outline-color: hsl(var(--background-hsl));
+      }
+
+      &:focus {
+        @include focus-indicator.focus();
+      }
+
+      &:active {
+        @include focus-indicator.active();
+      }
     }
 
     .container {
@@ -75,13 +105,32 @@
     }
 
     &.is-half {
-      @include interactable.half;
+      @include half-transparent.index(
+        background,
+        $h,
+        --background-s,
+        --background-l
+      );
+
+      &:not(:disabled) {
+        &:hover,
+        &:active {
+          @include half-transparent.hover();
+        }
+      }
     }
 
     &.is-solid {
-      --base-color-l: 0%;
-      --background-a: 100% !important;
-      @include glow();
+      @include lightness.highlight-on-solid(--base-highlight-l);
+      @include lightness.inverse(--base-color-l);
+      --background-a: 100%;
+      --outline-color: hsl(var(--background-hsl));
+      @include glow.index(--hue, --background-s, --background-l);
+
+      &:hover,
+      &:active {
+        --background-a: 100%;
+      }
     }
 
     &.is-colored {
@@ -92,7 +141,7 @@
       --base-color-l: 60%;
 
       &.is-half {
-        --background-a: 20%;
+        @include half-transparent.hover();
       }
 
       &.is-solid {
@@ -101,22 +150,15 @@
     }
 
     @media (prefers-color-scheme: light) {
-      &.is-solid {
-        --base-highlight-l: 10%;
-        --base-color-l: 90%;
-      }
-
       &.is-colored {
-        --base-highlight-l: -20%;
-        --base-color-l: 40%;
+        &:not(.is-solid) {
+          --base-highlight-l: -20%;
+          --base-color-l: 40%;
+        }
 
         &.is-solid {
           --base-color-l: 10%;
           --base-highlight-l: 10%;
-        }
-
-        &.is-solid {
-          --base-background-l: 60%;
         }
       }
     }

@@ -1,7 +1,6 @@
 <script lang="ts">
   import Arrow from "svelte-material-icons/UnfoldMoreHorizontal.svelte";
   import {
-    Transition,
     Listbox,
     ListboxLabel,
     ListboxButton,
@@ -25,55 +24,60 @@
   on:change={(e) => (selected = e.detail)}
 >
   <ListboxLabel class="listbox-label">{label}</ListboxLabel>
-  <ListboxButton class="listbox-button">
+  <ListboxButton class="listbox-button clickable">
     {selected}
     <div class="icon">
       <Arrow />
     </div>
   </ListboxButton>
-  <Transition enter="animate-in" leave="animate-out">
-    <ListboxOptions class="listbox-options">
-      {#each options as option}
-        {#if option !== selected}
-          <ListboxOption
-            value={option}
-            class={({ active }) =>
-              "listbox-option button" + (active ? " force-hover" : "")}
-          >
-            {option}
-          </ListboxOption>
-        {/if}
-      {/each}
-    </ListboxOptions>
-  </Transition>
+  <ListboxOptions class="listbox-options">
+    {#each options as option}
+      {#if option !== selected}
+        <ListboxOption
+          value={option}
+          class={({ active }) =>
+            "listbox-option clickable" + (active ? " active" : "")}
+        >
+          {option}
+        </ListboxOption>
+      {/if}
+    {/each}
+  </ListboxOptions>
 </Listbox>
 
 <style lang="scss" global>
   @use "../sass-resources/label";
-  @use "../sass-resources/interactable";
+
+  @use "../sass-lib/traits/button-text.scss";
+  @use "../sass-lib/traits/focus-indicator.scss";
+  @use "../sass-lib/traits/half-transparent.scss";
+  @use "../sass-lib/traits/rounded.scss";
+
+  @use "../sass-lib/tokens/lightness.scss";
+  @use "../sass-lib/tokens/transition.scss";
 
   .listbox {
-    --hue: 0;
-    @include interactable.baseColors;
-    @include interactable.transition;
-    @include interactable.outline(
-      --border-radius,
-      --background-hsl,
-      40%,
-      --transition
-    );
-    @include interactable.buttonColors(
-      $hue: --hue,
-      $base-background-l: --base-background-l,
-      $base-color-l: --base-color-l,
-      $highlight-l: --highlight-l
-    );
-    --background-a: 0%;
+    // Base-values
+    --base-hue: 0;
+    --base-s: 0%;
+    @include transition.index(--transition);
+    @include lightness.index(--base-l);
+    @include lightness.highlight(--base-highlight-l);
 
+    // Computed values
+    $h: --base-hue;
+    $s: --base-s;
+    --highlight-l: 0%;
+    --l: calc(var(--base-l) + var(--highlight-l));
+    --outline-color: hsl(var($h), var($s), var(--l));
+
+    // Traits
+
+    // Properties
     border-radius: var(--border-radius);
-
     position: relative;
     flex: 1;
+    gap: 0.4rem;
     display: flex;
     flex-direction: column;
 
@@ -81,24 +85,43 @@
       @include label.label;
     }
 
-    .listbox-button {
-      @include interactable.highlightable;
-      @include interactable.transition;
-      @include interactable.buttonShape($border-radius: --border-radius);
-      @include interactable.buttonColors(
-        $hue: --hue,
-        $base-background-l: --base-background-l,
-        $base-color-l: --base-color-l,
-        $highlight-l: --highlight-l
-      );
-      @include interactable.half;
+    .clickable {
+      @include half-transparent.index(background, $h, $s, --l);
+      @include button-text.index();
+      @include rounded.index(--border-radius);
 
+      color: hsl(var($h), var($s), var(--l));
+      border: none;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .listbox-button {
+      // Traits
+      @include focus-indicator.index(
+        --border-radius,
+        --outline-color,
+        --transition
+      );
+
+      transition: var(--transition);
       height: 4rem;
       padding-block-start: calc(var(--border-radius) + 1rem);
-
-      cursor: pointer;
       text-align: left;
       font-size: 1rem;
+
+      &:hover,
+      &:active {
+        @include half-transparent.hover();
+      }
+
+      &:focus {
+        @include focus-indicator.focus();
+      }
+
+      &:active {
+        @include focus-indicator.active();
+      }
 
       .icon {
         position: absolute;
@@ -108,35 +131,41 @@
     }
 
     .listbox-options {
+      @include focus-indicator.index(
+        --border-radius,
+        --outline-color,
+        --transition
+      );
+
       list-style: none;
       display: flex;
       flex-direction: column;
       padding: 0;
       margin: 0;
-      border-radius: 0 0 var(--border-radius) var(--border-radius);
-      overflow: hidden;
+
+      &:focus {
+        @include focus-indicator.focus();
+      }
     }
 
     .listbox-option {
-      @include interactable.transition;
-      @include interactable.baseColors;
-      @include interactable.highlightable;
-      @include interactable.buttonColors(
-        $hue: --hue,
-        $base-background-l: --base-background-l,
-        $base-color-l: --base-color-l,
-        $highlight-l: --highlight-l
-      );
-      @include interactable.buttonShape($border-radius: --border-radius);
-      @include interactable.half;
-      border-radius: 0;
-      cursor: pointer;
-    }
+      &:first-child {
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+      }
 
-    &.is-open {
-      .listbox-button {
-        border-radius: var(--border-radius) var(--border-radius)  0 0;
+      &:last-child {
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
+      }
+
+      &.active {
+        @include half-transparent.hover();
       }
     }
+
+    // &.is-open {
+    //   .listbox-button {
+    //     border-radius: var(--border-radius) var(--border-radius) 0 0;
+    //   }
+    // }
   }
 </style>
