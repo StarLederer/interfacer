@@ -1,0 +1,27 @@
+@mixin index($property) {
+  #{$property}: 90%;
+
+  @media (prefers-color-scheme: light) {
+    #{$property}: 0%;
+  }
+}
+
+@mixin inverse($property) {
+  #{$property}: 0%;
+
+  @media (prefers-color-scheme: light) {
+    #{$property}: 90%;
+  }
+}
+
+@mixin highlight($property) {
+  #{$property}: 10%;
+
+  @media (prefers-color-scheme: light) {
+    #{$property}: -10%;
+  }
+}
+
+@mixin highlight-on-solid($property) {
+  #{$property}: 10%;
+}
