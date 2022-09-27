@@ -43,3 +43,7 @@ pub fn status(
     let stati = repo.statuses(None)?;
     Ok(stati.len() > 0)
 }
+
+pub fn nuke_pull() -> Result<bool, git2::Error>  {
+    todo!("fetch, merge, prefer local changes if any conflicts occur.");
+}
