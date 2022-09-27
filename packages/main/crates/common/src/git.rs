@@ -38,9 +38,8 @@ pub fn git_fetch(
 }
 
 pub fn status(
-    repo: &git2::Repository,
-    username: &str,
-    password: &str,
+    repo: &git2::Repository
 ) -> Result<bool, git2::Error> {
-    todo!("Execute git status")
+    let stati = repo.statuses(None)?;
+    Ok(stati.len() > 0)
 }
