@@ -10,29 +10,6 @@ use commands::*;
 fn main() {
     tauri::Builder::default()
         .manage(AppState::default())
-        // .manage(Actions(Mutex::new(vec![
-        //     common::Action {
-        //         idle_name: "Start server".to_string(),
-        //         active_name: "Stop server".to_string(),
-        //         process: None,
-        //         command: "ls -a".to_string(),
-        //         user_terminated: true,
-        //     },
-        //     common::Action {
-        //         idle_name: "Quick action".to_string(),
-        //         active_name: "".to_string(),
-        //         process: None,
-        //         command: "ls -a".to_string(),
-        //         user_terminated: false,
-        //     },
-        //     common::Action {
-        //         idle_name: "Long action".to_string(),
-        //         active_name: "".to_string(),
-        //         process: None,
-        //         command: "sleep 3".to_string(),
-        //         user_terminated: false,
-        //     },
-        // ])))
         .invoke_handler(tauri::generate_handler![
             add_website,
             get_websites,
