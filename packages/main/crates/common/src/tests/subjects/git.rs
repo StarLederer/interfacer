@@ -101,7 +101,7 @@ fn git_fetches() {
 
     // Fetch the repo, should detect no changes
     assert_eq!(
-        git_fetch(&repo, "origin", &username, &password,).expect(&fetch_fail_msg),
+        fetch(&repo, "origin", &username, &password,).expect(&fetch_fail_msg),
         false
     );
 
@@ -129,7 +129,7 @@ fn git_fetches() {
 
     // Fetch the now outdated repo, should detech changes
     assert_eq!(
-        git_fetch(&repo, "origin", &username, &password,).expect(&fetch_fail_msg),
+        fetch(&repo, "origin", &username, &password,).expect(&fetch_fail_msg),
         true
     );
 }

@@ -1,6 +1,6 @@
 use std::str;
 
-pub fn git_fetch(
+pub fn fetch(
     repo: &git2::Repository,
     remote: &str,
     username: &str,
