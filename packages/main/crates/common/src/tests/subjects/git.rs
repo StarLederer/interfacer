@@ -51,9 +51,6 @@ fn git_pulls_changes() {
 
 #[test]
 fn git_detects_changes() {
-    util::init_env();
-    let username = util::env::var("TEST_GIT_USERNAME");
-    let password = util::env::var("TEST_GIT_PASSWORD");
     let status_fail_msg = "Failed to status a git repo!";
 
     let from = Path::new("./src/tests/fixtures/git-repo");
@@ -64,12 +61,12 @@ fn git_detects_changes() {
     util::fs::copy_dir(from, &repo_path);
     let repo = util::expect(
         git2::Repository::open(&repo_path),
-        "Failed to open the git repo",
+        "Failed to open a git repo",
     );
 
     // Check the repo. Should not detect cahnges yet
     assert_eq!(
-        status(&repo, &username, &password).expect(status_fail_msg),
+        status(&repo).expect(status_fail_msg),
         false
     );
 
@@ -80,7 +77,7 @@ fn git_detects_changes() {
 
     // Check repo_2. Should detect changes now
     assert_eq!(
-        status(&repo, &username, &password).expect(status_fail_msg),
+        status(&repo).expect(status_fail_msg),
         true
     );
 }
