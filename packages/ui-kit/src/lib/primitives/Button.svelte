@@ -121,8 +121,9 @@
     }
 
     &.is-solid {
-      @include lightness.highlight-on-solid(--base-highlight-l);
-      @include lightness.inverse(--base-color-l);
+      @include lightness.asymetric(--base-background-l, 10%, 0%);
+      @include lightness.index(--base-color-l, 90%);
+      @include lightness.highlight-one-way(--base-highlight-l);
       --background-a: 100%;
       --outline-color: hsl(var(--background-hsl));
       @include glow.index(--hue, --background-s, --background-l);

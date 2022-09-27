@@ -9,8 +9,10 @@
 <div style={describeStyle(style)} />
 
 <style lang="scss">
+  @use "../sass-lib/tokens/lightness.scss";
+
   div {
-    --base-l: 100%;
+    @include lightness.index(--base-l);
     --color-1: hsla(0, 0%, var(--base-l), 10%);
     --color-2: hsla(0, 0%, var(--base-l), 40%);
 
@@ -20,10 +22,6 @@
     width: calc(var(--border-radius) * 2);
     height: calc(var(--border-radius) * 2);
     animation: spin 2s linear infinite;
-
-    @media (prefers-color-scheme: light) {
-      --base-l: 0%;
-    }
   }
 
   @keyframes spin {

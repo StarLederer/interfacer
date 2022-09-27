@@ -1,27 +1,46 @@
-@mixin index($property) {
-  #{$property}: 90%;
+$grade-0: 0%;
+$grade-10: 10%;
+$grade-20: 20%;
+$grade-40: 40%;
+$grade-40i: 60%;
+$grade-20i: 80%;
+$grade-10i: 90%;
+$grade-0i: 100%;
+
+@mixin index($property, $grade: $grade-10) {
+  #{$property}: 100% - $grade;
 
   @media (prefers-color-scheme: light) {
-    #{$property}: 0%;
+    #{$property}: $grade;
   }
 }
 
-@mixin inverse($property) {
-  #{$property}: 0%;
+@mixin asymetric($property, $grade-l, $grade-d) {
+  #{$property}: 100% - $grade-l;
 
   @media (prefers-color-scheme: light) {
-    #{$property}: 90%;
+    #{$property}: $grade-d;
   }
 }
 
-@mixin highlight($property) {
-  #{$property}: 10%;
+// Highlights
+
+$highlight-10: 10%;
+$highlight-20: 20%;
+$highlight-40: 40%;
+$highlight-60: 60%;
+$highlight-80: 60%;
+$highlight-90: 60%;
+$highlight-100: 100%;
+
+@mixin highlight($property, $strength: 10%) {
+  #{$property}: $strength;
 
   @media (prefers-color-scheme: light) {
-    #{$property}: -10%;
+    #{$property}: -$strength;
   }
 }
 
-@mixin highlight-on-solid($property) {
+@mixin highlight-one-way($property, $strength: 10%) {
   #{$property}: 10%;
 }
