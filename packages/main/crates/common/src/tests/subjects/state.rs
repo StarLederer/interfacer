@@ -3,9 +3,9 @@ use std::path::PathBuf;
 use crate::state::*;
 
 #[test]
-fn state_initializes() {
-    let state = AppState::init(
-        crate::config::Config {
+fn projects_initialize() {
+    let state = ProjectState::init(
+        crate::project_config::Config {
             version: String::from("1"),
             workspace_dir: String::from("./workspace"),
             after_code_download: vec![],

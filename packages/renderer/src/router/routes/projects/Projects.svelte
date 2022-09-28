@@ -3,8 +3,9 @@
   import { onMount } from "svelte";
   import Add from "svelte-material-icons/Git.svelte";
   import AddLocal from "svelte-material-icons/FolderPlus.svelte";
-  import route from "~/router";
-  import { name } from "~/routes/server/server";
+  import User from "svelte-material-icons/AccountCircle.svelte";
+  import {navigate} from "~/router";
+  import { projectStore } from "~/stores";
   import Project from "./lib/Project.svelte";
   import Progress from "ui-kit/primitives/Progress.svelte";
   import Button from "ui-kit/primitives/Button.svelte";
@@ -32,25 +33,21 @@
   <Flex slot="actions">
     {#if status}
       <Button
-        colored
-        style={{ hue: 100 }}
+        half
         on:click={async () => {
-          route.set("/add-website");
+          navigate("/add-website");
         }}
       >
-        Add local
+        Add project
         <AddLocal />
       </Button>
       <Button
         half
-        colored
-        style={{ hue: 100 }}
         on:click={async () => {
-          route.set("/add-website");
+          navigate("/settings");
         }}
       >
-        Add from Git
-        <Add />
+        <User />
       </Button>
     {/if}
   </Flex>
@@ -63,8 +60,8 @@
         <Project
           label={website}
           on:click={() => {
-            name.set(website);
-            route.set("/server");
+            projectStore.set(website);
+            navigate("/server");
           }}
         />
       {/each}

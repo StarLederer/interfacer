@@ -1,13 +1,13 @@
-use crate::config::{self};
+use crate::{project_config, user_config};
 use std::{fs, path::PathBuf, process::Child};
 
 pub struct ActionState {
-    pub config: config::ActionConfig,
+    pub config: project_config::ActionConfig,
     pub process: Option<Child>,
 }
 
 impl ActionState {
-    pub fn from_config(config: &config::ActionConfig) -> ActionState {
+    pub fn from_config(config: &project_config::ActionConfig) -> ActionState {
         ActionState {
             config: config.clone(),
             process: None,
@@ -15,16 +15,24 @@ impl ActionState {
     }
 }
 
-pub struct AppState {
+pub struct VersionControlState {
+    pub repo: git2::Repository,
+    pub remote: String,
+}
+
+pub struct ProjectState {
     pub workspace_dir: PathBuf,
     // pub after_code_download: Vec<ActionState>,
     // pub before_code_upload: Vec<ActionState>,
     pub actions: Vec<ActionState>,
-    pub repo: git2::Repository,
+    pub version_control: VersionControlState,
 }
 
-impl AppState {
-    pub fn init(config: config::Config, mut project_dir: PathBuf) -> Result<AppState, String> {
+impl ProjectState {
+    pub fn init(
+        config: project_config::Config,
+        mut project_dir: PathBuf,
+    ) -> Result<ProjectState, String> {
         // Init the actions vec
         let mut actions = vec![];
         for config in config.actions.iter() {
@@ -37,22 +45,52 @@ impl AppState {
             Ok(some) => some,
             Err(err) => {
                 return Err(err.to_string());
-            },
+            }
         };
 
-        // Init the source-control repo
-        let repo = match git2::Repository::open(&workspace_dir) {
-            Ok(some) => some,
-            Err(err) => {
-                return Err(err.to_string());
-            },
+        let version_control = {
+            // Init the source-control repo
+            let repo = match git2::Repository::open(&workspace_dir) {
+                Ok(some) => some,
+                Err(err) => {
+                    return Err(err.to_string());
+                }
+            };
+
+            // Init version control state
+            VersionControlState {
+                repo,
+                remote: String::from("Origin"),
+            }
         };
 
         // Return
-        Ok(AppState {
+        Ok(ProjectState {
             workspace_dir,
             actions,
-            repo
+            version_control,
         })
     }
+}
+
+pub struct UserState {
+    pub local_name: String,
+    pub git_username: String,
+    pub git_password: String,
+}
+
+impl UserState {
+    pub fn init(config: user_config::Config) -> Result<UserState, String> {
+        Ok(UserState {
+            local_name: config.username,
+            git_username: config.git.username,
+            git_password: config.git.password,
+        })
+    }
+}
+
+#[derive(Default)]
+pub struct AppState {
+    pub project: Option<ProjectState>,
+    pub user: Option<UserState>,
 }

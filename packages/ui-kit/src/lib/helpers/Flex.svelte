@@ -1,16 +1,23 @@
 <script lang="ts">
-  export let direction: "row" | "column" | null = null;
-  export let justify: "space-between" | "center" | "flex-start" | "flex-end" | null = null;
-  export let align: "stretch" | "center" | "flex-start" | "flex-end" | null = null;
-  export let gap: number | null = 0.4;
+  import type * as CSS from "csstype";
+
+  let className: string = "";
+  export { className as class };
+
+  export let direction: CSS.Property.FlexDirection | null = null;
+  export let justify: CSS.Property.JustifyContent | null = null;
+  export let align: CSS.Property.AlignContent | null = null;
+  export let gap: number = 0.4;
 </script>
 
-<div style={`
-  ${direction !== null ? `flex-direction: ${direction};` : ''}
-  ${justify !== null ? `justify-content: ${justify};` : ''}
-  ${align !== null ? `align-items: ${align};` : ''}
-  ${gap !== null ? `gap: ${gap}rem;` : ''}
-`}>
+<div
+  class={className}
+  style={`
+    ${direction !== null ? `flex-direction: ${direction};` : ''}
+    ${justify !== null ? `justify-content: ${justify};` : ''}
+    ${align !== null ? `align-items: ${align};` : ''}
+    ${gap !== null ? `gap: ${gap}rem;` : ''}
+  `}>
  <slot />
 </div>
 

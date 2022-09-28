@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 use crate::tests::{messages::*, util};
 
 use crate::api::*;
-use crate::config::ActionConfig;
+use crate::project_config::ActionConfig;
 
 #[test]
 fn self_terminated_interactions_work() {
@@ -17,7 +17,7 @@ fn self_terminated_interactions_work() {
         process: None,
     };
 
-    interact(&mut action, Path::new("./")).unwrap();
+    interact_directly(&mut action, Path::new("./")).unwrap();
 
     if action.process.is_some() {
         panic!(
@@ -39,7 +39,7 @@ fn user_terminated_interactions_work() {
     };
 
     // Start action
-    interact(&mut action, Path::new("./")).unwrap();
+    interact_directly(&mut action, Path::new("./")).unwrap();
 
     std::thread::sleep(std::time::Duration::from_secs(5));
 
@@ -50,7 +50,7 @@ fn user_terminated_interactions_work() {
     let pid = action.process.as_ref().unwrap().id();
 
     // Stop action
-    interact(&mut action, Path::new("./")).unwrap();
+    interact_directly(&mut action, Path::new("./")).unwrap();
 
     if String::from_utf8(
         std::process::Command::new("ps")
@@ -82,8 +82,8 @@ fn source_control_detects_changes() {
 
     util::fs::copy_dir(from, to);
 
-    let state = crate::state::AppState::init(
-        crate::config::Config {
+    let state = crate::state::ProjectState::init(
+        crate::project_config::Config {
             version: String::from("1"),
             workspace_dir: String::from("./workspace"),
             after_code_download: vec![],

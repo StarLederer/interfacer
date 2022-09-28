@@ -1,43 +1,22 @@
 <script lang="ts">
   import { style } from "ui-kit/css-engine/style";
-  import route from "~/router";
-  import Projects from "~/routes/projects/Projects.svelte";
-  import AddProject from "~/routes/AddProject.svelte";
-  import Server from "~/routes/server/Server.svelte";
-  import { routeIn, routeOut } from "~/lib/visuals";
+  import { navigate, Root } from "~/router";
 
-  route.set("/websites");
+  navigate("/setup/user");
 </script>
 
-<main style={style({
-  hue: 0,
-  borderRadius: 1,
-})}>
-  {#if $route.startsWith("/websites")}
-    <section in:routeIn out:routeOut>
-      <Projects />
-    </section>
- {:else if $route.startsWith("/add-website")}
-    <section in:routeIn out:routeOut>
-      <AddProject />
-    </section>
-   {:else if $route.startsWith("/server")}
-    <section in:routeIn out:routeOut>
-      <Server />
-    </section>
-  {/if}
+<main
+  style={style({
+    hue: 0,
+    borderRadius: 1,
+  })}
+>
+  <Root />
 </main>
 
 <style>
   main {
     position: fixed;
     inset: 0;
-  }
-
-  section {
-    position: absolute;
-    inset: 0;
-    overflow: scroll;
-    overflow: overlay;
   }
 </style>

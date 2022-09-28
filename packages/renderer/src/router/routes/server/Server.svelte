@@ -4,17 +4,17 @@
   import Refresh from "svelte-material-icons/Refresh.svelte";
   import Save from "svelte-material-icons/ContentSave.svelte";
 
-  import route from "~/router";
+  import {navigate} from "~/router";
   import { stringToHue } from "~/lib/visuals";
   import Button from "ui-kit/primitives/Button.svelte";
   import Flex from "ui-kit/helpers/Flex.svelte";
   import Progress from "ui-kit/primitives/Progress.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
 
-  import { name } from "./server";
+  import { projectStore } from "~/stores";
   import Action from "./lib/Action.svelte";
 
-  $: hue = stringToHue($name);
+  $: hue = stringToHue($projectStore);
 
   let error;
   let actions: {
@@ -24,7 +24,7 @@
 
   onMount(async () => {
     try {
-      await invoke("load_project", { name: $name });
+      await invoke("load_project", { name: $projectStore });
       actions = await invoke("get_actions");
     } catch (err) {
       error = err;
@@ -34,11 +34,11 @@
 
 <section>
   <Headerbar
-    title={$name}
+    title={$projectStore}
     back={async () => {
       error = undefined;
       // await invoke("close_website");
-      route.set("/websites");
+      navigate("/websites");
     }}
   >
     <Flex slot="title-actions">

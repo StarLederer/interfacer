@@ -7,7 +7,7 @@
   import Dropdown from "ui-kit/primitives/Dropdown.svelte";
   import Button from "ui-kit/primitives/Button.svelte";
   import Input from "ui-kit/primitives/Input.svelte";
-  import route from "../router";
+  import {navigate} from "~/router";
   import Progress from "ui-kit/primitives/Progress.svelte";
   import Flex from "ui-kit/helpers/Flex.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
@@ -23,7 +23,7 @@
 <Headerbar
   title="Add website"
   back={() => {
-    route.set("/websites");
+    navigate("/websites");
   }}
 >
   <Button solid colored style={{ hue: 100 }} slot="actions">
@@ -45,7 +45,7 @@
       on:submit|preventDefault={async () => {
         loading = true;
         await invoke("add_website", { name, url });
-        route.set("/websites");
+        navigate("/websites");
       }}
     >
       <Input label="Name" bind:value={name} required />
@@ -110,6 +110,10 @@
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+  }
+
+  fieldset {
+    padding: 0.4rem;
   }
 
   .action {

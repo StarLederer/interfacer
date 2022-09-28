@@ -45,7 +45,7 @@ pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Re
 }
 
 #[derive(Default)]
-pub struct AppState(Mutex<Option<common::state::AppState>>);
+pub struct AppState(Mutex<common::state::AppState>);
 
 #[tauri::command]
 pub fn load_project(
@@ -68,9 +68,9 @@ pub fn load_project(
         }
     };
 
-    let config = match common::config::parse_config(
+    let config = match common::project_config::parse_config(
         &config_src,
-        common::config::Config {
+        common::project_config::Config {
             version: String::from("1"),
             workspace_dir: String::from("./workspace"),
             after_code_download: vec![],
@@ -84,14 +84,15 @@ pub fn load_project(
         }
     };
 
-    let initialized_state = match common::state::AppState::init(config, project_path) {
+    let initialized_state = match common::state::ProjectState::init(config, project_path) {
         Ok(state) => state,
         Err(err) => {
             return Err(err.to_string());
         }
     };
 
-    *state.0.lock().unwrap() = Some(initialized_state);
+    let mut state = state.0.lock().unwrap();
+    (*state).project = Some(initialized_state);
 
     Ok(())
 }
@@ -99,29 +100,14 @@ pub fn load_project(
 #[tauri::command]
 pub fn get_actions(state: tauri::State<'_, AppState>) -> Result<Vec<common::api::Consequence>, String> {
     let state = state.0.lock().unwrap();
-
-    if let Some(state) = &*state {
-        Ok(common::api::get_actions(state))
-    } else {
-        Err("Attempted to start action before project is loaded".to_string())
-    }
+    common::api::get_actions(&state)
 }
 
 #[tauri::command]
 pub async fn interact(
-    action_i: usize,
     state: tauri::State<'_, AppState>,
+    action_i: usize,
 ) -> Result<common::api::Consequence, String> {
     let mut state = state.0.lock().unwrap();
-    let state = match &mut *state {
-        Some(state) => state,
-        None => return Err("Attempted to start action before project is loaded".to_string()),
-    };
-
-    if action_i >= (state.actions).len() {
-        return Err("Action index out of bounds. This is a bug! Please report it".to_string());
-    }
-
-    let action = &mut state.actions[action_i];
-    common::api::interact(action, &state.workspace_dir)
+    common::api::interact(&mut state, action_i)
 }
