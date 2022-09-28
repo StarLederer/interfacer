@@ -4,9 +4,9 @@
   import Favorite from "svelte-material-icons/Star.svelte";
 
   import { stringToHue } from "~/lib/visuals";
-  import Button from "ui-kit/primitives/Button.svelte";
-  import Panel from "ui-kit/primitives/Panel.svelte";
-  import Flex from "ui-kit/helpers/Flex.svelte";
+  import Button from "~/lib/primitives/Button.svelte";
+  import Panel from "~/lib/primitives/Panel.svelte";
+  import Flex from "~/lib/helpers/Flex.svelte";
 
   export let label = "";
 </script>

@@ -1,15 +1,12 @@
 <script lang="ts">
-  import { style as describeStyle } from "$lib/css-engine/style.js";
-
   export let type = "button";
   export let half = false;
   export let solid = false;
   export let colored = false;
   export let disabled = false;
-  export let style: {
-    borderRadius?: number;
-    hue?: number;
-  } = {};
+
+  export let hue: number | null = null;
+  export let borderRadius: number | null = null;
 </script>
 
 <button
@@ -18,7 +15,10 @@
   class:is-solid={solid}
   {type}
   {disabled}
-  style={describeStyle(style)}
+  style={`
+    ${hue != null ? `--hue: ${hue};` : ""}
+    ${borderRadius != null ? `--border-radius: ${borderRadius};` : ""}
+  `}
   on:click
 >
   <div class="container"><slot /></div>

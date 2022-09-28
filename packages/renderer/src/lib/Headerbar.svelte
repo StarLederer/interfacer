@@ -1,6 +1,6 @@
 <script lang="ts">
   import Back from "svelte-material-icons/ChevronLeft.svelte";
-  import Button from "ui-kit/primitives/Button.svelte";
+  import Button from "~/lib/primitives/Button.svelte";
 
   export let title = null;
   export let back = null;

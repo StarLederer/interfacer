@@ -2,10 +2,10 @@
   import Save from "svelte-material-icons/Check.svelte";
   import Remove from "svelte-material-icons/Close.svelte";
   import { invoke } from "@tauri-apps/api/tauri";
-  import Button from "ui-kit/primitives/Button.svelte";
-  import Input from "ui-kit/primitives/Input.svelte";
-  import Progress from "ui-kit/primitives/Progress.svelte";
-  import Flex from "ui-kit/helpers/Flex.svelte";
+  import Button from "~/lib/primitives/Button.svelte";
+  import Input from "~/lib/primitives/Input.svelte";
+  import Progress from "~/lib/primitives/Progress.svelte";
+  import Flex from "~/lib/helpers/Flex.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
   import { navigate } from "~/router";
 
@@ -30,13 +30,13 @@
     solid={!loading}
     half={loading}
     colored
-    style={{ hue: 100 }}
+    hue={100}
     slot="actions"
     disabled={loading}
     on:click={save}
   >
     {#if loading}
-      <Progress style={{ borderRadius: 0.5 }} />
+      <Progress borderRadius={0.5} />
     {:else}
       Save
       <Save />

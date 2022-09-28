@@ -1,18 +1,20 @@
 <script lang="ts">
-  import { style as describeStyle } from "$lib/css-engine/style.js";
-
   let titleStyle = `
     color: hsl(var(--hue), 20%, var(--color-l));
     font-weight: 600;
   `;
 
-  export let style: {
-    hue: number;
-    borderRadius?: number;
-  };
+  export let hue: number | null = null;
+  export let borderRadius: number | null = null;
 </script>
 
-<div class="panel" style={describeStyle(style)}>
+<div
+  class="panel"
+  style={`
+  ${hue != null ? `--hue: ${hue};` : ""}
+  ${borderRadius != null ? `--border-radius: ${borderRadius};` : ""}
+`}
+>
   <slot {titleStyle} />
 </div>
 

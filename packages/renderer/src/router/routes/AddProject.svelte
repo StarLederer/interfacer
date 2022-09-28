@@ -4,13 +4,13 @@
   import Back from "svelte-material-icons/ChevronLeft.svelte";
   import Remove from "svelte-material-icons/Close.svelte";
   import { invoke } from "@tauri-apps/api/tauri";
-  import Dropdown from "ui-kit/primitives/Dropdown.svelte";
-  import Button from "ui-kit/primitives/Button.svelte";
-  import Input from "ui-kit/primitives/Input.svelte";
-  import {navigate} from "~/router";
-  import Progress from "ui-kit/primitives/Progress.svelte";
-  import Flex from "ui-kit/helpers/Flex.svelte";
+  import Dropdown from "~/lib/primitives/Dropdown.svelte";
+  import Button from "~/lib/primitives/Button.svelte";
+  import Input from "~/lib/primitives/Input.svelte";
+  import Progress from "~/lib/primitives/Progress.svelte";
+  import Flex from "~/lib/helpers/Flex.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
+  import {navigate} from "~/router";
 
   let loading = false;
   let name;

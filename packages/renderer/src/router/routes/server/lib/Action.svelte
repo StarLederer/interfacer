@@ -1,8 +1,8 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/tauri";
   import Active from "svelte-material-icons/Cog.svelte";
-  import Button from "ui-kit/primitives/Button.svelte";
-  import Progress from "ui-kit/primitives/Progress.svelte";
+  import Button from "~/lib/primitives/Button.svelte";
+  import Progress from "~/lib/primitives/Progress.svelte";
 
   let error;
   let active = false;

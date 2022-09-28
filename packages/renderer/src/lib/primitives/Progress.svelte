@@ -1,12 +1,10 @@
 <script lang="ts">
-  import { style as describeStyle } from "$lib/css-engine/style.js";
-
-  export let style: {
-    borderRadius?: number;
-  } = {};
+  export let borderRadius: number | null = null;
 </script>
 
-<div style={describeStyle(style)} />
+<div
+  style={`${borderRadius != null ? `--borderRadius : ${borderRadius}` : ""}`}
+/>
 
 <style lang="scss">
   @use "../sass-lib/tokens/lightness.scss";

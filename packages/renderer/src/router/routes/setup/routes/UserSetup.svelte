@@ -1,10 +1,10 @@
 <script lang="ts">
   import Git from "svelte-material-icons/Git.svelte"
   import Save from "svelte-material-icons/Check.svelte"
-  import Panel from "ui-kit/primitives/Panel.svelte"
-  import Button from "ui-kit/primitives/Button.svelte"
-  import Input from "ui-kit/primitives/Input.svelte"
-  import Flex from "ui-kit/helpers/Flex.svelte"
+  import Panel from "~/lib/primitives/Panel.svelte"
+  import Button from "~/lib/primitives/Button.svelte"
+  import Input from "~/lib/primitives/Input.svelte"
+  import Flex from "~/lib/helpers/Flex.svelte"
 
   import { inline } from "~/lib/css";
 
@@ -18,7 +18,7 @@
 
 
 <div class="container">
-  <Panel style={{hue: 100}}>
+  <Panel hue={100}>
     <Flex direction="column" justify="space-between" class={styles.root} gap={1}>
 
       <div class="header">

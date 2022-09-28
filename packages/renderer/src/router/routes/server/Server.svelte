@@ -6,9 +6,9 @@
 
   import {navigate} from "~/router";
   import { stringToHue } from "~/lib/visuals";
-  import Button from "ui-kit/primitives/Button.svelte";
-  import Flex from "ui-kit/helpers/Flex.svelte";
-  import Progress from "ui-kit/primitives/Progress.svelte";
+  import Button from "~/lib/primitives/Button.svelte";
+  import Flex from "~/lib/helpers/Flex.svelte";
+  import Progress from "~/lib/primitives/Progress.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
 
   import { projectStore } from "~/stores";

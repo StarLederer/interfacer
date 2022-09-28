@@ -7,20 +7,20 @@
     ListboxOptions,
     ListboxOption,
   } from "@rgossiaux/svelte-headlessui";
-  import { style as describeStyle } from "$lib/css-engine/style.js";
 
   export let label: string;
   export let selected: string;
   export let options: string[];
-  export let style: {
-    borderRadius?: number;
-  } = {};
+
+  export let borderRadius: number | null = null;
 </script>
 
 <Listbox
   value={"Listbox val"}
   class={({ open }) => "listbox" + (open ? " is-open force-focus" : "")}
-  style={describeStyle(style)}
+  style={`
+    ${borderRadius != null ? `--border-radius: ${borderRadius};` : ""}
+  `}
   on:change={(e) => (selected = e.detail)}
 >
   <ListboxLabel class="listbox-label">{label}</ListboxLabel>

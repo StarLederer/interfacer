@@ -7,9 +7,9 @@
   import {navigate} from "~/router";
   import { projectStore } from "~/stores";
   import Project from "./lib/Project.svelte";
-  import Progress from "ui-kit/primitives/Progress.svelte";
-  import Button from "ui-kit/primitives/Button.svelte";
-  import Flex from "ui-kit/helpers/Flex.svelte";
+  import Progress from "~/lib/primitives/Progress.svelte";
+  import Button from "~/lib/primitives/Button.svelte";
+  import Flex from "~/lib/helpers/Flex.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
 
   let status;
