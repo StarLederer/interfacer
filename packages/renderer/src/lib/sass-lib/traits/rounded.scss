@@ -1,5 +1,0 @@
-// Rounded edges + padding
-@mixin index($border-radius) {
-  padding: var(#{$border-radius});
-  border-radius: var(#{$border-radius});
-}

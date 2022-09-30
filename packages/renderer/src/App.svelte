@@ -1,15 +1,17 @@
 <script lang="ts">
-  import { navigate, Root } from "~/router";
+  import { navigate } from "~/lib/router";
+  import Root from "./tree/Root.svelte";
 
-  navigate("/setup/user");
+  navigate("/websites");
 </script>
 
-<main>
+<main class="bg-def text-on-def">
   <Root />
 </main>
 
 <style>
   main {
+    --hue: 40;
     position: fixed;
     inset: 0;
   }

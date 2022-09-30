@@ -1,18 +1,15 @@
 $glow-color-a: --#{unique-id()};
 $glow-color: --#{unique-id()};
 $glow: --#{unique-id()};
-$shadow: --#{unique-id()};
 
-@mixin index($h, $s, $l) {
+@mixin index($color) {
   #{$glow-color-a}: 40%;
-  #{$glow-color}: hsla(var($h), var($s), var($l), var($glow-color-a));
+  #{$glow-color}: hsla(var($color), var($glow-color-a));
   #{$glow}: 0 0 6rem var($glow-color);
-  #{$shadow}: 0 0 0.4rem rgba(0, 0, 0, 0.6);
 
-  box-shadow: var($glow), var($shadow);
+  box-shadow: var($glow);
 
   @media (prefers-color-scheme: light) {
     #{$glow-color-a}: 60%;
-    #{$shadow}: 0 0 0 transparent;
   }
 }

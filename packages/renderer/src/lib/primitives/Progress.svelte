@@ -6,14 +6,8 @@
   style={`${borderRadius != null ? `--borderRadius : ${borderRadius}` : ""}`}
 />
 
-<style lang="scss">
-  @use "../sass-lib/tokens/lightness.scss";
-
+<style>
   div {
-    @include lightness.index(--base-l);
-    --color-1: hsla(0, 0%, var(--base-l), 10%);
-    --color-2: hsla(0, 0%, var(--base-l), 40%);
-
     border: 0.2rem solid var(--color-1);
     border-top: 0.2rem solid var(--color-2);
     border-radius: 50%;

@@ -45,126 +45,91 @@
   </ListboxOptions>
 </Listbox>
 
-<style lang="scss" global>
-  @use "../sass-lib/traits/button-text.scss";
-  @use "../sass-lib/traits/focus-indicator.scss";
-  @use "../sass-lib/traits/half-transparent.scss";
-  @use "../sass-lib/traits/label.scss";
-  @use "../sass-lib/traits/rounded.scss";
-
-  @use "../sass-lib/tokens/lightness.scss";
-  @use "../sass-lib/tokens/transition.scss";
-
+<style lang="postcss" global>
   .listbox {
-    // Base-values
-    --base-hue: 0;
-    --base-s: 0%;
-    @include transition.index(--transition);
-    @include lightness.index(--base-l);
-    @include lightness.highlight(--base-highlight-l);
-
-    // Computed values
-    $h: --base-hue;
-    $s: --base-s;
-    --highlight-l: 0%;
-    --l: calc(var(--base-l) + var(--highlight-l));
-    --outline-color: hsl(var($h), var($s), var(--l));
-
-    // Traits
-
-    // Properties
-    border-radius: var(--border-radius);
+    @apply flex
+      flex-col
+      gap-xs
+      flex-1
+      border-color-int3
+      text-on-int3
+      rund-m;
     position: relative;
-    flex: 1;
-    gap: 0.4rem;
-    display: flex;
-    flex-direction: column;
 
-    .listbox-label {
-      @include label.index(--border-radius);
+    &:hover {
+      --highlight: -10%;
     }
 
-    .clickable {
-      @include half-transparent.index(background, $h, $s, --l);
-      @include button-text.index();
-      @include rounded.index(--border-radius);
+    & .listbox-label {
+      @apply text-on-def-2;
+      position: absolute;
+      left: 1rem;
+      line-height: 2.5rem;
+      z-index: 1;
+      font-size: 0.8rem;
+      pointer-events: none;
+    }
 
-      color: hsl(var($h), var($s), var(--l));
-      border: none;
-      transition: var(--transition);
+    & .clickable {
+      @apply int-text
+        transition
+        pad-m;
+      border-color: inherit;
       cursor: pointer;
     }
 
-    .listbox-button {
-      // Traits
-      @include focus-indicator.index(
-        --border-radius,
-        --outline-color,
-        --transition
-      );
-
-      transition: var(--transition);
-      height: 4rem;
-      padding-block-start: calc(var(--border-radius) + 1rem);
+    & .listbox-button {
+      @apply round-m;
+      border-width: 1px;
+      border-style: solid;
+      color: inherit;
+      padding-block-start: 2rem;
       text-align: left;
-      font-size: 1rem;
 
-      &:hover,
-      &:active {
-        @include half-transparent.hover();
-      }
-
-      &:focus {
-        @include focus-indicator.focus();
-      }
-
-      &:active {
-        @include focus-indicator.active();
-      }
-
-      .icon {
+      & .icon {
         position: absolute;
-        right: var(--border-radius);
+        right: 1rem;
         top: 1.5rem;
       }
     }
 
-    .listbox-options {
-      @include focus-indicator.index(
-        --border-radius,
-        --outline-color,
-        --transition
-      );
-
+    & .listbox-options {
+      @apply round-m;
+      border-color: inherit;
+      border-width: 1px;
+      border-style: solid;
       list-style: none;
       display: flex;
       flex-direction: column;
-      padding: 0;
-      margin: 0;
-
-      &:focus {
-        @include focus-indicator.focus();
-      }
+      overflow: hidden;
     }
 
-    .listbox-option {
-      &:first-child {
-        border-radius: var(--border-radius) var(--border-radius) 0 0;
-      }
-
-      &:last-child {
-        border-radius: 0 0 var(--border-radius) var(--border-radius);
-      }
-
+    & .listbox-option {
       &.active {
-        @include half-transparent.hover();
+        --highlight: -10%;
+        @apply bg-int2 text-on-int2;
       }
     }
 
-    // &.is-open {
-    //   .listbox-button {
-    //     border-radius: var(--border-radius) var(--border-radius) 0 0;
-    //   }
-    // }
+    &:focus-within,
+    &.is-open {
+      & .listbox-options {
+        @apply border-color-int;
+      }
+    }
+
+    &.is-open {
+      @apply border-color-int;
+
+      & .listbox-button {
+        border-end-start-radius: 0.4rem;
+        border-end-end-radius: 0.4rem;
+      }
+
+      & .listbox-options {
+        border-start-start-radius: 0.4rem;
+        border-start-end-radius: 0.4rem;
+      }
+    }
   }
 </style>

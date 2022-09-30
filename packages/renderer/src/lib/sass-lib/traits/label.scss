@@ -1,9 +1,0 @@
-@mixin index($border-radius) {
-  position: absolute;
-  left: var(#{$border-radius});
-  line-height: calc(var(#{$border-radius}) * 2.5);
-  font-size: 0.8rem;
-  opacity: 0.6;
-  user-select: none;
-  pointer-events: none;
-}

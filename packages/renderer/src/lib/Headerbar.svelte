@@ -8,6 +8,7 @@
 
 <div class="header-bar">
   <div class="title-side">
+    {#if back || $$slots.titleActions}
     <div class="title-actions">
       {#if back}
         <Button half on:click={back}>
@@ -15,8 +16,10 @@
         </Button>
       {/if}
 
-      <slot name="title-actions" />
+      <slot name="titleActions" />
     </div>
+    {/if}
+
 
     {#if title}
       <h2>{title}</h2>
@@ -38,7 +41,7 @@
   .header-bar {
     gap: 1rem;
     justify-content: space-between;
-    padding: var(--border-radius);
+    padding: 1rem;
   }
 
   .title-side {
