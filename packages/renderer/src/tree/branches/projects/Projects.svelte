@@ -29,7 +29,7 @@
 </script>
 
 <Headerbar title="Your projects">
-  <div class="flex gap-s" slot="actions">
+  <div class="flex gap-s0" slot="actions">
     {#if status}
       <Button
         half

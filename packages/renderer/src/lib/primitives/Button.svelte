@@ -21,15 +21,15 @@
   `}
   on:click
 >
-  <div class="flex items-center justify-center flex-1 gap-m"><slot /></div>
+  <div class="flex items-center justify-center flex-1 gap-m0"><slot /></div>
 </button>
 
 <style lang="postcss">
   button {
     @apply flex
       items-stretch
-      round-m
-      pad-m
+      round-m0
+      pad-m0
       int-text
       transition
       bg-none

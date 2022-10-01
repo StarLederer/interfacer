@@ -52,7 +52,7 @@
         navigate("/websites");
       }}
     >
-      <div class="flex flex-col gap-s">
+      <div class="flex flex-col gap-s0">
         <Input label="Name" bind:value={name} required />
         <Input label="Git URL" bind:value={url} required />
       </div>
@@ -99,15 +99,15 @@
   .add-website {
     @apply flex
       flex-col
-      gap-m
-      pad-m;
+      gap-m0
+      pad-m0;
   }
 
   form,
   fieldset {
     @apply flex
       flex-col
-      gap-s;
+      gap-s0;
   }
 
   form {

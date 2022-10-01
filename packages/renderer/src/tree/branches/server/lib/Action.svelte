@@ -71,15 +71,6 @@
 </Button>
 
 <style lang="postcss">
-  @mixin use-background {
-    --background: hsl(
-      var(--hue),
-      var(--background-s),
-      var(--background-l),
-      var(--background-a)
-    );
-  }
-
   @keyframes rotate {
     from {
       transform: rotate(0deg);

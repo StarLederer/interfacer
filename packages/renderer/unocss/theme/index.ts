@@ -27,6 +27,27 @@ const theme: ITheme = {
       'int3': { dark: { s: 10, l: 10 } },
       'on-int3': { dark: { s: 10, l: 80 } },
     },
+    sizes: {
+      's0': '1px',
+      's--': '0.2rem',
+      's-': '0.4rem',
+      's': '0.5rem',
+      's+': '0.6rem',
+      's++': '0.8rem',
+      'm0': '1rem',
+      'm--': '2rem',
+      'm-': '4rem',
+      'm': '5rem',
+      'm+': '6rem',
+      'm++': '8rem',
+      'l0': '10rm',
+      'l--': '20rm',
+      'l-': '40rm',
+      'l': '50rm',
+      'l+': '60rm',
+      'l++': '80rm',
+      'xl0': '100rm',
+    }
   }
 };
 

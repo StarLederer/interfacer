@@ -9,7 +9,7 @@
   export let label = "";
 </script>
 
-<div class="panel bg-srf text-on-srf-2 round-m pad-m pad-block-l">
+<div class="panel bg-srf text-on-srf-2 round-m0 pad-m0 pad-block-l0">
   <article>
     <div class="header">
       <div class="title text-on-srf">{label}</div>

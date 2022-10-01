@@ -49,7 +49,7 @@
   .listbox {
     @apply flex
       flex-col
-      gap-xs
+      gap-s0
       flex-1
       border-color-int3
       text-on-int3
@@ -73,13 +73,13 @@
     & .clickable {
       @apply int-text
         transition
-        pad-m;
+        pad-m0;
       border-color: inherit;
       cursor: pointer;
     }
 
     & .listbox-button {
-      @apply round-m;
+      @apply round-m0;
       border-width: 1px;
       border-style: solid;
       color: inherit;
@@ -94,7 +94,7 @@
     }
 
     & .listbox-options {
-      @apply round-m;
+      @apply round-m0;
       border-color: inherit;
       border-width: 1px;
       border-style: solid;

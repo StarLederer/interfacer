@@ -9,7 +9,7 @@
 </script>
 
 <div class="container flex items-center justify-center">
-  <div class="flex flex-col gap-m">
+  <div class="flex flex-col gap-m0">
     <div class="header">
       <div class="git bg-srf text-on-srf">
         <Git size="2rem" />
@@ -18,7 +18,7 @@
       <span class="text-on-def-2">Let's start by setting up your Git credentials</span>
     </div>
 
-    <div class="flex flex-col gap-s">
+    <div class="flex flex-col gap-s0">
       <Input label="Username" bind:value={username} />
       <Input label="Token" bind:value={password} />
     </div>

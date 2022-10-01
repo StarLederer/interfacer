@@ -1,5 +1,7 @@
+import { Rule } from "@unocss/core";
+
 // Generates rules that
-const colorRules = (prefix, property) => {
+const colorRules = (prefix, property): Rule<{}>[] => {
   const formulas: [(color: string) => string, string[]][] = [
     [
       (color) => `hsl(var(--hue), var(--col-${color}-s), var(--col-${color}-l));`,
@@ -44,6 +46,6 @@ const colorRules = (prefix, property) => {
   });
 
   return rules;
-}
+};
 
 export { colorRules }

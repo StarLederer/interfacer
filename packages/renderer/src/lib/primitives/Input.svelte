@@ -11,7 +11,7 @@
 
 <style lang="postcss">
   .input {
-    @apply round-m border-color-int3 text-on-int3 transition;
+    @apply round-m0 border-color-int3 text-on-int3 transition;
     border-width: 1px;
     border-style: solid;
     width: 100%;
@@ -41,7 +41,7 @@
       flex: 1;
       color: inherit;
       border-radius: inherit;
-      @apply pad-m int-text;
+      @apply pad-m0 int-text;
       padding-block-start: 2rem;
       outline: none;
       top: 0;
