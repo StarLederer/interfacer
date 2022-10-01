@@ -29,7 +29,7 @@
   <slot name="actions" />
 </div>
 
-<style>
+<style lang="postcss">
   .header-bar,
   .title-side,
   .title-actions {
@@ -39,17 +39,17 @@
   }
 
   .header-bar {
-    gap: 1rem;
-    justify-content: space-between;
-    padding: 1rem;
+    @apply pd-m0
+      gap-m0
+      justify-between;
   }
 
   .title-side {
-    flex:1;
-    gap: 1rem;
+    @apply flex1
+      gap-m0;
   }
 
   .title-actions {
-    gap: 0.4rem;
+    @apply gap-s-;
   }
 </style>

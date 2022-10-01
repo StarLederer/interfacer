@@ -9,55 +9,23 @@
   export let label = "";
 </script>
 
-<div class="panel bg-srf text-on-srf-2 round-m0 pad-m0 pad-block-l0">
-  <article>
+<div class="panel bg-srf text-on-srf-2 flex flex-col gap-m0">
+  <div class="flex flex-col gap-s pd-bs-m0">
     <div class="header">
-      <div class="title text-on-srf">{label}</div>
+      <div class="title text-on-srf font-semibold">{label}</div>
     </div>
     <p>A short description maybe?</p>
-    <!-- <table>
-      <thead>
-        <tr>
-          <th>Team</th>
-          <th>Git status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="team-members">
-            {#each Array(Math.floor(Math.random() * 3 + 1)) as member}
-              <div class="team-member" style={`--hue: ${Math.random() * 360}`} />
-            {/each}
-          </td>
-          <td>Up to date</td>
-        </tr>
-      </tbody>
-    </table> -->
+  </div>
 
-    <div class="flex justify-between">
-      <div class="flex">
-        <Button solid on:click>
-          Open
-          <Open />
-        </Button>
-      </div>
-      <Button>
-        <Menu />
+  <div class="flex gap-s- justify-between">
+    <div class="flex">
+      <Button solid on:click>
+        Open
+        <Open />
       </Button>
     </div>
-  </article>
+    <Button secondary>
+      <Menu />
+    </Button>
+  </div>
 </div>
-
-<style lang="postcss">
-  article {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-
-    & .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-  }
-</style>

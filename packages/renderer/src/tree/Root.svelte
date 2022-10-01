@@ -4,7 +4,7 @@
   import Projects from "./branches/projects/Projects.svelte";
   import AddProject from "./branches/AddProject.svelte";
   import Server from "./branches/server/Server.svelte";
-  import UserSettings from "./branches/UserSettings.svelte";
+  import UserSettings from "./branches/Settings.svelte";
   import Setup from "./branches/setup/Setup.svelte";
 </script>
 

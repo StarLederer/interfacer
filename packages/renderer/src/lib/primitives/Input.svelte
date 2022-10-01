@@ -41,7 +41,7 @@
       flex: 1;
       color: inherit;
       border-radius: inherit;
-      @apply pad-m0 int-text;
+      @apply pd-m0 int-text;
       padding-block-start: 2rem;
       outline: none;
       top: 0;

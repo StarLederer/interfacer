@@ -40,10 +40,10 @@
 </script>
 
 <Button
-  half={!active}
+  secondary={!active}
   solid={active}
   disabled={loading}
-  {hue}
+  radius="m--"
   on:click={interact}
 >
   <div
@@ -83,6 +83,7 @@
   .action-content {
     width: 100%;
     height: 100%;
+    position: relative;
 
     display: flex;
     flex-direction: column;

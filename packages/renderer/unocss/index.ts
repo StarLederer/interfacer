@@ -14,7 +14,8 @@ export const presetWrapp = (options: PresetOptions = {}): Preset<{}> => {
     preflights,
     prefix: undefined,
     shortcuts: [
-      { 'int-text': 'font-semibold' }
+      { 'int-text': 'font-semibold' },
+      { 'panel': 'round-m-- pd-m0' },
     ],
   }
 }

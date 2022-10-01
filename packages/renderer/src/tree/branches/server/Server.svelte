@@ -40,14 +40,14 @@
       navigate("/websites");
     }}
   >
-    <div class="flex" slot="title-actions">
+    <div class="flex" slot="titleActions">
       <Button half>
         <Save />
       </Button>
     </div>
 
     <div slot="actions" class="header-bar-actions">
-      <span> Up to date </span>
+      <span class="text-int-3"> Up to date </span>
       <Button half>
         Refresh
         <Refresh />
@@ -74,25 +74,18 @@
     height: 100%;
     display: grid;
     grid-template-rows: min-content auto;
+    overflow: auto
   }
 
   main {
-    padding: var(--border-radius);
-    padding-block-start: 0;
+    @apply pd-m0
+      pd-bs-0;
   }
 
   .header-bar-actions {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-
-    & span {
-      opacity: 0.6;
-    }
-  }
-
-  p {
-    color: hsla(0, 0%, 100%, 0.8);
+    @apply gap-m0;
   }
 
   .actions {

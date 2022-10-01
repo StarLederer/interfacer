@@ -18,7 +18,7 @@
       <span class="text-on-def-2">Let's start by setting up your Git credentials</span>
     </div>
 
-    <div class="flex flex-col gap-s0">
+    <div class="flex flex-col gap-s--">
       <Input label="Username" bind:value={username} />
       <Input label="Token" bind:value={password} />
     </div>

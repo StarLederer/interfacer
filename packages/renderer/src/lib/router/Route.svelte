@@ -1,7 +1,7 @@
 <script lang="ts">
   import { route } from "~/lib/router";
 
-  let duration = 100;
+  let duration = 150;
   let delay = 0;
 
   const routeIn = (node) => {

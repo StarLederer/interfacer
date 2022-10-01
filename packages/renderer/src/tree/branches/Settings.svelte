@@ -7,6 +7,7 @@
   import Progress from "~/lib/primitives/Progress.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
   import { navigate } from "~/lib/router";
+  import { mainStore } from "~/stores";
 
   let loading = false;
   let username;
@@ -41,10 +42,26 @@
   </Button>
 </Headerbar>
 
-<div class="body">
+<section>
   <form on:submit|preventDefault={async () => {}}>
     <fieldset>
-      <legend>Change Git credentials</legend>
+      <legend>Appearance</legend>
+      <div class="flex gap-s-">
+        {#each [["red", 0], ["orange", 40], ["teal", 150], ["blue", 210]] as color}
+          <Button
+            secondary
+            hue={color[1]}
+            on:click={() => {
+              mainStore.set(color[1]);
+            }}
+          >
+            {color[0]}
+          </Button>
+        {/each}
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Git credentials</legend>
       <fieldset class="field-changer">
         <Input label="New username" bind:value={username} required />
         <Button
@@ -70,18 +87,22 @@
       <p class="text-on-def-3">Previous credentials are not shown.</p>
     </fieldset>
   </form>
-</div>
+</section>
 
 <style lang="postcss">
-  .body {
+  section {
     padding-inline: 1rem;
   }
 
   form,
   fieldset {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
+    @apply flex
+      flex-col
+      gap-s-;
+  }
+
+  form {
+    @apply gap-m0;
   }
 
   fieldset {
@@ -90,9 +111,12 @@
     }
   }
 
+  legend {
+    @apply mg-i-m0 mg-be-m0;
+  }
+
   .field-changer {
     padding: 0;
-    border: none;
-    flex-direction: row;
+    @apply gap-s-- flex-row;
   }
 </style>

@@ -22,13 +22,14 @@ const theme: ITheme = {
       'on-int': { dark: { s: 100, l: 10 }, light: { l: 10 } },
 
       'int2': { dark: { s: 60, l: 20 }, light: { s: 90 } },
-      'on-int2': { dark: { s: 80, l: 90 } },
+      'on-int2': { dark: { s: 100, l: 80 } },
 
       'int3': { dark: { s: 10, l: 10 } },
       'on-int3': { dark: { s: 10, l: 80 } },
     },
     sizes: {
-      's0': '1px',
+      'min': '1px',
+      '0': '0rem',
       's--': '0.2rem',
       's-': '0.4rem',
       's': '0.5rem',

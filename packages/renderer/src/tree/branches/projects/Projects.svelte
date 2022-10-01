@@ -3,8 +3,8 @@
   import { onMount } from "svelte";
   import Add from "svelte-material-icons/Git.svelte";
   import AddLocal from "svelte-material-icons/FolderPlus.svelte";
-  import User from "svelte-material-icons/AccountCircle.svelte";
-  import {navigate} from "~/lib/router";
+  import Settings from "svelte-material-icons/Cog.svelte";
+  import { navigate } from "~/lib/router";
   import { projectStore } from "~/stores";
   import Project from "./lib/Project.svelte";
   import Progress from "~/lib/primitives/Progress.svelte";
@@ -28,56 +28,62 @@
   });
 </script>
 
-<Headerbar title="Your projects">
-  <div class="flex gap-s0" slot="actions">
-    {#if status}
-      <Button
-        half
-        on:click={async () => {
-          navigate("/add-website");
-        }}
-      >
-        Add project
-        <AddLocal />
-      </Button>
-      <Button
-        half
-        on:click={async () => {
-          navigate("/settings");
-        }}
-      >
-        <User />
-      </Button>
-    {/if}
-  </div>
-</Headerbar>
-
-{#if status}
-  {#if websites}
-    <div class="websites">
-      {#each websites as website}
-        <Project
-          label={website}
-          on:click={() => {
-            projectStore.set(website);
-            navigate("/server");
+<section>
+  <Headerbar title="Your projects">
+    <div class="flex gap-s-" slot="actions">
+      {#if status}
+        <Button
+          half
+          on:click={async () => {
+            navigate("/add-website");
           }}
-        />
-      {/each}
+        >
+          Add project
+          <AddLocal />
+        </Button>
+        <Button
+          half
+          on:click={async () => {
+            navigate("/settings");
+          }}
+        >
+          <Settings />
+        </Button>
+      {/if}
     </div>
-  {:else}
-    <p>{status}</p>
-  {/if}
-{:else}
-  <Progress />
-{/if}
+  </Headerbar>
 
-<style>
+  {#if status}
+    {#if websites}
+      <div class="websites">
+        {#each websites as website}
+          <Project
+            label={website}
+            on:click={() => {
+              projectStore.set(website);
+              navigate("/server");
+            }}
+          />
+        {/each}
+      </div>
+    {:else}
+      <p>{status}</p>
+    {/if}
+  {:else}
+    <Progress />
+  {/if}
+</section>
+
+<style lang="postcss">
+  section {
+    overflow: auto;
+  }
+
   .websites {
+    @apply gap-m0
+      pd-m0
+      pd-bs-0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr));
-    gap: 0.4rem;
-    padding: 1rem;
-    padding-block-start: 0;
   }
 </style>

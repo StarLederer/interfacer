@@ -6,10 +6,11 @@
   export let disabled = false;
 
   export let hue: number | null = null;
-  export let borderRadius: number | null = null;
+  export let radius: string = "m0";
 </script>
 
 <button
+  class="round-{radius} pd-{radius}"
   class:is-half={half}
   class:is-secondary={secondary}
   class:is-solid={solid}
@@ -17,7 +18,6 @@
   {disabled}
   style={`
     ${hue != null ? `--hue: ${hue};` : ""}
-    ${borderRadius != null ? `--border-radius: ${borderRadius};` : ""}
   `}
   on:click
 >
@@ -28,8 +28,6 @@
   button {
     @apply flex
       items-stretch
-      round-m0
-      pad-m0
       int-text
       transition
       bg-none

@@ -19,108 +19,119 @@
   let actions = [];
 </script>
 
-<Headerbar
-  title="Add website"
-  back={() => {
-    navigate("/websites");
-  }}
->
-  <Button solid slot="actions">
-    Save
-    <Save />
-  </Button>
-</Headerbar>
+<section>
+  <Headerbar
+    title="Add website"
+    back={() => {
+      navigate("/websites");
+    }}
+  >
+    <Button solid slot="actions">
+      Save
+      <Save />
+    </Button>
+  </Headerbar>
 
-<section class="add-website">
-  <aside style="--hue: 6; border-radius: 2rem; padding: 0.4rem; display: flex; flex-direction: row; align-items: center; gap: 1rem;" class="text-on-def-2">
-    <div style="border-radius: 50%; padding: 0.6rem" class="bg-srf2 text-on-srf">
-      <Exclimation size="1rem"/>
-    </div>
-    <span>
-      If you are a content writer, you probably want to call your developer for
-      this.
-    </span>
-  </aside>
-
-  {#if loading}
-    <Progress />
-  {:else}
-    <form
-      on:submit|preventDefault={async () => {
-        loading = true;
-        await invoke("add_website", { name, url });
-        navigate("/websites");
-      }}
+  <div class="add-website">
+    <aside
+      style="--hue: 6;"
+      class="flex flex-row items-center gap-m0 bg-srf text-on-srf-2 pd-s- round-m--"
     >
-      <div class="flex flex-col gap-s0">
-        <Input label="Name" bind:value={name} required />
-        <Input label="Git URL" bind:value={url} required />
+      <div style="border-radius: 50%;" class="bg-srf2 text-on-srf pd-s+">
+        <Exclimation size="1rem" />
       </div>
+      <span>
+        If you are a content writer, you probably want to call your developer
+        for this.
+      </span>
+    </aside>
 
-      <Dropdown
-        label="Environment"
-        bind:selected={selectedEnvironment}
-        options={environments}
-      />
+    {#if loading}
+      <Progress />
+    {:else}
+      <form
+        on:submit|preventDefault={async () => {
+          loading = true;
+          await invoke("add_website", { name, url });
+          navigate("/websites");
+        }}
+      >
+        <div class="flex flex-col gap-s-">
+          <Input label="Name" bind:value={name} required />
+          <Input label="Git URL" bind:value={url} required />
+        </div>
 
-      <fieldset class="actions">
-        <legend>Actions</legend>
-        {#each actions as _, i}
-          <fieldset class="action">
-            <Input label="Name" bind:value={actions[i].name} />
-            <Input label="Command" bind:value={actions[i].command} />
-            <Button
-              hue={6}
-              on:click={() => {
-                actions.splice(i, 1);
-                actions = [...actions];
-              }}
-            >
-              <Remove />
-            </Button>
-          </fieldset>
-        {/each}
-        <Button
-          secondary
-          hue={166}
-          on:click={() => {
-            actions = [...actions, { name: "", command: "" }];
-            console.log(actions);
-          }}
-        >
-          Add action <Add />
-        </Button>
-      </fieldset>
-    </form>
-  {/if}
+        <Dropdown
+          label="Environment"
+          bind:selected={selectedEnvironment}
+          options={environments}
+        />
+
+        <fieldset class="actions">
+          <legend>Actions</legend>
+          {#each actions as _, i}
+            <fieldset class="action">
+              <Input label="Name" bind:value={actions[i].name} />
+              <Input label="Command" bind:value={actions[i].command} />
+              <Button
+                hue={6}
+                on:click={() => {
+                  actions.splice(i, 1);
+                  actions = [...actions];
+                }}
+              >
+                <Remove />
+              </Button>
+            </fieldset>
+          {/each}
+          <Button
+            secondary
+            hue={166}
+            on:click={() => {
+              actions = [...actions, { name: "", command: "" }];
+              console.log(actions);
+            }}
+          >
+            Add action <Add />
+          </Button>
+        </fieldset>
+      </form>
+    {/if}
+  </div>
 </section>
 
 <style lang="postcss">
+  section {
+    overflow: auto;
+  }
+
   .add-website {
     @apply flex
       flex-col
       gap-m0
-      pad-m0;
+      pd-m0
+      pd-bs-0;
   }
 
   form,
   fieldset {
     @apply flex
       flex-col
-      gap-s0;
+      gap-s;
   }
 
   form {
-    gap: 1rem;
+    @apply gap-m0;
   }
 
   legend {
-    margin-bottom: 0.4rem;
+    @apply mg-i-m0 mg-be-m0;
+    font-size: 1.2rem;
   }
 
   .action {
+    @apply gap-s--;
     display: grid;
     grid-template-columns: auto auto min-content;
-    gap: 0.4rem;
   }
 </style>
