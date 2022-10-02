@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Add from "svelte-material-icons/Plus.svelte";
   import Save from "svelte-material-icons/Check.svelte";
   import Exclimation from "svelte-material-icons/Exclamation.svelte";
@@ -14,14 +14,45 @@
   let loading = false;
   let name;
   let url;
-  let environments = ["Your OS", "Managed Docker container", "Cloud", "LAN"];
-  let selectedEnvironment = environments[0];
+  let remote = "origin";
+  let hooks: Record<string, { name: string; commands?: string[] }> = {
+    before_each_action: {
+      name: "Before each action",
+      commands: undefined,
+    },
+    after_code_downlaod: {
+      name: "After code download",
+      commands: undefined,
+    },
+    before_code_upload: {
+      name: "Before code upload",
+      commands: undefined,
+    },
+  };
   let actions = [];
+
+  let usedHooks = [];
+  let unusedHooks = [];
+
+  $: {
+    usedHooks = [];
+    unusedHooks = [];
+
+    Object.keys(hooks).forEach((key) => {
+      const hook = hooks[key];
+
+      if (hook.commands != undefined) {
+        usedHooks.push({ key, ...hook });
+      } else {
+        unusedHooks.push({ key, ...hook });
+      }
+    });
+  }
 </script>
 
 <section>
   <Headerbar
-    title="Add website"
+    title="Add project"
     back={() => {
       navigate("/websites");
     }}
@@ -56,25 +87,80 @@
           navigate("/websites");
         }}
       >
-        <div class="flex flex-col gap-s-">
+        <div class="fieldset">
           <Input label="Name" bind:value={name} required />
           <Input label="Git URL" bind:value={url} required />
+          <Input label="Push remote" bind:value={remote} required />
         </div>
 
-        <Dropdown
-          label="Environment"
-          bind:selected={selectedEnvironment}
-          options={environments}
-        />
+        {#if usedHooks.length > 0}
+          <div class="fieldset">
+            <span class="legend">Hooks</span>
+            {#each usedHooks as hook}
+              <fieldset class="panel bg-srf text-on-srf flex flex-col gap-s">
+                <div class="flex justify-between items-center">
+                  <span class="mg-i-m0">{hook.name}</span>
+                  <Button
+                    hue={0}
+                    on:click={() => {
+                      hooks[hook.key].commands = undefined;
+                    }}
+                  >
+                    <Remove />
+                  </Button>
+                </div>
 
-        <fieldset class="actions">
-          <legend>Actions</legend>
+                {#each hook.commands as _, i}
+                  <Input
+                    label="Command"
+                    bind:value={hooks[hook.key].commands[i]}
+                  />
+                {/each}
+
+                <Button
+                  secondary
+                  on:click={() => {
+                    hooks[hook.key].commands = [
+                      ...hooks[hook.key].commands,
+                      "",
+                    ];
+                  }}
+                >
+                  Add command
+                  <Add />
+                </Button>
+              </fieldset>
+            {/each}
+          </div>
+        {/if}
+
+        {#if unusedHooks.length > 0}
+          <div class="fieldset">
+            <span class="legend">Add hooks</span>
+            <div class="flex flex-wrap gap-s-">
+              {#each unusedHooks as hook}
+                <Button
+                  half
+                  on:click={() => {
+                    hooks[hook.key].commands = [""];
+                  }}
+                >
+                  {hook.name}
+                  <Add />
+                </Button>
+              {/each}
+            </div>
+          </div>
+        {/if}
+
+        <div class="fieldset">
+          <span class="legend">Actions</span>
           {#each actions as _, i}
             <fieldset class="action">
-              <Input label="Name" bind:value={actions[i].name} />
+              <Input label="Local name" bind:value={actions[i].name} />
               <Input label="Command" bind:value={actions[i].command} />
               <Button
-                hue={6}
+                hue={0}
                 on:click={() => {
                   actions.splice(i, 1);
                   actions = [...actions];
@@ -94,7 +180,7 @@
           >
             Add action <Add />
           </Button>
-        </fieldset>
+        </div>
       </form>
     {/if}
   </div>
@@ -113,18 +199,19 @@
       pd-bs-0;
   }
 
-  form,
-  fieldset {
+  form {
+    @apply flex
+      flex-col
+      gap-m0;
+  }
+
+  .fieldset {
     @apply flex
       flex-col
       gap-s;
   }
 
-  form {
-    @apply gap-m0;
-  }
-
-  legend {
+  .legend {
     @apply mg-i-m0 mg-be-m0;
     font-size: 1.2rem;
   }

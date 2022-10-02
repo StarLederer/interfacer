@@ -7,10 +7,11 @@
 
   export let hue: number | null = null;
   export let radius: string = "m0";
+  export let flex1: boolean = false;
 </script>
 
 <button
-  class="round-{radius} pd-{radius}"
+  class="round-{radius} pd-{radius} {flex1 ? "flex-1" : ""}"
   class:is-half={half}
   class:is-secondary={secondary}
   class:is-solid={solid}
