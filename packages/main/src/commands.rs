@@ -1,4 +1,4 @@
-use std::{fs, sync::Mutex, vec};
+use std::{fs, sync::Mutex};
 
 #[tauri::command]
 pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> {
@@ -53,48 +53,13 @@ pub fn load_project(
     state: tauri::State<'_, AppState>,
     name: String,
 ) -> Result<(), String> {
-    let mut project_path = app.path_resolver().app_dir().unwrap();
-    project_path.push("projects");
-    project_path.push(&name);
-
-    // Config
-    let mut config_path = project_path.clone();
-    config_path.push("wrapp.yaml");
-
-    let config_src = match fs::read_to_string(&config_path) {
-        Ok(src) => src,
-        Err(err) => {
-            return Err(err.to_string());
-        }
-    };
-
-    let config = match common::project_config::parse_config(
-        &config_src,
-        common::project_config::Config {
-            version: String::from("1"),
-            workspace_dir: String::from("./workspace"),
-            after_code_download: vec![],
-            before_code_upload: vec![],
-            actions: vec![],
-        },
-    ) {
-        Ok(config) => config,
-        Err(err) => {
-            return Err(err.to_string());
-        }
-    };
-
-    let initialized_state = match common::state::ProjectState::init(config, project_path) {
-        Ok(state) => state,
-        Err(err) => {
-            return Err(err.to_string());
-        }
+    let app_dir = match app.path_resolver().app_dir() {
+        Some(app_dir) => app_dir,
+        None => return  Err(String::from("Unable to determine the data directory")),
     };
 
     let mut state = state.0.lock().unwrap();
-    (*state).project = Some(initialized_state);
-
-    Ok(())
+    common::api::load_project(&mut state, &app_dir, &name)
 }
 
 #[tauri::command]

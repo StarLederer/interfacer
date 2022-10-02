@@ -8,7 +8,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::{git, state, user_config};
+use crate::{git, state, user_config, project_config};
 use serde::Serialize;
 
 use self::internal::interact_directly;
@@ -20,7 +20,6 @@ pub struct Consequence {
 }
 
 /*
-    API Endpoint.
     Use when the user clicks an action.
 */
 pub fn interact(state: &mut state::AppState, action_i: usize) -> Result<Consequence, String> {
@@ -41,6 +40,48 @@ pub fn interact(state: &mut state::AppState, action_i: usize) -> Result<Conseque
     let action = &mut state.actions[action_i];
 
     interact_directly(action, &cwd)
+}
+
+pub fn load_project(state: &mut state::AppState, app_dir: &Path, name: &str) -> Result<(), String> {
+    let mut project_path = PathBuf::from(app_dir);
+    project_path.push("projects");
+    project_path.push(&name);
+
+    let mut config_path = project_path.clone();
+    config_path.push("wrapp.yaml");
+
+    match fs::read_to_string(&config_path) {
+        Ok(config_src) => {
+            match project_config::parse_config(
+                &config_src,
+                project_config::Config {
+                    version: String::from("1"),
+                    workspace_dir: String::from("./workspace"),
+                    after_code_download: vec![],
+                    before_code_upload: vec![],
+                    actions: vec![],
+                },
+            ) {
+                Ok(config) => {
+                    match state::ProjectState::init(config, project_path) {
+                        Ok(project_state) => {
+                            state.project = Some(project_state);
+                            Ok(())
+                        },
+                        Err(err) => {
+                            Err(err.to_string())
+                        }
+                    }
+                },
+                Err(err) => {
+                    Err(err.to_string())
+                }
+            }
+        },
+        Err(err) => {
+            Err(err.to_string())
+        }
+    }
 }
 
 pub fn get_actions(state: &state::AppState) -> Result<Vec<Consequence>, String> {
@@ -76,7 +117,6 @@ pub fn load_user(state: &mut state::AppState, app_dir: &Path) -> Result<bool, St
                     match state::UserState::init(config) {
                         Ok(user_state) => {
                             state.user = Some(user_state);
-
                             Ok(true)
                         },
                         Err(err) => Err(err.to_string()),
