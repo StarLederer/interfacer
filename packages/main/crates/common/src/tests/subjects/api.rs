@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use crate::tests::{messages::*, util};
 
-use crate::api::*;
+use crate::api::internal::*;
 use crate::project_config::ActionConfig;
 
 #[test]

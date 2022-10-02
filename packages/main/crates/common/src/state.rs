@@ -74,7 +74,6 @@ impl ProjectState {
 }
 
 pub struct UserState {
-    pub local_name: String,
     pub git_username: String,
     pub git_password: String,
 }
@@ -82,7 +81,6 @@ pub struct UserState {
 impl UserState {
     pub fn init(config: user_config::Config) -> Result<UserState, String> {
         Ok(UserState {
-            local_name: config.username,
             git_username: config.git.username,
             git_password: config.git.password,
         })

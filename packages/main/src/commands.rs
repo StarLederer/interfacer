@@ -104,6 +104,32 @@ pub fn get_actions(state: tauri::State<'_, AppState>) -> Result<Vec<common::api:
 }
 
 #[tauri::command]
+pub fn load_user(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, AppState>
+) -> Result<bool, String> {
+    let app_dir = match app.path_resolver().app_dir() {
+        Some(app_dir) => app_dir,
+        None => return  Err(String::from("Unable to determine the data directory")),
+    };
+
+    let mut state = state.0.lock().unwrap();
+    common::api::load_user(&mut state, &app_dir)
+}
+
+#[tauri::command]
+pub fn get_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
+    let state = state.0.lock().unwrap();
+    common::api::get_user(&state)
+}
+
+#[tauri::command]
+pub fn set_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
+    let state = state.0.lock().unwrap();
+    common::api::set_user(&state)
+}
+
+#[tauri::command]
 pub async fn interact(
     state: tauri::State<'_, AppState>,
     action_i: usize,

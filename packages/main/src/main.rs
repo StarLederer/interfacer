@@ -14,7 +14,9 @@ fn main() {
             add_website,
             get_websites,
             load_project,
+            load_user,
             get_actions,
+            get_user,
             interact,
         ])
         .run(tauri::generate_context!())
