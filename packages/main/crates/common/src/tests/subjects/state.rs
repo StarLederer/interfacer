@@ -6,10 +6,8 @@ use crate::state::*;
 fn projects_initialize() {
     let state = ProjectState::init(
         crate::project_config::Config {
-            version: String::from("1"),
             workspace_dir: String::from("./workspace"),
-            after_code_download: vec![],
-            before_code_upload: vec![],
+            hooks: crate::project_config::HookConfig::default(),
             actions: vec![],
         },
         PathBuf::from("./src/tests/fixtures/minimum-config-app"),

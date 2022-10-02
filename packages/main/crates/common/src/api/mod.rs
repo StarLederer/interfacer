@@ -55,10 +55,12 @@ pub fn load_project(state: &mut state::AppState, app_dir: &Path, name: &str) -> 
             match project_config::parse_config(
                 &config_src,
                 project_config::Config {
-                    version: String::from("1"),
                     workspace_dir: String::from("./workspace"),
-                    after_code_download: vec![],
-                    before_code_upload: vec![],
+                    hooks: project_config::HookConfig {
+                        before_each_action: vec![],
+                        after_code_download: vec![],
+                        before_code_upload: vec![],
+                    },
                     actions: vec![],
                 },
             ) {
