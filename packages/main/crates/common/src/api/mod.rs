@@ -145,11 +145,29 @@ pub fn set_user(state: &state::AppState) -> Result<(), String> {
     Err(String::from("Not implemented yet"))
 }
 
-/**
-    This function is named the way it is because it does not have to
-    be limited to git. Other version control software may be added in the future
-*/
-pub fn check_source_cloud(state: &state::AppState) -> Result<bool, String> {
+// The following functions are named the way they are because they do not have to
+// be limited to git. Other version control software may be added in the future
+
+pub fn detect_local_source_changes(state: &state::AppState) -> Result<bool, String> {
+    let project = match &state.project {
+        Some(project) => project,
+        None => {
+            return Err(String::from(
+                "Attempted to read project from state with no project",
+            ))
+        }
+    };
+
+    let repo = &project.version_control.repo;
+
+    match git::status(repo) {
+        Ok(is_ahead) => Ok(is_ahead),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+
+pub fn detect_remote_source_changes(state: &state::AppState) -> Result<bool, String> {
     let project = match &state.project {
         Some(project) => project,
         None => {
