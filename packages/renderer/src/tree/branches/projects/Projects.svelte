@@ -35,7 +35,7 @@
         <Button
           half
           on:click={async () => {
-            navigate("/add-website");
+            navigate("/add-website/edit");
           }}
         >
           Add project
