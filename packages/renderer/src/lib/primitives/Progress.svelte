@@ -1,18 +1,18 @@
 <script lang="ts">
-  export let borderRadius: number | null = null;
+  export let radius: number = 1;
 </script>
 
 <div
-  style={`${borderRadius != null ? `--borderRadius : ${borderRadius}` : ""}`}
+  style="--radius: {radius}rem"
 />
 
-<style>
+<style lang="postcss">
   div {
-    border: 0.2rem solid var(--color-1);
-    border-top: 0.2rem solid var(--color-2);
+    border: 0.2rem solid black;
+    border-top: 0.2rem solid white;
     border-radius: 50%;
-    width: calc(var(--border-radius) * 2);
-    height: calc(var(--border-radius) * 2);
+    width: calc(var(--radius) * 2);
+    height: calc(var(--radius) * 2);
     animation: spin 2s linear infinite;
   }
 
