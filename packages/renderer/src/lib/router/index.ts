@@ -6,6 +6,20 @@ type IRouteStore = {
   firstDifferent: string[]; // fist path segments that is different between previous and current
 };
 
+const resolve = (path: string) => {
+  let resolvedSegments = [];
+
+  path.split("/").forEach((segment) => {
+    if (segment === "..") {
+      resolvedSegments.pop();
+    } else {
+      resolvedSegments.push(segment);
+    }
+  })
+
+  return `${resolvedSegments.join("/")}`;
+}
+
 const findFirstDifferent = (a: string, b: string) => {
   const c = a.split("/"); // a but split
   const d = b.split("/"); // b but split
@@ -34,13 +48,15 @@ const route = writable<IRouteStore>({
 });
 
 const navigate = (to: string) => {
+  const resolvedTo = resolve(to);
+
   route.update((oldState) => {
     const previous = oldState.current;
     const newState = oldState;
     Object.assign(newState, {
       previous,
-      current: to,
-      firstDifferent: findFirstDifferent(previous, to)
+      current: resolvedTo,
+      firstDifferent: findFirstDifferent(previous, resolvedTo)
     });
     return newState;
   });

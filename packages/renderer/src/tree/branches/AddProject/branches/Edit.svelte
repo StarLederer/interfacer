@@ -21,6 +21,7 @@
   import Remove from "svelte-material-icons/Close.svelte";
   import { invoke } from "@tauri-apps/api/tauri";
   import { Route } from "~/lib/router";
+  import Headerbar from "~/lib/Headerbar.svelte";
   import Button from "~/lib/primitives/Button.svelte";
   import Input from "~/lib/primitives/Input.svelte";
   import Progress from "~/lib/primitives/Progress.svelte";
@@ -56,7 +57,28 @@
   export let actions: IAction[];
 </script>
 
-<Route {path} absolute={false}>
+<Route {path}>
+  <Headerbar
+    title="Add project"
+    back={() => {
+      navigate("/websites");
+    }}
+  >
+    <Button
+      solid
+      slot="actions"
+      on:click={() => {
+        navigate(`${path}/../loading`);
+        setTimeout(() => {
+          navigate(`${path}/../success`);
+        }, 2000);
+      }}
+    >
+      Save
+      <Save />
+    </Button>
+  </Headerbar>
+
   <section>
     <div class="add-website">
       <aside
