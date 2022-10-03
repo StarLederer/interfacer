@@ -16,7 +16,38 @@ const stringToColour = (str, s: Percentage, l: Percentage) => {
   return `hsl(${stringToHue(str)}, ${s}, ${l})`;
 }
 
+let duration = 150;
+let delay = 0;
+
+const animateIn = (node) => {
+  const opacity = +getComputedStyle(node).opacity;
+
+  return {
+    delay,
+    duration,
+    css: (t) => `
+      opacity: ${t * opacity};
+      transform: scale(${1 - 0.025 * (1 - t)});
+    `,
+  };
+};
+
+const animateOut = (node) => {
+  const opacity = +getComputedStyle(node).opacity;
+
+  return {
+    delay,
+    duration,
+    css: (t) => `
+      opacity: ${t * opacity};
+      transform: scale(${1 + 0.025 * (1 - t)});
+    `,
+  };
+};
+
 export {
   stringToHue,
-  stringToColour
-}
+  stringToColour,
+  animateIn,
+  animateOut,
+};
