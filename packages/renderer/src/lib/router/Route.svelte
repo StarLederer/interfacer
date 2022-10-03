@@ -1,39 +1,31 @@
 <script lang="ts">
+  import { animateIn, animateOut } from "~/lib/visuals";
   import { route } from "~/lib/router";
 
-  let duration = 150;
-  let delay = 0;
+  const voidTransition = { duration: 0, delay: 0 };
 
   const routeIn = (node) => {
-    const opacity = +getComputedStyle(node).opacity;
-
-    return {
-      delay,
-      duration,
-      css: (t) => `
-        opacity: ${t * opacity};
-        transform: scale(${1 - 0.025 * (1 - t)});
-      `,
-    };
+    if ($route.firstDifferent[1] === pathLast) {
+      return animateIn(node);
+    } else {
+      return voidTransition;
+    }
   };
 
   const routeOut = (node) => {
-    const opacity = +getComputedStyle(node).opacity;
-
-    return {
-      delay,
-      duration,
-      css: (t) => `
-        opacity: ${t * opacity};
-        transform: scale(${1 + 0.025 * (1 - t)});
-      `,
-    };
+    if ($route.firstDifferent[0] === pathLast) {
+      return animateOut(node);
+    } else {
+      return voidTransition;
+    }
   };
+
+  $: pathLast = path.split("/").pop()
 
   export let path: string;
 </script>
 
-{#if $route.startsWith(path)}
+{#if $route.current.startsWith(path)}
   <section in:routeIn out:routeOut>
     <slot />
   </section>
