@@ -61,7 +61,7 @@
             label={website}
             on:click={() => {
               projectStore.set(website);
-              navigate("/server");
+              navigate("/project");
             }}
           />
         {/each}

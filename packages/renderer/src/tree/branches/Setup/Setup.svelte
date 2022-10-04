@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Route } from "~/lib/router";
-  import User from "./routes/UserSetup.svelte";
+  import User from "./branches/UserSetup.svelte";
 </script>
 
 <Route path="/setup/user">

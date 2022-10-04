@@ -1,6 +1,11 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import { animateIn, animateOut } from "~/lib/visuals";
   import { route } from "~/lib/router";
+
+  const dispatch = createEventDispatcher();
+
+  // Transitions
 
   const voidTransition = { duration: 0, delay: 0 };
 
@@ -20,13 +25,35 @@
     }
   };
 
-  $: pathLast = path.split("/").pop()
+  $: pathLast = path.split("/").pop();
 
+  // State
+
+  $: isOpen = (() => {
+    let open = false;
+
+    if (strict) {
+      open = $route.current === path;
+    } else {
+      open = $route.current.startsWith(path);
+    }
+
+    if (open) dispatch("open");
+    else dispatch("close");
+
+    return open;
+  })();
+
+  // Attributes
+
+  export let strict: boolean = false;
   export let path: string;
+  let cls: string = "flex flex-col items-stretch";
+  export { cls as class };
 </script>
 
-{#if $route.current.startsWith(path)}
-  <section in:routeIn out:routeOut>
+{#if isOpen}
+  <section class={cls} in:routeIn out:routeOut>
     <slot />
   </section>
 {/if}
@@ -36,8 +63,5 @@
     position: absolute;
     inset: 0;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
   }
 </style>

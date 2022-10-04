@@ -1,6 +1,7 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/tauri";
   import Active from "svelte-material-icons/Cog.svelte";
+  import { animateIn, animateOut } from "~/lib/visuals";
   import Button from "~/lib/primitives/Button.svelte";
   import Progress from "~/lib/primitives/Progress.svelte";
 
@@ -43,29 +44,37 @@
   secondary={!active}
   solid={active}
   disabled={loading}
-  radius="m--"
+  class="round-m- position-relative"
   on:click={interact}
 >
-  <div
-    class="action-content"
-    class:is-active={active && !loading}
-    class:is-loading={loading}
-  >
-    <div class="progress-container">
-      <Progress />
-    </div>
-
-    <div class="name-line">
-      <div class="icon"><Active size={"100%"} /></div>
-      <span class="name">{name}</span>
-    </div>
-    {#if error}
-      <span class="name">{name}</span>
-      <div class="error">
-        <div>Error:</div>
-        {error}
+  <div class="pd-m-">
+    {#if loading}
+      <div
+        in:animateIn
+        out:animateOut
+        class="route flex items-center justify-center"
+      >
+        <Progress />
       </div>
-      Try again?
+    {:else if error}
+      <div in:animateIn out:animateOut class="route">
+        <span class="name">{name}</span>
+        <div class="error">
+          <div>Error:</div>
+          {error}
+        </div>
+        Try again?
+      </div>
+    {:else}
+      <div
+        in:animateIn
+        out:animateOut
+        class="route name-line"
+        class:has-cog={active}
+      >
+        <div class="icon"><Active size={"100%"} /></div>
+        <span class="name">{name}</span>
+      </div>
     {/if}
   </div>
 </Button>
@@ -80,48 +89,37 @@
     }
   }
 
-  .action-content {
-    width: 100%;
-    height: 100%;
-    position: relative;
+  .route {
+    position: absolute;
+    inset: 0;
+  }
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
+  .name-line {
+    @apply flex
+      justify-center
+      items-center;
 
-    & .progress-container {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: var(--transition);
-
-      opacity: 0;
-      --border-radius: 1rem;
+    & .name {
+      font-weight: 800;
+      font-size: 2rem;
     }
 
-    & .name-line {
+    & .icon {
+      width: 0rem;
       display: flex;
-      align-items: center;
-      transition: var(--transition);
+      animation: 10s rotate infinite;
+      margin-inline-start: 0rem;
+    }
 
-      & .name {
-        font-weight: 800;
-        font-size: 2rem;
-      }
-
+    &.has-cog {
       & .icon {
-        width: 0rem;
-        display: flex;
-        animation: 10s rotate infinite;
-        margin-inline-start: 0rem;
-        transition: var(--transition);
+        width: 2rem;
+        @apply mg-ie-s;
       }
     }
+  }
 
+  .action-content {
     & .error {
       --border-radius: 1rem;
       --color-s: 40%;
@@ -142,23 +140,6 @@
       & div {
         color: hsl(0, var(--color-s), 60%);
         font-weight: 600;
-      }
-    }
-
-    &.is-loading {
-      & .name-line {
-        opacity: 0;
-      }
-
-      & .progress-container {
-        opacity: 1;
-      }
-    }
-
-    &.is-active {
-      & .icon {
-        width: 2rem;
-        margin-inline-end: 1rem;
       }
     }
   }

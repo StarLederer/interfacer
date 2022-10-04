@@ -34,7 +34,7 @@
     on:click={save}
   >
     {#if loading}
-      <Progress borderRadius={0.5} />
+      <Progress radius={0.5} />
     {:else}
       Save
       <Save />

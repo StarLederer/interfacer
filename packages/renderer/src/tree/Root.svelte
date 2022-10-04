@@ -1,20 +1,18 @@
 <script lang="ts">
   import { Route } from "~/lib/router";
 
-  import Projects from "./branches/projects/Projects.svelte";
+  import Projects from "./branches/Pprojects/Projects.svelte";
   import AddProject from "./branches/AddProject/AddProject.svelte";
-  import Server from "./branches/server/Server.svelte";
+  import Project from "./branches/Project/Project.svelte";
   import UserSettings from "./branches/Settings.svelte";
-  import Setup from "./branches/setup/Setup.svelte";
+  import Setup from "./branches/Setup/Setup.svelte";
 </script>
 
 <Route path="/websites">
   <Projects />
 </Route>
 <AddProject path="/add-website" />
-<Route path="/server">
-  <Server />
-</Route>
+<Project path="/project"/>
 <Route path="/settings">
   <UserSettings />
 </Route>
