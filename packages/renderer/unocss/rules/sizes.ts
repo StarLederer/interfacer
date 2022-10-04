@@ -5,9 +5,9 @@ const sizeRule = (prefix: string, property: string): DynamicRule<ITheme> => {
   return [
     new RegExp(`^(${prefix})-(.+)$`),
     (match, { theme }) => {
-      const rule = {};
-      rule[property] = theme.wrapp.sizes[match[2]]
-      return rule;
+      const css = {};
+      css[property] = theme.wrapp.sizes[match[2]]
+      return css;
     }
   ];
 };

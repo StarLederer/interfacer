@@ -46,9 +46,15 @@ const getColorCSS = (
  * @returns :root CSS containing various color variables for dark (default) and light (@media) modes. The variables are intended for internal use by this UnoCSS preset
  */
 const getCSS = ({ theme: { wrapp } }: PreflightContext<ITheme>): string => {
-  const colors = Object.keys(wrapp.colors).map((color) => {
-    return getColorCSS(color, wrapp.colors[color]);
+  const themeColors = {...wrapp.colors.static, ...wrapp.colors.interactive};
+
+  const colors = Object.keys(themeColors).map((color) => {
+    console.log(color)
+    console.log(themeColors[color])
+    console.log("\n")
+    return getColorCSS(color, themeColors[color]);
   });
+
 
   return `
     :root {

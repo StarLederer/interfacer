@@ -1,15 +1,15 @@
 import type { Rule } from "@unocss/core";
 
 import { ITheme } from "../theme/types";
-import { colorRules } from "./colors";
+import { colorRule } from "./colors";
 import sizeRule from "./sizes";
 
 const rules: Rule<ITheme>[] = [
   // Colors
   ['bg-none', { background: 'none' }],
-  ...colorRules('border-color', 'border-color'),
-  ...colorRules('bg', 'background'),
-  ...colorRules('text', 'color'),
+  colorRule('border-color', 'border-color'),
+  colorRule('bg', 'background'),
+  colorRule('text', 'color'),
 
   // Shapesand sizes
   sizeRule('inset', 'inset'),

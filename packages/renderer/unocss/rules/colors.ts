@@ -1,51 +1,30 @@
-import { Rule } from "@unocss/core";
+import { DynamicRule } from "@unocss/core";
+import { ITheme, IThemeColor } from "../theme/types";
 
-// Generates rules that
-const colorRules = (prefix, property): Rule<{}>[] => {
-  const formulas: [(color: string) => string, string[]][] = [
-    [
-      (color) => `hsl(var(--hue), var(--col-${color}-s), var(--col-${color}-l));`,
-      [
-        'abs',
-        'on-abs',
-        'def',
-        'on-def',
-        'on-def-2',
-        'on-def-3',
-        'srf',
-        'on-srf',
-        'on-srf-2',
-        'srf2',
-        'on-srf2',
-      ]
-    ],
-    [
-      (color) => `hsl(var(--hue), var(--col-${color}-s), calc(var(--col-${color}-l) + var(--highlight)));`,
-      [
-        'int',
-        'on-int',
-        'int2',
-        'on-int2',
-        'int3',
-        'on-int3',
-      ]
-    ]
-  ]
+const staticColorCss = (color: string) => `hsl(var(--hue), var(--col-${color}-s), var(--col-${color}-l));`;
+const interactiveColorCss = (color: string) => `hsl(var(--hue), var(--col-${color}-s), calc(var(--col-${color}-l) + var(--highlight)));`;
 
-  const rules = [];
-
-  formulas.forEach(([formula, colors]) => {
-    colors.forEach((color) => {
-      const className = `${prefix}-${color}`;
-
+const colorRule = (prefix: string, property: string): DynamicRule<ITheme> => {
+  return [
+    new RegExp(`^(${prefix})-(.+)$`),
+    (match, { theme }) => {
       const css = {};
-      css[property] = formula(color);
 
-      rules.push([className, css]);
-    });
-  });
+      // Static css
+      const statColor = theme.wrapp.colors.static[match[2]];
+      if (statColor !== undefined) {
+        css[property] = staticColorCss(match[2]);
+      }
 
-  return rules;
+      // Interactive css
+      const intColor = theme.wrapp.colors.interactive[match[2]];
+      if (intColor !== undefined) {
+        css[property] = interactiveColorCss(match[2]);
+      }
+
+      return css;
+    }
+  ];
 };
 
-export { colorRules }
+export { colorRule }
