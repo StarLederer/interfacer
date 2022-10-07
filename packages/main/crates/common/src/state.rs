@@ -1,5 +1,5 @@
 use crate::{project_config, user_config};
-use std::{fs, path::PathBuf, process::Child};
+use std::{fs, path::{PathBuf, Path}, process::Child};
 
 pub struct ActionState {
     pub config: project_config::ActionConfig,
@@ -22,8 +22,6 @@ pub struct VersionControlState {
 
 pub struct ProjectState {
     pub workspace_dir: PathBuf,
-    // pub after_code_download: Vec<ActionState>,
-    // pub before_code_upload: Vec<ActionState>,
     pub actions: Vec<ActionState>,
     pub version_control: VersionControlState,
 }
@@ -44,7 +42,7 @@ impl ProjectState {
         let workspace_dir = match fs::canonicalize(project_dir) {
             Ok(some) => some,
             Err(err) => {
-                return Err(err.to_string());
+                return Err(String::from("Workspace dir not found! ") + &err.to_string());
             }
         };
 
