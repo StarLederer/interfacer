@@ -1,5 +1,7 @@
 use std::{fs, sync::Mutex};
 
+use common::project_config;
+
 #[tauri::command]
 pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> {
     let mut res: Vec<String> = Vec::new();
@@ -25,23 +27,16 @@ pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> 
 }
 
 #[tauri::command]
-pub async fn add_website(app: tauri::AppHandle, name: String, url: String) -> Result<(), String> {
-    // let mut path = app.path_resolver().app_dir().unwrap();
-    // path.push("projects");
-
-    // fs::create_dir_all(&path).unwrap();
-    // path.push(&name);
-
-    // match git2::Repository::clone(&url, path) {
-    //     Ok(_) => {
-    //         return Ok(());
-    //     }
-    //     Err(err) => {
-    //         return Err(err.to_string());
-    //     }
-    // }
-
-    Ok(())
+pub fn add_project(
+    app: tauri::AppHandle,
+    name: String,
+    config: project_config::ConfigLatest,
+) -> Result<(), String> {
+    let app_dir = match app.path_resolver().app_dir() {
+        Some(app_dir) => app_dir,
+        None => return Err(String::from("Unable to determine the data directory")),
+    };
+    common::api::add_project(&app_dir, &name, &config)
 }
 
 #[derive(Default)]
@@ -55,7 +50,7 @@ pub fn load_project(
 ) -> Result<(), String> {
     let app_dir = match app.path_resolver().app_dir() {
         Some(app_dir) => app_dir,
-        None => return  Err(String::from("Unable to determine the data directory")),
+        None => return Err(String::from("Unable to determine the data directory")),
     };
 
     let mut state = state.0.lock().unwrap();
@@ -63,21 +58,19 @@ pub fn load_project(
 }
 
 #[tauri::command]
-pub fn get_actions(state: tauri::State<'_, AppState>) -> Result<Vec<common::api::Consequence>, String> {
+pub fn get_actions(
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<common::api::Consequence>, String> {
     let state = state.0.lock().unwrap();
     common::api::get_actions(&state)
 }
 
 #[tauri::command]
-pub fn load_user(
-    app: tauri::AppHandle,
-    state: tauri::State<'_, AppState>
-) -> Result<bool, String> {
+pub fn load_user(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Result<bool, String> {
     let app_dir = match app.path_resolver().app_dir() {
         Some(app_dir) => app_dir,
-        None => return  Err(String::from("Unable to determine the data directory")),
+        None => return Err(String::from("Unable to determine the data directory")),
     };
-
     let mut state = state.0.lock().unwrap();
     common::api::load_user(&mut state, &app_dir)
 }

@@ -1,6 +1,6 @@
-mod config_v1;
+mod config_latest;
 
-use self::config_v1::*;
+pub use self::config_latest::*;
 
 #[derive(Default)]
 pub struct HookConfig {
@@ -23,8 +23,8 @@ pub struct Config {
     pub actions: Vec<ActionConfig>,
 }
 
-impl From<config_v1::ActionConfigV1> for ActionConfig {
-    fn from(config_v1: ActionConfigV1) -> Self {
+impl From<config_latest::ActionConfigLatest> for ActionConfig {
+    fn from(config_v1: ActionConfigLatest) -> Self {
         ActionConfig {
             command: config_v1.command,
             user_terminated: config_v1.user_terminated,
@@ -35,7 +35,7 @@ impl From<config_v1::ActionConfigV1> for ActionConfig {
 }
 
 pub fn parse_config(config_src: &String, defaults: Config) -> Result<Config, serde_yaml::Error> {
-    let config = serde_yaml::from_str::<ConfigV1>(&config_src)?;
+    let config = serde_yaml::from_str::<ConfigLatest>(&config_src)?;
 
     Ok(Config {
         workspace_dir: config.workspace_dir.unwrap_or(defaults.workspace_dir),

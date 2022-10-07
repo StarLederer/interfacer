@@ -1,9 +1,30 @@
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
-use crate::tests::{messages::*, util};
+use crate::tests::util;
 
 use crate::api::internal::*;
-use crate::project_config::ActionConfig;
+use crate::api::*;
+use crate::project_config::{ActionConfig, ConfigLatest};
+
+#[test]
+fn adds_projects() {
+    let path = Path::new("./src/tests/tmp/app-dir");
+    util::fs::rimraf(path);
+
+    match add_project(
+        path,
+        "New Project",
+        &ConfigLatest {
+            version: Some(String::from("1")),
+            workspace_dir: None,
+            hooks: None,
+            actions: None,
+        },
+    ) {
+        Ok(_) => {}
+        Err(err) => panic!("Failed to add project: {}", err),
+    }
+}
 
 #[test]
 fn self_terminated_interactions_work() {

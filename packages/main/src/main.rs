@@ -11,7 +11,7 @@ fn main() {
     tauri::Builder::default()
         .manage(AppState::default())
         .invoke_handler(tauri::generate_handler![
-            add_website,
+            add_project,
             get_websites,
             load_project,
             load_user,

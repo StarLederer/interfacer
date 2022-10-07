@@ -8,7 +8,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::{git, state, user_config, project_config};
+use crate::{git, project_config, state, user_config};
 use serde::Serialize;
 
 use self::internal::interact_directly;
@@ -17,6 +17,37 @@ use self::internal::interact_directly;
 pub struct Consequence {
     pub name: String,
     pub active: bool,
+}
+
+pub fn add_project(
+    app_dir: &Path,
+    name: &str,
+    config: &project_config::ConfigLatest,
+) -> Result<(), String> {
+    println!("{:?}", config);
+
+    let mut path = PathBuf::from(app_dir);
+    path.push("projects");
+    path.push(name);
+
+    match fs::create_dir_all(&path) {
+        Ok(_) => {}
+        Err(err) => return Err(err.to_string()),
+    };
+
+    path.push("config.yaml");
+
+    let src = match serde_yaml::to_string(config) {
+        Ok(src) => src,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    match fs::write(path, src) {
+        Ok(_) => {}
+        Err(err) => return Err(err.to_string()),
+    };
+
+    Ok(())
 }
 
 /*
@@ -48,7 +79,7 @@ pub fn load_project(state: &mut state::AppState, app_dir: &Path, name: &str) -> 
     project_path.push(&name);
 
     let mut config_path = project_path.clone();
-    config_path.push("wrapp.yaml");
+    config_path.push("config.yaml");
 
     match fs::read_to_string(&config_path) {
         Ok(config_src) => {
@@ -64,25 +95,17 @@ pub fn load_project(state: &mut state::AppState, app_dir: &Path, name: &str) -> 
                     actions: vec![],
                 },
             ) {
-                Ok(config) => {
-                    match state::ProjectState::init(config, project_path) {
-                        Ok(project_state) => {
-                            state.project = Some(project_state);
-                            Ok(())
-                        },
-                        Err(err) => {
-                            Err(err.to_string())
-                        }
+                Ok(config) => match state::ProjectState::init(config, project_path) {
+                    Ok(project_state) => {
+                        state.project = Some(project_state);
+                        Ok(())
                     }
+                    Err(err) => Err(err.to_string()),
                 },
-                Err(err) => {
-                    Err(err.to_string())
-                }
+                Err(err) => Err(err.to_string()),
             }
-        },
-        Err(err) => {
-            Err(err.to_string())
         }
+        Err(err) => Err(err.to_string()),
     }
 }
 
@@ -113,20 +136,16 @@ pub fn load_user(state: &mut state::AppState, app_dir: &Path) -> Result<bool, St
     config_path.push("user.yaml");
 
     match fs::read_to_string(&config_path) {
-        Ok(src) => {
-            match user_config::parse_config(&src) {
-                Ok(config) => {
-                    match state::UserState::init(config) {
-                        Ok(user_state) => {
-                            state.user = Some(user_state);
-                            Ok(true)
-                        },
-                        Err(err) => Err(err.to_string()),
-                    }
-                },
+        Ok(src) => match user_config::parse_config(&src) {
+            Ok(config) => match state::UserState::init(config) {
+                Ok(user_state) => {
+                    state.user = Some(user_state);
+                    Ok(true)
+                }
                 Err(err) => Err(err.to_string()),
-            }
-        }
+            },
+            Err(err) => Err(err.to_string()),
+        },
         Err(err) => match err.kind() {
             // If there is no fonfig file return false
             std::io::ErrorKind::NotFound => Ok(false),
@@ -167,7 +186,6 @@ pub fn detect_local_source_changes(state: &state::AppState) -> Result<bool, Stri
         Err(e) => Err(e.to_string()),
     }
 }
-
 
 pub fn detect_remote_source_changes(state: &state::AppState) -> Result<bool, String> {
     let project = match &state.project {
