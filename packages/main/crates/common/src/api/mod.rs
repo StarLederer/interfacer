@@ -24,8 +24,6 @@ pub fn add_project(
     name: &str,
     config: &project_config::ConfigLatest,
 ) -> Result<(), String> {
-    println!("{:?}", config);
-
     let mut path = PathBuf::from(app_dir);
     path.push("projects");
     path.push(name);
