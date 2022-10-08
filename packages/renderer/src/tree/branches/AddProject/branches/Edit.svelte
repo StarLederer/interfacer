@@ -12,6 +12,7 @@
   import Input from "~/lib/primitives/Input.svelte";
   import Toggle from "~/lib/primitives/Toggle.svelte";
   import { navigate } from "~/lib/router";
+  import { error } from "../store";
 
   const save = async () => {
     navigate(`${path}/../loading`);
@@ -30,7 +31,7 @@
       });
       navigate(`${path}/../success`);
     } catch (err) {
-      alert(err);
+      error.set(err);
       navigate(`${path}/../error`);
     }
   };
