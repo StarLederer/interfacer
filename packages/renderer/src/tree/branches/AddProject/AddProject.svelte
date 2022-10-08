@@ -3,42 +3,14 @@
   import Button from "~/lib/primitives/Button.svelte";
   import Progress from "~/lib/primitives/Progress.svelte";
   import { navigate } from "~/lib/router";
-
-  import type { IHook, IAction } from "./branches/Edit.svelte";
   import Edit from "./branches/Edit.svelte";
-
-  let name;
-  let url;
-  let remote = "origin";
-  let hooks: Record<string, IHook> = {
-    before_each_action: {
-      name: "Before each action",
-      commands: undefined,
-    },
-    after_code_downlaod: {
-      name: "After code download",
-      commands: undefined,
-    },
-    before_code_upload: {
-      name: "Before code upload",
-      commands: undefined,
-    },
-  };
-  let actions: IAction[] = [];
 
   export let path;
 </script>
 
 <Route {path}>
   <div class="container">
-    <Edit
-      path="{path}/edit"
-      bind:name
-      bind:url
-      bind:remote
-      bind:hooks
-      bind:actions
-    />
+    <Edit path="{path}/edit" />
 
     <Route path="{path}/loading">
       <div class="flex flex-col gap-m0 justify-center items-center flex-1">
@@ -58,6 +30,20 @@
           }}
         >
           Go to projects
+        </Button>
+      </div>
+    </Route>
+
+    <Route path="{path}/error">
+      <div class="flex flex-col gap-m0 justify-center items-center flex-1">
+        <div>An error occured!</div>
+        <Button
+          solid
+          on:click={() => {
+            navigate("/add-website/edit");
+          }}
+        >
+          Go back
         </Button>
       </div>
     </Route>

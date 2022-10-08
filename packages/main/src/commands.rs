@@ -30,8 +30,9 @@ pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> 
 pub fn add_project(
     app: tauri::AppHandle,
     name: String,
-    config: project_config::ConfigLatest,
+    config: String,
 ) -> Result<(), String> {
+    let config = serde_json::from_str::<project_config::ConfigLatest>(&config).expect("Failed to deserialize config");
     let app_dir = match app.path_resolver().app_dir() {
         Some(app_dir) => app_dir,
         None => return Err(String::from("Unable to determine the data directory")),
