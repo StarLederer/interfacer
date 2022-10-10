@@ -1,4 +1,4 @@
-# Intrafacer
+# Interfacer
 
 Description and screenshots coming soon.
 
