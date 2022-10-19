@@ -6,7 +6,7 @@
     "distDir": "../renderer/dist"
   },
   "package": {
-    "productName": "Webwriter App",
+    "productName": "Interfacer",
     "version": "0.1.0"
   },
   "tauri": {
@@ -28,7 +28,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "org.webwriter.app",
+      "identifier": "org.interfacer.app",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -57,7 +57,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "Webwriter App",
+        "title": "Interfacer",
         "width": 800
       }
     ]
