@@ -4,8 +4,10 @@ Description and screenshots coming soon.
 
 ## Development
 
-- Initialize the environment `node init.mjs`
-- Start deelopment processes `node dev.mjs`
+- *Optional:* Enter the development environment `nix-shell` (requires nix)
+- Make sure you have tauri-cli installed `cargo install tauri-cli`
+- Initialize dev tools `node init.mjs`
+- Start development processes `node dev.mjs`
 
 ## Deployment
 
