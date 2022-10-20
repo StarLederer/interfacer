@@ -16,6 +16,7 @@ const tauriRequired = defineConfig({
   clearScreen: false,
   // Tauri expects a fixed port, fail if that port is not available
   server: {
+    port: 5173,
     strictPort: true,
   },
   // to make use of `TAURI_PLATFORM`, `TAURI_ARCH`, `TAURI_FAMILY`,
