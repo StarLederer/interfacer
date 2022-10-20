@@ -30,6 +30,7 @@ in pkgs.mkShell {
     librsvg
     patchelf
     dbus
+    SDL2
   ];
 
   RUST_BACKTRACE = 1;
