@@ -57,7 +57,7 @@
     position: relative;
 
     &:hover {
-      --highlight: -10%;
+      @apply highlight;
     }
 
     & .listbox-label {
@@ -106,8 +106,7 @@
 
     & .listbox-option {
       &.active {
-        --highlight: -10%;
-        @apply bg-int2 text-on-int2;
+        @apply bg-int2 text-on-int2 highlight;
       }
     }
 

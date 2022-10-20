@@ -20,7 +20,7 @@
     position: relative;
 
     &:hover {
-      --highlight: -10%;
+      @apply highlight;
     }
 
     &:focus-within {

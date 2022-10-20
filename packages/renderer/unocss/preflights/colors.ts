@@ -56,6 +56,8 @@ const getCSS = ({ theme: { wrapp } }: PreflightContext<ITheme>): string => {
   return `
     :root {
       --hue: 0;
+      --base-highlight: 10%;
+      --base-highlight-plus: 20%;
       --highlight: 0%;
 
       ${colors.map(([dark, _]) => {
@@ -65,6 +67,9 @@ const getCSS = ({ theme: { wrapp } }: PreflightContext<ITheme>): string => {
 
     @media (prefers-color-scheme: light) {
       :root {
+        --base-highlight: -10%;
+        --base-highlight-plus: -20%;
+
         ${colors.map(([_, light]) => {
           return light;
         }).join('\n')}

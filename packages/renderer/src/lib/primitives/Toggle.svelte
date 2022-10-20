@@ -28,12 +28,11 @@
     pd-s--;
 
     &:hover {
-      --highlight: -10%;
+      @apply highlight;
     }
 
     &:active {
-      @apply pd-s-;
-      --highlight: -20%;
+      @apply pd-s- highlight+;
     }
 
     & .text-representation {

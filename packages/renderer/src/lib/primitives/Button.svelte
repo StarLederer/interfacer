@@ -46,12 +46,11 @@
 
       &:hover,
       &:active {
-        @apply bg-int3 text-on-int3;
-        --highlight: -10%;
+        @apply bg-int3 text-on-int3 highlight;
       }
 
       &:active {
-        --highlight: -20%;
+        @apply highlight+;
       }
     }
 
@@ -76,12 +75,11 @@
       &:not(:disabled) {
         &:hover,
         &:active {
-          @apply bg-int text-on-int;
-          --highlight: 10%;
+          @apply bg-int text-on-int highlight;
         }
 
         &:active {
-          --highlight: 20%;
+          @apply highlight+;
         }
       }
     }
