@@ -87,6 +87,37 @@ impl UserState {
 
 #[derive(Default)]
 pub struct AppState {
-    pub project: Option<ProjectState>,
-    pub user: Option<UserState>,
+    project: Option<ProjectState>,
+    user: Option<UserState>,
+}
+
+impl AppState {
+    pub fn project(&self) -> Result<&ProjectState, String> {
+        match &self.project {
+            Some(project) => Ok(project),
+            None => Err(String::from("Attempted to read project from state with no project")),
+        }
+    }
+
+    pub fn project_mut(&mut self) -> Result<&mut ProjectState, String> {
+        match &mut self.project {
+            Some(project) => Ok(project),
+            None => Err(String::from("Attempted to read project from state with no project")),
+        }
+    }
+
+    pub fn set_project(&mut self, project: ProjectState) {
+        self.project = Some(project);
+    }
+
+    pub fn user(&self) -> Result<&UserState, String> {
+        match &self.user {
+            Some(user) => Ok(user),
+            None => Err(String::from("Attempted to get user from state before user is loaded")),
+        }
+    }
+
+    pub fn set_user(&mut self, user: UserState) {
+        self.user = Some(user);
+    }
 }

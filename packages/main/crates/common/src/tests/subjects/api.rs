@@ -8,12 +8,29 @@ use crate::project_config::{ActionConfig, ConfigLatest};
 
 #[test]
 fn adds_projects() {
+    // Load environment variables
+    util::init_env();
+    let git_url = util::env::var("TEST_GIT_REPO");
+    let git_username = util::env::var("TEST_GIT_USERNAME");
+    let git_password = util::env::var("TEST_GIT_PASSWORD");
+
+    // Make sure our test dir is clean
     let path = Path::new("./src/tests/tmp/app-dir");
     util::fs::rimraf(path);
 
+    // Initialize minimal required app state
+    let mut state = crate::state::AppState::default();
+    state.set_user(crate::state::UserState {
+        git_username,
+        git_password,
+    });
+
+    // Test whether the function runs successfully
     match add_project(
+        &state,
         path,
         "New Project",
+        &git_url,
         &ConfigLatest {
             version: Some(String::from("1")),
             workspace_dir: None,
