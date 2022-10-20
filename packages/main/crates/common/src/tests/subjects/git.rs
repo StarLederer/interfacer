@@ -45,6 +45,20 @@ fn write_time_to_repo(repo: &git2::Repository) {
 }
 
 #[test]
+fn git_clones() {
+    util::init_env();
+    let url = util::env::var("TEST_GIT_REPO");
+    let username = util::env::var("TEST_GIT_USERNAME");
+    let password = util::env::var("TEST_GIT_PASSWORD");
+    let into = Path::new("./src/tests/tmp/git-repo");
+
+    util::fs::rimraf(&into);
+
+    // Fetch the repo, should detect no changes
+    clone(&url, into, &username, &password).unwrap();
+}
+
+#[test]
 fn git_pulls_changes() {
     todo!("Pull a git repo");
 }

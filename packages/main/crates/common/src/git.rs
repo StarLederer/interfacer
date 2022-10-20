@@ -1,4 +1,29 @@
-use std::str;
+use std::{str, path::Path};
+
+pub fn clone(
+    url: &str,
+    into: &Path,
+    username: &str,
+    password: &str,
+) -> Result<(), git2::Error> {
+    // Remote callbacks
+    let mut cb = git2::RemoteCallbacks::new();
+    cb.credentials(move |_, _, _| git2::Cred::userpass_plaintext(username, password));
+
+    // Fetch options
+    let mut fo = git2::FetchOptions::new();
+    fo.remote_callbacks(cb);
+
+    // Repo builder
+    let mut builder = git2::build::RepoBuilder::new();
+    builder.fetch_options(fo);
+
+    // Clone
+    builder.clone(url, into)?;
+
+    Ok(())
+}
+
 
 pub fn fetch(
     repo: &git2::Repository,
