@@ -27,6 +27,7 @@
 
       await invoke("add_project", {
         name,
+        gitUrl: url,
         config: JSON.stringify(config),
       });
       navigate(`${path}/../success`);
