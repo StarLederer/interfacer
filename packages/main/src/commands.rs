@@ -29,7 +29,9 @@ pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> 
 #[tauri::command]
 pub fn add_project(
     app: tauri::AppHandle,
+    state: tauri::State<'_, AppState>,
     name: String,
+    git_url: String,
     config: String,
 ) -> Result<(), String> {
     let config = serde_json::from_str::<project_config::ConfigLatest>(&config).expect("Failed to deserialize config");
@@ -37,7 +39,8 @@ pub fn add_project(
         Some(app_dir) => app_dir,
         None => return Err(String::from("Unable to determine the data directory")),
     };
-    common::api::add_project(&app_dir, &name, &config)
+    let state = state.0.lock().unwrap();
+    common::api::add_project(&state, &app_dir, &name, &git_url, &config)
 }
 
 #[derive(Default)]
