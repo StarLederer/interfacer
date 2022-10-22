@@ -8,7 +8,7 @@ import { extractorSvelte } from '@unocss/core'
 import transformerDirective from '@unocss/transformer-directives'
 
 import unocsPresetMini from '@unocss/preset-mini'
-import unocssPresetWrapp from "./unocss";
+import unocssPresetWrapp from "./unocss-preset";
 
 // https://tauri.app/v1/guides/getting-started/setup/vite/
 const tauriRequired = defineConfig({

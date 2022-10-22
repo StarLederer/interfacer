@@ -1,0 +1,3 @@
+[submodule "packages/renderer/unocss-preset"]
+	path = packages/renderer/unocss-preset
+	url = https://github.com/StarLederer/unocss-preset.git
