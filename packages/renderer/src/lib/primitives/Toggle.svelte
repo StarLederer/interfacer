@@ -21,11 +21,12 @@
     border: solid 1px;
     cursor: pointer;
 
-    @apply border-color-int3
-    transition
-    transition-all
-    round-m0
-    pd-s--;
+    @apply bg-int3
+      border-color-int3
+      transition
+      transition-all
+      round-m0
+      pd-s--;
 
     &:hover {
       @apply highlight;
@@ -46,14 +47,18 @@
       position: relative;
       inset-inline-start: 0;
       transition: inherit;
+      opacity: 60%;
 
-      @apply round-m0 bg-int3;
+
+      @apply round-m0 bg-int;
     }
 
     &:is(.on) {
+      @apply border-color-int2;
+
       & .toggle {
         inset-inline-start: 50%;
-        @apply bg-int;
+        opacity: 100%;
       }
     }
   }

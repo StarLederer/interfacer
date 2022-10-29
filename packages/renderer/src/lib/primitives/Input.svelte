@@ -11,7 +11,7 @@
 
 <style lang="postcss">
   .input {
-    @apply round-m0 border-color-int3 text-on-int3 transition;
+    @apply round-m0 border-color-int3 transition;
     border-width: 1px;
     border-style: solid;
     width: 100%;

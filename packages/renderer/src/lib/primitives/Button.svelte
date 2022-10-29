@@ -46,7 +46,7 @@
 
       &:hover,
       &:active {
-        @apply bg-int3 text-on-int3 highlight;
+        @apply bg-int4 text-on-int4 highlight;
       }
 
       &:active {
@@ -55,7 +55,7 @@
     }
 
     &.is-half {
-      @apply bg-int3 text-on-int3;
+      @apply bg-int4 text-on-int4;
     }
 
     &.is-secondary {
