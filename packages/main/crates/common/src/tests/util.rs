@@ -73,6 +73,13 @@ pub mod fs {
     }
 
     /**
+     * Get tmp path for tests
+     */
+    pub fn tmp_path() -> std::path::PathBuf {
+        canonicalize("./src/tests/tmp")
+    }
+
+    /**
      * Similar to rm -rf
      * Does not panic if the path does not exist
      */
@@ -121,6 +128,14 @@ pub mod fs {
     pub fn create_dir_all<P: AsRef<std::path::Path>>(path: P) {
         std::fs::create_dir_all(path)
             .expect(&(String::from("Failed to create a directory!") + " " + TEST_ERR));
+    }
+
+    pub fn read<P>(path: P) -> Vec<u8>
+    where
+        P: AsRef<std::path::Path>,
+    {
+        std::fs::read(path)
+            .expect(&(String::from("Failed to read a file!") + " " + TEST_ERR))
     }
 }
 
