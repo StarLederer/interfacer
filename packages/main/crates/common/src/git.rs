@@ -1,11 +1,6 @@
-use std::{str, path::Path};
+use std::{path::Path, str};
 
-pub fn clone(
-    url: &str,
-    into: &Path,
-    username: &str,
-    password: &str,
-) -> Result<(), git2::Error> {
+pub fn clone(url: &str, into: &Path, username: &str, password: &str) -> Result<(), git2::Error> {
     // Remote callbacks
     let mut cb = git2::RemoteCallbacks::new();
     cb.credentials(move |_, _, _| git2::Cred::userpass_plaintext(username, password));
@@ -23,7 +18,6 @@ pub fn clone(
 
     Ok(())
 }
-
 
 pub fn fetch(
     repo: &git2::Repository,
@@ -50,11 +44,7 @@ pub fn fetch(
     // remote.update_tips(None, true, git2::AutotagOption::Unspecified, None)?;
 
     // Fetch conveniently
-    remote.fetch(
-        &[] as &[&str],
-        Some(&mut fo),
-        None,
-    )?;
+    remote.fetch(&[] as &[&str], Some(&mut fo), None)?;
 
     let stats = remote.stats();
     stats.received_objects();
@@ -62,13 +52,11 @@ pub fn fetch(
     Ok(stats.received_objects() > 0)
 }
 
-pub fn status(
-    repo: &git2::Repository
-) -> Result<bool, git2::Error> {
+pub fn status(repo: &git2::Repository) -> Result<bool, git2::Error> {
     let stati = repo.statuses(None)?;
     Ok(stati.len() > 0)
 }
 
-pub fn nuke_pull() -> Result<bool, git2::Error>  {
+pub fn nuke_pull() -> Result<bool, git2::Error> {
     todo!("fetch, merge, prefer local changes if any conflicts occur.");
 }
