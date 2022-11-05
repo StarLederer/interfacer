@@ -1,5 +1,5 @@
 use crate::{project_config, user_config};
-use std::{fs, path::{PathBuf, Path}, process::Child};
+use std::{fs, path::{PathBuf}, process::Child};
 
 pub struct ActionState {
     pub config: project_config::ActionConfig,
