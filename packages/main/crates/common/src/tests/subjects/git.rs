@@ -65,18 +65,17 @@ fn git_pulls_changes() {
 
 #[test]
 fn git_detects_changes() {
-    let status_fail_msg = "Failed to status a git repo!";
+    util::init_env();
 
-    let from = Path::new("./src/tests/fixtures/git-repo");
-    let repo_path = Path::new("./src/tests/tmp/git-repo");
+    let status_fail_msg = "Failed to status a git repo!";
+    let mut repo_path = util::fs::canonicalize("./src/tests/tmp");
+    repo_path.push("git-repo");
+
     util::fs::rimraf(&repo_path);
 
-    // Copy the repo and open it
-    util::fs::copy_dir(from, &repo_path);
-    let repo = util::expect(
-        git2::Repository::open(&repo_path),
-        "Failed to open a git repo",
-    );
+    // Clone test repo
+    let url = util::env::var("TEST_GIT_REPO");
+    let repo = util::git2::clone_repo(&url, &repo_path);
 
     // Check the repo. Should not detect cahnges yet
     assert_eq!(
