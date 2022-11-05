@@ -57,6 +57,73 @@ pub fn status(repo: &git2::Repository) -> Result<bool, git2::Error> {
     Ok(stati.len() > 0)
 }
 
-pub fn nuke_pull() -> Result<bool, git2::Error> {
-    todo!("fetch, merge, prefer local changes if any conflicts occur.");
+/**
+ * Pulls changes and prefers remote versions of all conflicts
+ *
+ * # TODO
+ * - Implement ability to manually select changes
+ * - Rename to just "pull" when previous point is complete
+ */
+pub fn nuke_pull(
+    repo: &git2::Repository,
+    remote: &str,
+    username: &str,
+    password: &str,
+) -> Result<(), git2::Error> {
+    // Fetch
+    fetch(repo, remote, username, password)?;
+
+    // Merge (prefer remote changes)
+    let fetch_head = repo.find_reference("FETCH_HEAD")?;
+    let fetch_commit = repo.reference_to_annotated_commit(&fetch_head)?;
+
+    // Discard all local changes ("nuke")
+    repo.reset(repo.head()?.peel_to_commit()?.as_object(), git2::ResetType::Hard, None)?;
+
+    // Merge (prefer remote changes (should not occur since we discard before merging))
+    let mut merge_opts = git2::MergeOptions::new();
+    merge_opts.file_favor(git2::FileFavor::Theirs);
+    let mut checkout_opts = git2::build::CheckoutBuilder::new();
+    checkout_opts.force();
+    checkout_opts.use_theirs(true);
+    repo.merge(
+        &[&fetch_commit],
+        Some(&mut merge_opts),
+        Some(&mut checkout_opts),
+    )?;
+
+    commit(repo)?;
+
+    repo.cleanup_state()?;
+
+    Ok(())
+}
+
+pub fn add_all(repo: &git2::Repository) -> Result<(), git2::Error> {
+    // Stage changes
+    let mut index = repo.index()?;
+    // We need CHECK_PATHSPEC to emulate git add -A
+    // without it we emilate git add . which does not stage deletions
+    index.add_all(
+        ["."].iter(),
+        git2::IndexAddOption::DEFAULT.union(git2::IndexAddOption::CHECK_PATHSPEC),
+        None,
+    )?; // not sure if we need to union with DEFAULT
+    index.write()?;
+
+    Ok(())
+}
+
+/**
+ * Commit current index with the preset message
+ */
+pub fn commit(repo: &git2::Repository) -> Result<git2::Oid, git2::Error> {
+    repo.commit(
+        Some("HEAD"),
+        &git2::Signature::now("Interfacer", "app@interfacer.org").unwrap(),
+        &git2::Signature::now("Interfacer", "app@interfacer.org").unwrap(),
+        "Save changes using Interfacer",
+        &repo.find_tree(repo.index()?.write_tree()?)?,
+        &[&repo.head()?.peel_to_commit()?],
+    )
 }

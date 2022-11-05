@@ -5,6 +5,19 @@ use crate::tests::{messages::*, util};
 
 use crate::git::*;
 
+fn push_repo(repo: &git2::Repository) {
+    let mut origin = util::expect(
+        repo.find_remote("origin"),
+        "Failed to find remote \"origin\"",
+    );
+    origin
+        .push(
+            &["HEAD:refs/heads/main"],
+            Some(git2::PushOptions::new().remote_callbacks(util::git2::RemoteCallbacks::new())),
+        )
+        .expect("Failed to push to git remote");
+}
+
 fn write_time_to_repo(repo: &git2::Repository) {
     // Find workdir
     let workdir = util::expect_opt(repo.workdir(), "Repo doesn't have a workdir!");
@@ -12,15 +25,11 @@ fn write_time_to_repo(repo: &git2::Repository) {
     // Make a change to worktree
     let mut file_path = PathBuf::from(workdir);
     file_path.push("time");
-    util::fs::write(
-        file_path,
-        util::expect(
-            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH),
-            "Error retreiving time. System time cannot be set to before the unix epoch",
-        )
-        .as_millis()
-        .to_be_bytes(),
+    let time = util::expect(
+        std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH),
+        "Error retreiving time. System time cannot be set to before the unix epoch",
     );
+    util::fs::write(file_path, time.as_millis().to_be_bytes());
 
     // Stage the cahange
     let mut index = util::expect(repo.index(), "Failed to retrieve repo index");
@@ -60,7 +69,70 @@ fn git_clones() {
 
 #[test]
 fn git_pulls_changes() {
-    todo!("Pull a git repo");
+    util::init_env();
+
+    let username = util::env::var("TEST_GIT_USERNAME");
+    let password = util::env::var("TEST_GIT_PASSWORD");
+    let mut repo1_path = util::fs::tmp_path();
+    repo1_path.push("repo1");
+    let mut repo2_path = util::fs::tmp_path();
+    repo2_path.push("repo2");
+
+    // Rimraf paths we need for testing
+    util::fs::rimraf(&repo1_path);
+    util::fs::rimraf(&repo2_path);
+
+    // Clone repo as repo 1
+    let url = util::env::var("TEST_GIT_REPO");
+    let repo1 = util::git2::clone_repo(&url, &repo1_path);
+
+    // Copy repo 1 to repo 2 and open it
+    util::fs::copy_dir(&repo1_path, &repo2_path);
+    let repo2 = util::expect(
+        git2::Repository::open(&repo2_path),
+        "Could not open a git repo!",
+    );
+
+    // Test macro
+    macro_rules! assert_repos_match {
+        () => {
+            // Time in repo 1 and repo 2 should have matching contents
+            let mut repo1_time_path = repo1_path.clone();
+            let mut repo2_time_path = repo2_path.clone();
+            repo1_time_path.push("time");
+            repo2_time_path.push("time");
+            let repo1_time = util::fs::read(repo1_time_path);
+            let repo2_time = util::fs::read(repo2_time_path);
+            assert_eq!(repo1_time, repo2_time);
+        };
+    }
+
+    // Test without conflicts
+    {
+        // Advance repo 2
+        write_time_to_repo(&repo2);
+        push_repo(&repo2);
+
+        // Test
+        nuke_pull(&repo1, "origin", &username, &password).expect("Failed to pull remote branch");
+        assert_repos_match!();
+    }
+
+    // Test with conflicts
+    {
+        // Make a local change to repo 1
+        let mut file_path = PathBuf::from(&repo1_path);
+        file_path.push("time");
+        util::fs::write(file_path, "this should cause a conflict");
+
+        // Advance repo 2
+        write_time_to_repo(&repo2);
+        push_repo(&repo2);
+
+        // Test
+        nuke_pull(&repo1, "origin", &username, &password).expect("Failed to nukepull remote branch with merge conflicts");
+        assert_repos_match!();
+    }
 }
 
 #[test]
@@ -78,10 +150,7 @@ fn git_detects_changes() {
     let repo = util::git2::clone_repo(&url, &repo_path);
 
     // Check the repo. Should not detect cahnges yet
-    assert_eq!(
-        status(&repo).expect(status_fail_msg),
-        false
-    );
+    assert_eq!(status(&repo).expect(status_fail_msg), false);
 
     // Make a change to worktree
     let mut file_path = PathBuf::from(repo_path);
@@ -89,10 +158,7 @@ fn git_detects_changes() {
     util::fs::write(file_path, []);
 
     // Check repo_2. Should detect changes now
-    assert_eq!(
-        status(&repo).expect(status_fail_msg),
-        true
-    );
+    assert_eq!(status(&repo).expect(status_fail_msg), true);
 }
 
 #[test]
