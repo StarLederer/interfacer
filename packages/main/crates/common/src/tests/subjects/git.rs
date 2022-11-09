@@ -3,8 +3,7 @@ use std::path::{Path, PathBuf};
 #[allow(unused_imports)]
 use crate::tests::{messages::*, util};
 
-use crate::{git::*};
-
+use crate::git::*;
 
 /// # Assumptions
 /// * "origin" is the remote that we want to push to
@@ -33,7 +32,10 @@ fn write_time_to_repo(repo: &git2::Repository, custom_time: Option<u128>) {
         std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH),
         "Error retreiving time. System time cannot be set to before the unix epoch",
     );
-    util::fs::write(file_path, custom_time.unwrap_or(time.as_millis()).to_be_bytes());
+    util::fs::write(
+        file_path,
+        custom_time.unwrap_or(time.as_millis()).to_be_bytes(),
+    );
 
     // Stage the cahange
     let mut index = util::expect(repo.index(), "Failed to retrieve repo index");
@@ -275,14 +277,13 @@ fn git_saves_changes() {
                     // We want this. This is correct
                     // This is the error that indicates that testrepo's main on the remote has commits that local main does not.
                     // That is the commit that we push just above
-                },
+                }
                 _ => {
                     // Some other error occured while pushing
                     // This most likely indicates a test error but
                     // I am not sure
                     panic!("An error occurred when pushing. It is likely (but not certainly) a test error. Please inspect the cause. ({})", err);
-
-                },
+                }
             },
         }
     }
