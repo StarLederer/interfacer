@@ -3,8 +3,12 @@ use std::path::{Path, PathBuf};
 #[allow(unused_imports)]
 use crate::tests::{messages::*, util};
 
-use crate::git::*;
+use crate::{git::*};
 
+
+/// # Assumptions
+/// * "origin" is the remote that we want to push to
+/// * we want to push changes on HEAD to main
 fn push_repo(repo: &git2::Repository) {
     let mut origin = util::expect(
         repo.find_remote("origin"),
@@ -18,7 +22,7 @@ fn push_repo(repo: &git2::Repository) {
         .expect("Failed to push to git remote");
 }
 
-fn write_time_to_repo(repo: &git2::Repository) {
+fn write_time_to_repo(repo: &git2::Repository, custom_time: Option<u128>) {
     // Find workdir
     let workdir = util::expect_opt(repo.workdir(), "Repo doesn't have a workdir!");
 
@@ -29,7 +33,7 @@ fn write_time_to_repo(repo: &git2::Repository) {
         std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH),
         "Error retreiving time. System time cannot be set to before the unix epoch",
     );
-    util::fs::write(file_path, time.as_millis().to_be_bytes());
+    util::fs::write(file_path, custom_time.unwrap_or(time.as_millis()).to_be_bytes());
 
     // Stage the cahange
     let mut index = util::expect(repo.index(), "Failed to retrieve repo index");
@@ -82,7 +86,7 @@ fn git_pulls_changes() {
     util::fs::rimraf(&repo1_path);
     util::fs::rimraf(&repo2_path);
 
-    // Clone repo as repo 1
+    // Clone repo as repo 1 and open it
     let url = util::env::var("TEST_GIT_REPO");
     let repo1 = util::git2::clone_repo(&url, &repo1_path);
 
@@ -110,7 +114,7 @@ fn git_pulls_changes() {
     // Test without conflicts
     {
         // Advance repo 2
-        write_time_to_repo(&repo2);
+        write_time_to_repo(&repo2, None);
         push_repo(&repo2);
 
         // Test
@@ -126,11 +130,12 @@ fn git_pulls_changes() {
         util::fs::write(file_path, "this should cause a conflict");
 
         // Advance repo 2
-        write_time_to_repo(&repo2);
+        write_time_to_repo(&repo2, None);
         push_repo(&repo2);
 
         // Test
-        nuke_pull(&repo1, "origin", &username, &password).expect("Failed to nukepull remote branch with merge conflicts");
+        nuke_pull(&repo1, "origin", &username, &password)
+            .expect("Failed to nukepull remote branch with merge conflicts");
         assert_repos_match!();
     }
 }
@@ -192,7 +197,7 @@ fn git_fetches() {
     );
 
     // Make a change to the copied repo
-    write_time_to_repo(&repo_2);
+    write_time_to_repo(&repo_2, None);
 
     // Push changes to the copied repo
     let mut origin = util::expect(
@@ -215,5 +220,70 @@ fn git_fetches() {
 
 #[test]
 fn git_saves_changes() {
-    todo!("Check if git is able to pull, add changes, commit and push");
+    util::init_env();
+
+    let username = util::env::var("TEST_GIT_USERNAME");
+    let password = util::env::var("TEST_GIT_PASSWORD");
+    let url = util::env::var("TEST_GIT_REPO");
+    let repo1_path = Path::new("./src/tests/tmp/git_saves_changes_repo1");
+    let repo2_path = Path::new("./src/tests/tmp/git_saves_changes_repo2");
+
+    // Prepare the test repo
+    util::fs::rimraf(&repo1_path);
+    let repo = util::git2::clone_repo(&url, &repo1_path);
+
+    // Test saving with no conflicts
+    {
+        // Make a change
+        write_time_to_repo(&repo, None);
+
+        // Save
+        add_all(&repo).expect("Failed to stage changes");
+        commit(&repo).expect("Faield to commit changes");
+        push(&repo, "origin", &username, &password).expect("Failed to push repo");
+    }
+
+    // Test with conflicts
+    {
+        // Introduce a conflict
+        {
+            // Prepare repo 2 path
+            util::fs::rimraf(&repo2_path);
+
+            // Copy repo 1 to repo 2 and open it
+            util::fs::copy_dir(&repo1_path, &repo2_path);
+            let repo2 = util::expect(
+                git2::Repository::open(&repo2_path),
+                "Could not open a git repo!",
+            );
+
+            // Write 0 as time
+            write_time_to_repo(&repo2, Some(0));
+            push_repo(&repo2);
+        }
+
+        // Advance repo 1
+        write_time_to_repo(&repo, None);
+
+        // Save
+        add_all(&repo).expect("Failed to stage changes");
+        commit(&repo).expect("Faield to commit changes");
+        match push(&repo, "origin", &username, &password) {
+            Ok(_) => panic!("Successfully pushed but expected to fail with a conflict"),
+            Err(err) => match err.code() {
+                git2::ErrorCode::NotFastForward => {
+                    // We want this. This is correct
+                    // This is the error that indicates that testrepo's main on the remote has commits that local main does not.
+                    // That is the commit that we push just above
+                },
+                _ => {
+                    // Some other error occured while pushing
+                    // This most likely indicates a test error but
+                    // I am not sure
+                    panic!("An error occurred when pushing. It is likely (but not certainly) a test error. Please inspect the cause. ({})", err);
+
+                },
+            },
+        }
+    }
 }
