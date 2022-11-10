@@ -5,19 +5,21 @@
 
 mod commands;
 
-use commands::*;
-
 fn main() {
     tauri::Builder::default()
-        .manage(AppState::default())
+        .manage(commands::AppState::default())
         .invoke_handler(tauri::generate_handler![
-            add_project,
-            get_websites,
-            load_project,
-            load_user,
-            get_actions,
-            get_user,
-            interact,
+            commands::add_project,
+            commands::get_websites,
+            commands::load_project,
+            commands::load_user,
+            commands::get_actions,
+            commands::get_user,
+            commands::interact,
+            commands::detect_local_source_changes,
+            commands::detect_remote_source_changes,
+            commands::download_remote_source_history,
+            commands::upload_local_source_history,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,9 +1,9 @@
 use std::{fs, sync::Mutex};
 
-use interfacer_core::project_config;
+use interfacer_core::*;
 
 #[derive(Default)]
-pub struct AppState(Mutex<interfacer_core::state::AppState>);
+pub struct AppState(Mutex<state::AppState>);
 
 #[tauri::command]
 pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> {
@@ -44,7 +44,7 @@ pub fn add_project(
         None => return Err(String::from("Unable to determine the data directory")),
     };
     let state = state.0.lock().unwrap();
-    interfacer_core::api::add_project(&state, &app_dir, &name, &git_url, &config)
+    interfacer_core::add_project(&state, &app_dir, &name, &git_url, &config)
 }
 
 #[tauri::command]
@@ -59,15 +59,15 @@ pub fn load_project(
     };
 
     let mut state = state.0.lock().unwrap();
-    interfacer_core::api::load_project(&mut state, &app_dir, &name)
+    interfacer_core::load_project(&mut state, &app_dir, &name)
 }
 
 #[tauri::command]
 pub fn get_actions(
     state: tauri::State<'_, AppState>,
-) -> Result<Vec<interfacer_core::api::Consequence>, String> {
+) -> Result<Vec<Consequence>, String> {
     let state = state.0.lock().unwrap();
-    interfacer_core::api::get_actions(&state)
+    interfacer_core::get_actions(&state)
 }
 
 #[tauri::command]
@@ -77,26 +77,50 @@ pub fn load_user(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Re
         None => return Err(String::from("Unable to determine the data directory")),
     };
     let mut state = state.0.lock().unwrap();
-    interfacer_core::api::load_user(&mut state, &app_dir)
+    interfacer_core::load_user(&mut state, &app_dir)
 }
 
 #[tauri::command]
 pub fn get_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
     let state = state.0.lock().unwrap();
-    interfacer_core::api::get_user(&state)
+    interfacer_core::get_user(&state)
 }
 
 #[tauri::command]
 pub fn set_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
     let state = state.0.lock().unwrap();
-    interfacer_core::api::set_user(&state)
+    interfacer_core::set_user(&state)
 }
 
 #[tauri::command]
 pub async fn interact(
     state: tauri::State<'_, AppState>,
     action_i: usize,
-) -> Result<interfacer_core::api::Consequence, String> {
+) -> Result<Consequence, String> {
     let mut state = state.0.lock().unwrap();
-    interfacer_core::api::interact(&mut state, action_i)
+    interfacer_core::interact(&mut state, action_i)
+}
+
+// Source control & remote storage
+
+#[tauri::command]
+pub fn detect_local_source_changes(state: tauri::State<'_, AppState>) -> Result<bool, String> {
+    let state = state.0.lock().unwrap();
+    interfacer_core::detect_local_source_changes(&state)
+}
+
+#[tauri::command]
+pub fn detect_remote_source_changes(state: tauri::State<'_, AppState>) -> Result<bool, String> {
+    let state = state.0.lock().unwrap();
+    interfacer_core::detect_remote_source_changes(&state)
+}
+
+#[tauri::command]
+pub fn download_remote_source_history(state: tauri::State<'_, AppState>) -> Result<(), String> {
+    Err(String::from("Not implemented yet"))
+}
+
+#[tauri::command]
+pub fn upload_local_source_history(state: tauri::State<'_, AppState>) -> Result<(), String> {
+    Err(String::from("Not implemented yet"))
 }
