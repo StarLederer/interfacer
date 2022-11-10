@@ -2,8 +2,8 @@ use std::path::Path;
 
 use crate::tests::util;
 
-use crate::api::internal::*;
-use crate::api::*;
+use crate::internal::*;
+use crate::*;
 use crate::project_config::{ActionConfig, ConfigLatest};
 
 #[test]
