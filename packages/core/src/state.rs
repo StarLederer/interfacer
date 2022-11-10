@@ -58,7 +58,7 @@ impl ProjectState {
             // Init version control state
             VersionControlState {
                 repo,
-                remote: String::from("Origin"),
+                remote: String::from("origin"),
             }
         };
 
