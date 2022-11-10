@@ -24,7 +24,7 @@
         <Open />
       </Button>
     </div>
-    <Button secondary>
+    <Button half>
       <Menu />
     </Button>
   </div>
