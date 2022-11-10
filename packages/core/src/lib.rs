@@ -98,9 +98,7 @@ pub fn add_project(
     Ok(())
 }
 
-/*
-    Use when the user clicks an action.
-*/
+/// Use when the user clicks an action.
 pub fn interact(state: &mut state::AppState, action_i: usize) -> Result<Consequence, String> {
     let state = state.project_mut()?;
 
