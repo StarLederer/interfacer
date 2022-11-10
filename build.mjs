@@ -17,7 +17,7 @@ const runVite = () => {
 };
 
 const runTauri = () => {
-    const tauri = spawn("cargo", ["tauri", "build"], { cwd: resolve("./packages/main") });
+    const tauri = spawn("cargo", ["tauri", "build"], { cwd: resolve("./packages/tauri_app") });
     tauri.stdout.on('data', logData);
     tauri.stderr.on('data', logData);
 };

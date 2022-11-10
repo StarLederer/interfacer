@@ -2,7 +2,7 @@ import { resolve } from "path"
 import { spawn } from "child_process"
 
 const vite = spawn("pnpm", ["run", "dev"], { cwd: resolve("./packages/renderer") });
-const tauri = spawn("cargo", ["tauri", "dev"], { cwd: resolve("./packages/main") });
+const tauri = spawn("cargo", ["tauri", "dev"], { cwd: resolve("./packages/tauri_app") });
 
 // Common
 
