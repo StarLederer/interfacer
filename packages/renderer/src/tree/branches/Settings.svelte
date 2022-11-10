@@ -84,7 +84,7 @@
           <Remove />
         </Button>
       </fieldset>
-      <p class="text-on-def-3">Previous credentials are not shown.</p>
+      <p class="text-on3">Previous credentials are not shown.</p>
     </fieldset>
   </form>
 </section>

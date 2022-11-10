@@ -46,7 +46,7 @@
 
       &:hover,
       &:active {
-        @apply bg-int4 text-on-int4 highlight;
+        @apply bg-int4 highlight;
       }
 
       &:active {
@@ -55,27 +55,27 @@
     }
 
     &.is-half {
-      @apply bg-int4 text-on-int4;
+      @apply bg-int4;
     }
 
     &.is-secondary {
-      @apply bg-int2 text-on-int2;
+      @apply bg-int2;
 
       &:not(:disabled) {
         &:hover,
         &:active {
-          @apply bg-int2 text-on-int2;
+          @apply bg-int2;
         }
       }
     }
 
     &.is-solid {
-      @apply bg-int text-on-int;
+      @apply bg-int;
 
       &:not(:disabled) {
         &:hover,
         &:active {
-          @apply bg-int text-on-int highlight;
+          @apply bg-int highlight;
         }
 
         &:active {

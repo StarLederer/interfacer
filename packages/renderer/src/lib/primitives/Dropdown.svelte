@@ -52,7 +52,7 @@
       gap-s--
       flex-1
       border-color-int3
-      text-on-int3
+      text-on0
       rund-m;
     position: relative;
 
@@ -61,7 +61,7 @@
     }
 
     & .listbox-label {
-      @apply text-on-def-2;
+      @apply text-on1;
       position: absolute;
       left: 1rem;
       line-height: 2.5rem;
@@ -106,7 +106,7 @@
 
     & .listbox-option {
       &.active {
-        @apply bg-int2 text-on-int2 highlight;
+        @apply bg-int2 highlight;
       }
     }
 

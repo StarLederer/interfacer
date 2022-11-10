@@ -62,7 +62,7 @@
       {#if error}
         <div class="error">
           <p>An error has occured!</p>
-          <p class="text-on-srf-2">{error}</p>
+          <p class="text-on1">{error}</p>
         </div>
       {:else}
         <div class="actions">
@@ -102,7 +102,6 @@
   .error {
     --hue: 0;
     @apply bg-srf
-      text-on-srf
       round-m0
       pd-m0;
   }

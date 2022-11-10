@@ -9,10 +9,10 @@
   export let label = "";
 </script>
 
-<div class="panel bg-srf text-on-srf-2 flex flex-col gap-m0">
+<div class="panel bg-srf text-on2 flex flex-col gap-m0">
   <div class="flex flex-col gap-s pd-bs-m0">
     <div class="header">
-      <div class="title text-on-srf font-semibold">{label}</div>
+      <div class="title text-on0 font-semibold">{label}</div>
     </div>
     <p>A short description maybe?</p>
   </div>

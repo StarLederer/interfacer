@@ -78,9 +78,9 @@
     <div class="add-website">
       <aside
         style="--hue: 6;"
-        class="flex flex-row items-center gap-m0 bg-srf text-on-srf-2 pd-s- round-m--"
+        class="flex flex-row items-center gap-m0 bg-srf text-on1 pd-s- round-m--"
       >
-        <div style="border-radius: 50%;" class="bg-srf2 text-on-srf pd-s+">
+        <div style="border-radius: 50%;" class="bg-srf2 text-on1 pd-s+">
           <Exclimation size="1rem" />
         </div>
         <span>
@@ -99,7 +99,7 @@
           <div class="fieldset">
             <span class="legend">Hooks</span>
             {#each Object.keys(usedHooks) as key}
-              <fieldset class="panel bg-srf text-on-srf flex flex-col gap-s">
+              <fieldset class="panel bg-srf flex flex-col gap-s">
                 <div class="flex justify-between items-center">
                   <span class="mg-i-m0">{key.replaceAll("_", " ")}</span>
                   <Button
@@ -163,7 +163,7 @@
         <div class="fieldset">
           <span class="legend">Actions</span>
           {#each actions as _, i}
-            <fieldset class="panel bg-srf text-on-srf flex flex-col gap-s--">
+            <fieldset class="panel bg-srf flex flex-col gap-s--">
               <Input label="Idle name" bind:value={actions[i].idle_name} />
               <Input label="Active name" bind:value={actions[i].active_name} />
               <Input label="Command" bind:value={actions[i].command} />
@@ -241,6 +241,6 @@
 
   .label {
     font-size: 0.8rem;
-    @apply text-on-def-2;
+    @apply text-on2;
   }
 </style>

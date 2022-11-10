@@ -19,7 +19,7 @@
   });
 </script>
 
-<main class="bg-def text-on-def transition" style="--hue: {$mainStore}">
+<main class="bg-def transition" style="--hue: {$mainStore}">
   <Root />
 </main>
 

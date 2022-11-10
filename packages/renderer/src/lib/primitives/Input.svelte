@@ -28,7 +28,7 @@
     }
 
     & .label {
-      @apply text-on-def-2;
+      @apply text-on2;
       font-size: 0.8rem;
       position: absolute;
       top: 0;

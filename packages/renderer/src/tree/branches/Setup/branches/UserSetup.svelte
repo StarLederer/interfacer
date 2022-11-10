@@ -11,11 +11,11 @@
 <div class="container flex items-center justify-center">
   <div class="flex flex-col gap-m0">
     <div class="header">
-      <div class="git bg-srf text-on-srf">
+      <div class="git bg-srf">
         <Git size="2rem" />
       </div>
 
-      <span class="text-on-def-2">Let's start by setting up your Git credentials</span>
+      <span class="text-on1">Let's start by setting up your Git credentials</span>
     </div>
 
     <div class="flex flex-col gap-s--">
