@@ -1,6 +1,7 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/tauri";
   import Refresh from "svelte-material-icons/Refresh.svelte";
+  import Download from "svelte-material-icons/CloudDownloadOutline.svelte";
   import Save from "svelte-material-icons/ContentSave.svelte";
 
   import { Route, navigate } from "~/lib/router";
@@ -19,11 +20,53 @@
     name: string;
     active: boolean;
   }[] = [];
+  let saving;
+  let localChanges;
+  let remoteChanges;
+
+  const resetState = () => {
+    actions = [];
+    saving = false;
+    localChanges = false;
+    remoteChanges = undefined;
+  };
+
+  const checkRemote = async () => {
+    try {
+      remoteChanges = await invoke("detect_remote_source_changes");
+    } catch (err) {
+      error = err;
+    }
+  };
+
+  const updateCode = async () => {
+    try {
+      await invoke("download_remote_source_history");
+      remoteChanges = await invoke("detect_remote_source_changes");
+    } catch (err) {
+      error = err;
+    }
+  };
+
+  const saveCode = async () => {
+    saving = true;
+
+    try {
+      await invoke("upload_local_source_history");
+      localChanges = await invoke("detect_local_source_changes");
+    } catch (err) {
+      error = err;
+    }
+
+    saving = false;
+  };
 
   const onOpen = async () => {
-    actions = [];
+    resetState();
     try {
       await invoke("load_project", { name: $projectStore });
+      localChanges = await invoke("detect_local_source_changes");
+      remoteChanges = await invoke("detect_remote_source_changes");
       actions = await invoke("get_actions");
     } catch (err) {
       error = err;
@@ -44,17 +87,41 @@
       }}
     >
       <div class="flex" slot="titleActions">
-        <Button half>
-          <Save />
-        </Button>
+        {#if !error}
+          <Button
+            disabled={saving}
+            half={!localChanges}
+            solid={localChanges}
+            on:click={saveCode}
+          >
+            {#if saving}
+              <Progress radius={0.5} />
+            {:else}
+              <Save />
+            {/if}
+          </Button>
+        {/if}
       </div>
 
       <div slot="actions" class="header-bar-actions">
-        <span class="text-int-3"> Up to date </span>
-        <Button half>
-          Refresh
-          <Refresh />
-        </Button>
+        {#if !error}
+          {#if remoteChanges === undefined}
+            <span class="text-int-2"> Checking the cloud </span>
+            <Progress radius={0.5} />
+          {:else if remoteChanges}
+            <span class="text-int"> Out of date </span>
+            <Button solid on:click={updateCode}>
+              Update
+              <Download />
+            </Button>
+          {:else}
+            <span class="text-int-2"> Up to date </span>
+            <Button half on:click={checkRemote}>
+              Refresh
+              <Refresh />
+            </Button>
+          {/if}
+        {/if}
       </div>
     </Headerbar>
 
