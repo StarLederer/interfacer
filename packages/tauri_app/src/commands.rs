@@ -122,7 +122,7 @@ pub fn download_remote_source_history(state: tauri::State<'_, AppState>) -> Resu
 }
 
 #[tauri::command]
-pub fn upload_local_source_history(state: tauri::State<'_, AppState>) -> Result<(), String> {
+pub fn upload_local_source_history(state: tauri::State<'_, AppState>) -> Result<bool, String> {
     let state = state.0.lock().unwrap();
     interfacer_core::upload_local_source_history(&state)
 }

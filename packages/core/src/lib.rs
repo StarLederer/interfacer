@@ -227,9 +227,56 @@ pub fn detect_remote_source_changes(state: &state::AppState) -> Result<bool, Str
 }
 
 pub fn download_remote_source_history(state: &state::AppState) -> Result<(), String> {
-    Err(String::from("Not implemented yet"))
+    let project = state.project()?;
+    let user = state.user()?;
+
+    let repo = &project.version_control.repo;
+    let remote = &project.version_control.remote;
+
+    let username = &user.git_username;
+    let password = &user.git_password;
+
+    match git::nuke_pull(repo, remote, username, password) {
+        Ok(_) => Ok(()),
+        Err(e) => Err(e.to_string()),
+    }
 }
 
-pub fn upload_local_source_history(state: &state::AppState) -> Result<(), String> {
-    Err(String::from("Not implemented yet"))
+/// Use when the user wants to "save" the project
+///
+/// # Returns
+/// * **true** if uploaded successfully
+/// * **false** if the user needs to downlaod first
+///
+/// # Todo
+/// Return types are git specific.
+/// We need to fix that if we want to support other
+/// (remote) source control systems
+pub fn upload_local_source_history(state: &state::AppState) -> Result<bool, String> {
+    let project = state.project()?;
+    let user = state.user()?;
+
+    let repo = &project.version_control.repo;
+    let remote = &project.version_control.remote;
+
+    let username = &user.git_username;
+    let password = &user.git_password;
+
+    match git::add_all(repo) {
+        Ok(_) => (),
+        Err(e) => return Err(e.to_string()),
+    }
+
+    match git::commit(repo) {
+        Ok(_) => (),
+        Err(e) => return Err(e.to_string()),
+    }
+
+    match git::push(repo, remote, username, password) {
+        Ok(_) => Ok(true),
+        Err(e) => match e.code() {
+            git2::ErrorCode::NotFastForward => return Ok(false),
+            _ => return Err(e.to_string()),
+        },
+    }
 }
