@@ -2,6 +2,9 @@ use std::{fs, sync::Mutex};
 
 use interfacer_core::project_config;
 
+#[derive(Default)]
+pub struct AppState(Mutex<interfacer_core::state::AppState>);
+
 #[tauri::command]
 pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> {
     let mut res: Vec<String> = Vec::new();
@@ -34,7 +37,8 @@ pub fn add_project(
     git_url: String,
     config: String,
 ) -> Result<(), String> {
-    let config = serde_json::from_str::<project_config::ConfigLatest>(&config).expect("Failed to deserialize config");
+    let config = serde_json::from_str::<project_config::ConfigLatest>(&config)
+        .expect("Failed to deserialize config");
     let app_dir = match app.path_resolver().app_dir() {
         Some(app_dir) => app_dir,
         None => return Err(String::from("Unable to determine the data directory")),
@@ -42,9 +46,6 @@ pub fn add_project(
     let state = state.0.lock().unwrap();
     interfacer_core::api::add_project(&state, &app_dir, &name, &git_url, &config)
 }
-
-#[derive(Default)]
-pub struct AppState(Mutex<interfacer_core::state::AppState>);
 
 #[tauri::command]
 pub fn load_project(
