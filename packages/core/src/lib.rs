@@ -228,6 +228,10 @@ pub fn detect_remote_source_changes(state: &state::AppState) -> Result<bool, Str
     }
 }
 
-// TODO: check source
+pub fn download_remote_source_history(state: &state::AppState) -> Result<(), String> {
+    Err(String::from("Not implemented yet"))
+}
 
-// TODO: upload source
+pub fn upload_local_source_history(state: &state::AppState) -> Result<(), String> {
+    Err(String::from("Not implemented yet"))
+}
