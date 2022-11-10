@@ -30,7 +30,7 @@ pub async fn get_websites(app: tauri::AppHandle) -> Result<Vec<String>, String> 
 }
 
 #[tauri::command]
-pub fn add_project(
+pub async fn add_project(
     app: tauri::AppHandle,
     state: tauri::State<'_, AppState>,
     name: String,
@@ -48,7 +48,7 @@ pub fn add_project(
 }
 
 #[tauri::command]
-pub fn load_project(
+pub async fn load_project(
     app: tauri::AppHandle,
     state: tauri::State<'_, AppState>,
     name: String,
@@ -63,7 +63,7 @@ pub fn load_project(
 }
 
 #[tauri::command]
-pub fn get_actions(
+pub async fn get_actions(
     state: tauri::State<'_, AppState>,
 ) -> Result<Vec<Consequence>, String> {
     let state = state.0.lock().unwrap();
@@ -71,7 +71,7 @@ pub fn get_actions(
 }
 
 #[tauri::command]
-pub fn load_user(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Result<bool, String> {
+pub async fn load_user(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Result<bool, String> {
     let app_dir = match app.path_resolver().app_dir() {
         Some(app_dir) => app_dir,
         None => return Err(String::from("Unable to determine the data directory")),
@@ -81,13 +81,13 @@ pub fn load_user(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Re
 }
 
 #[tauri::command]
-pub fn get_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
+pub async fn get_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
     let state = state.0.lock().unwrap();
     interfacer_core::get_user(&state)
 }
 
 #[tauri::command]
-pub fn set_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
+pub async fn set_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
     let state = state.0.lock().unwrap();
     interfacer_core::set_user(&state)
 }
@@ -104,25 +104,25 @@ pub async fn interact(
 // Source control & remote storage
 
 #[tauri::command]
-pub fn detect_local_source_changes(state: tauri::State<'_, AppState>) -> Result<bool, String> {
+pub async fn detect_local_source_changes(state: tauri::State<'_, AppState>) -> Result<bool, String> {
     let state = state.0.lock().unwrap();
     interfacer_core::detect_local_source_changes(&state)
 }
 
 #[tauri::command]
-pub fn detect_remote_source_changes(state: tauri::State<'_, AppState>) -> Result<bool, String> {
+pub async fn detect_remote_source_changes(state: tauri::State<'_, AppState>) -> Result<bool, String> {
     let state = state.0.lock().unwrap();
     interfacer_core::detect_remote_source_changes(&state)
 }
 
 #[tauri::command]
-pub fn download_remote_source_history(state: tauri::State<'_, AppState>) -> Result<(), String> {
+pub async fn download_remote_source_history(state: tauri::State<'_, AppState>) -> Result<(), String> {
     let state = state.0.lock().unwrap();
     interfacer_core::download_remote_source_history(&state)
 }
 
 #[tauri::command]
-pub fn upload_local_source_history(state: tauri::State<'_, AppState>) -> Result<bool, String> {
+pub async fn upload_local_source_history(state: tauri::State<'_, AppState>) -> Result<bool, String> {
     let state = state.0.lock().unwrap();
     interfacer_core::upload_local_source_history(&state)
 }
