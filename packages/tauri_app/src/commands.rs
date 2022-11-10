@@ -117,10 +117,12 @@ pub fn detect_remote_source_changes(state: tauri::State<'_, AppState>) -> Result
 
 #[tauri::command]
 pub fn download_remote_source_history(state: tauri::State<'_, AppState>) -> Result<(), String> {
-    Err(String::from("Not implemented yet"))
+    let state = state.0.lock().unwrap();
+    interfacer_core::download_remote_source_history(&state)
 }
 
 #[tauri::command]
 pub fn upload_local_source_history(state: tauri::State<'_, AppState>) -> Result<(), String> {
-    Err(String::from("Not implemented yet"))
+    let state = state.0.lock().unwrap();
+    interfacer_core::upload_local_source_history(&state)
 }
