@@ -9,17 +9,17 @@
 
   const voidTransition = { duration: 0, delay: 0 };
 
-  const routeIn = (node) => {
+  const routeIn = (node, options) => {
     if ($route.firstDifferent[1] === pathLast) {
-      return animateIn(node);
+      return animateIn(node, options);
     } else {
       return voidTransition;
     }
   };
 
-  const routeOut = (node) => {
+  const routeOut = (node, options) => {
     if ($route.firstDifferent[0] === pathLast) {
-      return animateOut(node);
+      return animateOut(node, options);
     } else {
       return voidTransition;
     }

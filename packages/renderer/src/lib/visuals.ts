@@ -19,7 +19,7 @@ const stringToColour = (str, s: Percentage, l: Percentage) => {
 let duration = 150;
 let delay = 0;
 
-const animateIn = (node) => {
+const animateIn = (node, _) => {
   const opacity = +getComputedStyle(node).opacity;
 
   return {
@@ -32,7 +32,7 @@ const animateIn = (node) => {
   };
 };
 
-const animateOut = (node) => {
+const animateOut = (node, _) => {
   const opacity = +getComputedStyle(node).opacity;
 
   return {
