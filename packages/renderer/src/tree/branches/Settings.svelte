@@ -46,22 +46,23 @@
       navigate("/websites");
     }}
   >
-    {#if !error}
-      <Button
-        solid={!loading}
-        half={loading}
-        slot="actions"
-        disabled={loading}
-        on:click={save}
-      >
-        {#if loading}
-          <Progress radius={0.5} />
-        {:else}
-          Save
-          <Save />
-        {/if}
-      </Button>
-    {/if}
+    <div slot="actions">
+      {#if error === undefined}
+        <Button
+          solid={!loading}
+          half={loading}
+          disabled={loading}
+          on:click={save}
+        >
+          {#if loading}
+            <Progress radius={0.5} />
+          {:else}
+            Save
+            <Save />
+          {/if}
+        </Button>
+      {/if}
+    </div>
   </Headerbar>
 
   <div class="pd-i-m0">
