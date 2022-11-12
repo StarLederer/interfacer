@@ -44,6 +44,11 @@ fn adds_projects() {
 }
 
 #[test]
+fn updates_user() {
+    todo!("Update user and check if state and config have the changes")
+}
+
+#[test]
 fn self_terminated_interactions_work() {
     let mut action = crate::state::ActionState {
         config: ActionConfig {
