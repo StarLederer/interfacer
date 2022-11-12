@@ -1,5 +1,5 @@
 use crate::{project_config, user_config};
-use std::{fs, path::{PathBuf}, process::Child};
+use std::{fs, path::PathBuf, process::Child};
 
 pub struct ActionState {
     pub config: project_config::ActionConfig,
@@ -76,12 +76,36 @@ pub struct UserState {
     pub git_password: String,
 }
 
+pub struct UserStatePartial {
+    pub git_username: Option<String>,
+    pub git_password: Option<String>,
+}
+
 impl UserState {
     pub fn init(config: user_config::Config) -> Result<UserState, String> {
         Ok(UserState {
             git_username: config.git.username,
             git_password: config.git.password,
         })
+    }
+
+    pub fn update(&mut self, partial: UserStatePartial) {
+        if let Some(git_username) = partial.git_username {
+            self.git_username = git_username;
+        }
+
+        if let Some(git_password) = partial.git_password {
+            self.git_password = git_password;
+        }
+    }
+
+    pub fn generate_config(&self) -> user_config::Config {
+        user_config::Config {
+            git: user_config::GitConfig {
+                username: self.git_username.clone(),
+                password: self.git_password.clone(),
+            },
+        }
     }
 }
 
@@ -95,14 +119,18 @@ impl AppState {
     pub fn project(&self) -> Result<&ProjectState, String> {
         match &self.project {
             Some(project) => Ok(project),
-            None => Err(String::from("Attempted to read project from state with no project")),
+            None => Err(String::from(
+                "Attempted to read project from state with no project",
+            )),
         }
     }
 
     pub fn project_mut(&mut self) -> Result<&mut ProjectState, String> {
         match &mut self.project {
             Some(project) => Ok(project),
-            None => Err(String::from("Attempted to read project from state with no project")),
+            None => Err(String::from(
+                "Attempted to read project from state with no project",
+            )),
         }
     }
 
@@ -113,7 +141,9 @@ impl AppState {
     pub fn user(&self) -> Result<&UserState, String> {
         match &self.user {
             Some(user) => Ok(user),
-            None => Err(String::from("Attempted to get user from state before user is loaded")),
+            None => Err(String::from(
+                "Attempted to get user from state before user is loaded",
+            )),
         }
     }
 
