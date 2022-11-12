@@ -81,6 +81,17 @@ pub async fn load_user(app: tauri::AppHandle, state: tauri::State<'_, AppState>)
 }
 
 #[tauri::command]
+pub async fn interact(
+    state: tauri::State<'_, AppState>,
+    action_i: usize,
+) -> Result<Consequence, String> {
+    let mut state = state.0.lock().unwrap();
+    interfacer_core::interact(&mut state, action_i)
+}
+
+// User state & config commands
+
+#[tauri::command]
 pub async fn get_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
     let state = state.0.lock().unwrap();
     interfacer_core::get_user(&state)
@@ -90,15 +101,6 @@ pub async fn get_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
 pub async fn set_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
     let state = state.0.lock().unwrap();
     interfacer_core::set_user(&state)
-}
-
-#[tauri::command]
-pub async fn interact(
-    state: tauri::State<'_, AppState>,
-    action_i: usize,
-) -> Result<Consequence, String> {
-    let mut state = state.0.lock().unwrap();
-    interfacer_core::interact(&mut state, action_i)
 }
 
 // Source control & remote storage
