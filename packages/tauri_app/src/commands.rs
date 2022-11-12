@@ -71,16 +71,6 @@ pub async fn get_actions(
 }
 
 #[tauri::command]
-pub async fn load_user(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Result<bool, String> {
-    let app_dir = match app.path_resolver().app_dir() {
-        Some(app_dir) => app_dir,
-        None => return Err(String::from("Unable to determine the data directory")),
-    };
-    let mut state = state.0.lock().unwrap();
-    interfacer_core::load_user(&mut state, &app_dir)
-}
-
-#[tauri::command]
 pub async fn interact(
     state: tauri::State<'_, AppState>,
     action_i: usize,
@@ -90,6 +80,16 @@ pub async fn interact(
 }
 
 // User state & config commands
+
+#[tauri::command]
+pub async fn load_user(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Result<bool, String> {
+    let app_dir = match app.path_resolver().app_dir() {
+        Some(app_dir) => app_dir,
+        None => return Err(String::from("Unable to determine the data directory")),
+    };
+    let mut state = state.0.lock().unwrap();
+    interfacer_core::load_user(&mut state, &app_dir)
+}
 
 #[tauri::command]
 pub async fn get_user(state: tauri::State<'_, AppState>) -> Result<(), String> {
