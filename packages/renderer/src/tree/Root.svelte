@@ -13,9 +13,7 @@
 </Route>
 <AddProject path="/add-website" />
 <Project path="/project"/>
-<Route path="/settings">
-  <UserSettings />
-</Route>
+<UserSettings path="/settings" />
 <Route path="/setup">
   <Setup />
 </Route>
