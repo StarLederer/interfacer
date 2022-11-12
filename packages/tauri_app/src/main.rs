@@ -16,7 +16,7 @@ fn main() {
             commands::interact,
             commands::load_user,
             commands::get_user,
-            commands::set_user,
+            commands::update_user,
             commands::detect_local_source_changes,
             commands::detect_remote_source_changes,
             commands::download_remote_source_history,

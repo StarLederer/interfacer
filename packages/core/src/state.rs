@@ -71,11 +71,13 @@ impl ProjectState {
     }
 }
 
+#[derive(Clone)]
 pub struct UserState {
     pub git_username: String,
     pub git_password: String,
 }
 
+#[derive(serde::Deserialize)] // We intend this to be passed as an invoke argument and Tauri requires them to be deserializable
 pub struct UserStatePartial {
     pub git_username: Option<String>,
     pub git_password: Option<String>,
@@ -96,15 +98,6 @@ impl UserState {
 
         if let Some(git_password) = partial.git_password {
             self.git_password = git_password;
-        }
-    }
-
-    pub fn generate_config(&self) -> user_config::Config {
-        user_config::Config {
-            git: user_config::GitConfig {
-                username: self.git_username.clone(),
-                password: self.git_password.clone(),
-            },
         }
     }
 }
@@ -140,6 +133,15 @@ impl AppState {
 
     pub fn user(&self) -> Result<&UserState, String> {
         match &self.user {
+            Some(user) => Ok(user),
+            None => Err(String::from(
+                "Attempted to get user from state before user is loaded",
+            )),
+        }
+    }
+
+    pub fn user_mut(&mut self) -> Result<&mut UserState, String> {
+        match &mut self.user {
             Some(user) => Ok(user),
             None => Err(String::from(
                 "Attempted to get user from state before user is loaded",

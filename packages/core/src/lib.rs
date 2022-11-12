@@ -163,6 +163,8 @@ pub fn get_actions(state: &state::AppState) -> Result<Vec<Consequence>, String> 
     Ok(consequences)
 }
 
+// User state & config functions
+
 pub fn load_user(state: &mut state::AppState, app_dir: &Path) -> Result<bool, String> {
     let mut config_path = PathBuf::from(app_dir);
     config_path.push("user.yaml");
@@ -192,8 +194,41 @@ pub fn get_user(state: &state::AppState) -> Result<(), String> {
     Ok(())
 }
 
-pub fn set_user(state: &state::AppState) -> Result<(), String> {
-    Err(String::from("Not implemented yet"))
+pub fn update_user(
+    state: &mut state::AppState,
+    app_dir: &Path,
+    partial: state::UserStatePartial,
+) -> Result<(), String> {
+    // Apply partial to user state
+    let user = state.user_mut()?;
+    user.update(partial);
+
+    // Serialize user state
+    let config = user_config::Config::from(user.clone());
+    let disk_config = user_config::ConfigV1::from(config);
+    let src = match serde_yaml::to_string(&disk_config) {
+        Ok(src) => src,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    // Ensure app dir exists
+    let mut path = PathBuf::from(app_dir);
+    match fs::create_dir_all(&path) {
+        Ok(_) => {}
+        Err(err) => match err.kind() {
+            std::io::ErrorKind::AlreadyExists => todo!(),
+            _ => return Err(err.to_string()),
+        },
+    };
+
+    // Write src (generated above) to disk
+    path.push("user.yaml");
+    match fs::write(path, src) {
+        Ok(_) => (),
+        Err(err) => return Err(err.to_string()),
+    }
+
+    Ok(())
 }
 
 // The following functions are named the way they are because they do not have to
