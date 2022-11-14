@@ -71,7 +71,7 @@ impl ProjectState {
     }
 }
 
-#[derive(Clone)]
+#[derive(Default, Clone)]
 pub struct UserState {
     pub git_username: String,
     pub git_password: String,

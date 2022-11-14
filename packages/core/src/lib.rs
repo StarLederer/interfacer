@@ -199,8 +199,19 @@ pub fn update_user(
     app_dir: &Path,
     partial: state::UserStatePartial,
 ) -> Result<(), String> {
+    // Get user from state
+    let user = match state.user_mut() {
+        Ok(user) => user,
+        Err(_) => {
+            // User might be uninitialized.
+            // That occurs when app is first launched.
+            // Initialize and try again
+            state.set_user(state::UserState::default());
+            state.user_mut()?
+        },
+    };
+
     // Apply partial to user state
-    let user = state.user_mut()?;
     user.update(partial);
 
     // Serialize user state
