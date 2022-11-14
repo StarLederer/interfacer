@@ -6,6 +6,7 @@
   import { Route, navigate } from "~/lib/router";
   import Button from "~/lib/primitives/Button.svelte";
   import Input from "~/lib/primitives/Input.svelte";
+  import Error from "~/lib/Error.svelte";
 
   let loading;
   let error;
@@ -27,10 +28,11 @@
         git_password: password,
       };
       await invoke("update_user", { partial });
+      navigate("/websites");
     } catch (err) {
-      console.log(err);
+      error = err;
+      console.log(error);
     }
-    navigate("/websites");
   };
 
   const skip = () => {
@@ -49,9 +51,7 @@
         </div>
 
         <div class="flex flex-col gap-s-">
-          <span class="text-on2">
-            Welcome to Interfacer!
-          </span>
+          <span class="text-on2"> Welcome to Interfacer! </span>
 
           <span class="text-on1">
             Let's start by setting up your Git credentials
@@ -59,14 +59,18 @@
         </div>
       </div>
 
-      <div class="flex flex-col gap-s--">
-        <Input label="Username" bind:value={username} />
-        <Input label="Token" bind:value={password} />
-      </div>
-      <div class="flex justify-between">
-        <Button on:click={skip}>Skip</Button>
-        <Button solid on:click={save}>Save</Button>
-      </div>
+      {#if error}
+        <Error {error} />
+      {:else}
+        <div class="flex flex-col gap-s--">
+          <Input label="Username" bind:value={username} />
+          <Input label="Token" bind:value={password} />
+        </div>
+        <div class="flex justify-between">
+          <Button on:click={skip}>Skip</Button>
+          <Button solid on:click={save}>Save</Button>
+        </div>
+      {/if}
     </div>
   </div>
 </Route>

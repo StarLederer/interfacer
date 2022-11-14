@@ -9,6 +9,7 @@
   import Button from "~/lib/primitives/Button.svelte";
   import Progress from "~/lib/primitives/Progress.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
+  import Error from "~/lib/Error.svelte";
 
   import { projectStore } from "~/stores";
   import Action from "./lib/Action.svelte";
@@ -127,10 +128,7 @@
 
     <div class="main">
       {#if error}
-        <div class="error">
-          <p>An error has occured!</p>
-          <p class="text-on1">{error}</p>
-        </div>
+        <Error {error} />
       {:else}
         <div class="actions">
           {#each actions as action, i}
@@ -164,12 +162,5 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
     @apply gap-s-;
-  }
-
-  .error {
-    --hue: 0;
-    @apply bg-srf
-      round-m0
-      pd-m0;
   }
 </style>

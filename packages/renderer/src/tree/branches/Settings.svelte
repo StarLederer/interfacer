@@ -8,6 +8,7 @@
   import Input from "~/lib/primitives/Input.svelte";
   import Progress from "~/lib/primitives/Progress.svelte";
   import Headerbar from "~/lib/Headerbar.svelte";
+  import Error from "~/lib/Error.svelte";
   import { mainStore } from "~/stores";
 
   let loading = false;
@@ -67,10 +68,7 @@
 
   <div class="pd-i-m0">
     {#if error}
-      <div class="error">
-        <p>An error has occured!</p>
-        <p class="text-on1">{error}</p>
-      </div>
+      <Error error={error}/>
     {:else}
       <form on:submit|preventDefault={save}>
         <fieldset>
@@ -145,12 +143,5 @@
   .field-changer {
     padding: 0;
     @apply gap-s-- flex-row;
-  }
-
-  .error {
-    --hue: 0;
-    @apply bg-srf
-      round-m0
-      pd-m0;
   }
 </style>
