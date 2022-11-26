@@ -26,7 +26,7 @@ const Main: ParentComponent<IMainProps> = (props) => {
           return styles.isGhost;
         })(),
       ].join(" ")}
-      type={props.type}
+      type={props.type ?? "button"}
       disabled={props.disabled}
       style={`${props.hue != null ? `--hue: ${props.hue};` : ""}`}
       onClick={props.onClick}
