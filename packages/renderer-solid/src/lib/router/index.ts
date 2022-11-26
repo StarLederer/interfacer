@@ -1,4 +1,4 @@
-import { createSignal, createMemo, createRoot } from "solid-js";
+import { createSignal, createRoot } from "solid-js";
 
 type Path = string | undefined;
 
