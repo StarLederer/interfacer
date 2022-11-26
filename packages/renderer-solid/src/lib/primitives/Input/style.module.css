@@ -1,0 +1,36 @@
+.input {
+  @apply width-full
+    round-m0
+    border
+    border-color-int3
+    transition
+    relative
+    flex;
+  cursor: text;
+
+  &:hover {
+    @apply highlight;
+  }
+
+  &:focus-within {
+    @apply border-color-int;
+  }
+
+  & input {
+    @apply min-width-0
+      pd-m0
+      pd-bs-m--
+      text-fg-0
+      flex-1;
+    outline: none;
+  }
+}
+
+.label {
+  @apply absolute
+    text-fg-2
+    text-s++ a;
+  top: 0;
+  left: 1rem;
+  line-height: 2.5rem;
+}
