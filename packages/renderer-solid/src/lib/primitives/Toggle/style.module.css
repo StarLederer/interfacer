@@ -1,0 +1,45 @@
+.switch {
+  height: 2rem;
+  min-width: 4rem;
+  border: solid 1px;
+  cursor: pointer;
+
+  @apply bg-int3
+    border-color-int3
+    transition
+    transition-all
+    round-m0
+    pd-s--;
+
+  &:hover {
+    @apply highlight;
+  }
+
+  &:active {
+    @apply pd-s- highlight+;
+  }
+
+  & .text {
+    display: none;
+  }
+
+  & .toggle {
+    height: 100%;
+    width: 50%;
+
+    position: relative;
+    inset-inline-start: 0;
+    transition: inherit;
+
+    @apply round-m0 bg-int2;
+  }
+
+  &:is(.on) {
+    @apply border-color-int2;
+
+    & .toggle {
+      @apply bg-int;
+      inset-inline-start: 50%;
+    }
+  }
+}
