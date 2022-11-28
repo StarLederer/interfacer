@@ -1,0 +1,46 @@
+.animate-in,
+.animate-out {
+  animation-duration: 500ms;
+}
+
+.animate-in {
+  animation-name: in;
+}
+
+.animate-out {
+  animation-name: out;
+}
+
+@keyframes in {
+  from {
+    transform: scale(1.025);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.025);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes out {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(0.975);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(0.975);
+    opacity: 0;
+  }
+}

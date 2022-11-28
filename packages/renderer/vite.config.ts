@@ -1,13 +1,9 @@
-import { resolve } from 'path'
-
-import { defineConfig } from 'vite'
-
-import { svelte } from '@sveltejs/vite-plugin-svelte'
-import unocss from '@unocss/vite'
-import { extractorSvelte } from '@unocss/core'
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
+import solidPlugin from 'vite-plugin-solid';
+import unocss from '@unocss/vite';
+import presetIcons from '@unocss/preset-icons';
 import transformerDirective from '@unocss/transformer-directives'
-
-import unocsPresetMini from '@unocss/preset-mini'
 import unocssPresetWrapp from "./unocss-preset";
 
 // https://tauri.app/v1/guides/getting-started/setup/vite/
@@ -33,7 +29,6 @@ const tauriRequired = defineConfig({
   },
 });
 
-// https://vitejs.dev/config/
 export default defineConfig({
   ...tauriRequired,
 
@@ -44,18 +39,18 @@ export default defineConfig({
   },
 
   plugins: [
+    solidPlugin(),
     unocss({
       presets: [
-        unocsPresetMini(),
+        presetIcons(),
         unocssPresetWrapp(),
       ],
       transformers: [
         transformerDirective(),
       ],
-      extractors: [
-        extractorSvelte
-      ],
     }),
-    svelte()
   ],
+  build: {
+    target: 'esnext',
+  },
 });

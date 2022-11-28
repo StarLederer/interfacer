@@ -16,4 +16,4 @@ type IAction = {
 };
 
 export { availableHookKeys };
-export type { IHooks, IAction };
+export type { IHooks, IAction, IHookKey };

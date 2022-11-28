@@ -1,5 +1,8 @@
-import { writable } from "svelte/store";
+import { createRoot, createSignal } from "solid-js";
 
-const mainStore = writable(40);
+const createMainStore = () => {
+  const [hue, setHue] = createSignal(40);
+  return { hue, setHue };
+}
 
-export { mainStore };
+export default createRoot(createMainStore);

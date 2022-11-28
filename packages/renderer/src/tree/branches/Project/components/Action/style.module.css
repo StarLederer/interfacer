@@ -1,0 +1,40 @@
+.action {
+  overflow: hidden;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.route {
+  position: absolute;
+  inset: 0;
+}
+
+.nameLine {
+  @apply flex
+    justify-center
+    items-center;
+
+  & .name {
+    @apply font-extrabold text-m--;
+  }
+
+  & .icon {
+    @apply text-0;
+    animation: 10s rotate infinite;
+    margin-inline-start: 0rem;
+  }
+
+  &.hasCog {
+    & .icon {
+      width: 2rem;
+      @apply text-m-- mg-ie-s;
+    }
+  }
+}

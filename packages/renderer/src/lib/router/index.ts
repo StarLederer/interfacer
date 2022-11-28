@@ -1,13 +1,15 @@
-import { writable } from "svelte/store";
+import { createSignal, createRoot } from "solid-js";
+
+type Path = string | undefined;
 
 type IRouteStore = {
   previous: string;
   current: string;
-  firstDifferent: string[]; // fist path segments that is different between previous and current
+  firstDifferent: Path[]; // fist path segments that is different between previous and current
 };
 
 const resolve = (path: string) => {
-  let resolvedSegments = [];
+  let resolvedSegments: string[] = [];
 
   path.split("/").forEach((segment) => {
     if (segment === "..") {
@@ -41,26 +43,26 @@ const findFirstDifferent = (a: string, b: string) => {
   return [undefined, undefined];
 }
 
-const route = writable<IRouteStore>({
-  previous: "/",
-  current: "/",
-  firstDifferent: [undefined, undefined],
-});
-
-const navigate = (to: string) => {
-  const resolvedTo = resolve(to);
-
-  route.update((oldState) => {
-    const previous = oldState.current;
-    const newState = oldState;
-    Object.assign(newState, {
-      previous,
-      current: resolvedTo,
-      firstDifferent: findFirstDifferent(previous, resolvedTo)
-    });
-    return newState;
+const createRouter = () => {
+  const [route, setRoute] = createSignal<IRouteStore>({
+    previous: "/",
+    current: "/",
+    firstDifferent: [undefined, undefined],
   });
+
+  const navigate = (to: string) => {
+    const previous = route().current;
+    const current = resolve(to);
+
+    setRoute({
+      previous,
+      current,
+      firstDifferent: findFirstDifferent(previous, current)
+    });
+  };
+
+  return { route, navigate };
 }
 
-export { default as Route } from "./Route.svelte";
-export { route, navigate };
+export default createRoot(createRouter);
+export { default as Route } from "./Route";
