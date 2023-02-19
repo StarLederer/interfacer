@@ -12,3 +12,11 @@ Description and screenshots coming soon.
 ## Deployment
 
 - Build the app `node build.mjs`
+
+## Sponsors
+
+<p align="center">
+  <a href="https://starlederer.github.io/sponsors/sponsors.svg">
+    <img src="https://starlederer.github.io/sponsors/sponsors.svg"/>
+  </a>
+</p>
